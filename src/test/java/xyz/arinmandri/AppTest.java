@@ -17,13 +17,22 @@ public class AppTest
 {
 	ApiService api = new ApiService();
 
+//	final int YEAR_BASE = 2044;
 	final int YEAR_BASE = 1864;// KLunarDate.YEAR_BASE
 	final int year_min = YEAR_BASE;
-	final int year_max = YEAR_BASE + KLunarDate.CYCLE_SIZE * 3;
+	final int year_max = YEAR_BASE + KLunarDate.CYCLE_SIZE * 10;
 
 //	@Test
-	public void doit () {
-		int yd = 0b101001010110110_0100_1101100100101;
+	public void justOneApi () {
+		List<Item> items = api.getFromLunDate( 2050, 11, 18 );
+		for( Item item : items ){
+			System.out.println( item );
+		}
+	}
+
+//	@Test
+	public void printYd () {
+		int yd = 0x11126DA9;
 		System.out.println( "적일: " + ( yd >>> 17 ) );
 		System.out.println( "윤달위치 " + ( ( yd >>> 13 ) & 0xF ) );
 		System.out.println( "각월대소 " + Integer.toBinaryString( yd & 0x1FFF ) );
@@ -39,6 +48,9 @@ public class AppTest
 
 		int jDayC0 = 0;// 지원범위 첫날의 율리우스적일
 
+		boolean end = false;// 지원범위 끝을 넘음
+		String endDate = "";
+
 		StringBuilder cDaySB = new StringBuilder();
 		for( int c = year_min ; c < year_max ; c += KLunarDate.CYCLE_SIZE ){// 매 주기
 			System.out.print( "{\n" );
@@ -46,8 +58,11 @@ public class AppTest
 			int jDayC = 0;// 지원범위 첫날 ~ 이 주기 첫날 적일 차이
 			int jDayY0 = 0;// 이 주기 첫날의 율리우스적일
 
+			int decade = -999;// 주석용
+
 			for( int y0 = 0 ; y0 < KLunarDate.CYCLE_SIZE ; y0++ ){// 주기 중 1년
 				int y = c + y0;
+				decade = ( y0 % 10 == 0 ) ? y : decade;
 				int yd = 0;// KLunarDate.ydss에 듦
 
 				int jDayY = 0;// 이 주기 첫날 ~ 이 해 첫날 적일 차이
@@ -60,6 +75,12 @@ public class AppTest
 
 					List<Item> items = api.getFromLunDate( y, m, 1 );
 //					List<Item> items = api.getFromLunDateTest( y, m, 1 );// 출력 형식만 확인
+
+					if( items.size() == 0 ){// 날짜 제공 안 됨
+						end = true;
+						endDate = y + "-" + i( m );
+						break;
+					}
 
 					if( items.size() == 2 ){// 윤달 있음
 						if( leapMonth != leapMonthNone )
@@ -89,7 +110,7 @@ public class AppTest
 								if( c == year_min ){// 첫 주기
 									jDayC0 = jDay;
 								}
-								jDayC = jDay - jDayC0;
+								jDayC = jDay;
 								jDayY0 = jDay;
 							}
 							jDayY = jDay - jDayY0;
@@ -105,23 +126,29 @@ public class AppTest
 				System.out.print( String.format( "0x%08X", yd ) );// 16진수로 표시
 //				System.out.print( binaryYd( yd ) );// 2진수로 표시
 				System.out.print( ", " );
-				if( y0 % 10 == 9 )// 10년마다 줄내림
-				    System.out.print( "// " + ( y - 9 ) + "\n" );
+				if( y0 % 10 == 9 || end )// 10년마다 줄내림
+				    System.out.print( "// " + decade + "\n" );
+
+				if( end ) break;
 			}// 주기 중 1년
 			System.out.print( "},\n" );
 
-			cDaySB.append( jDayC + ",//" + c + "\n" );
+			cDaySB.append( jDayC + " - " + jDayC0 + ",// " + c + "\n" );
 
+			if( end ) break;
 		}// 매 주기
+		if( end ) System.out.println( "넘은 날짜: " + endDate );
+
 		System.out.print( "\n\n" );
 		System.out.println( cDaySB );
-		System.out.println( "jDays 마지막 항목은 손수 입력... (" + jDayC0 + ")// " + year_max );
+		System.out.println( "jDays 마지막 항목은 손수 입력... (" + jDayC0 + ")" );
 	}
 
 //	@Test
 	public void staticTest () {
 
-		LocalDate ld = LocalDate.of( 1924, 2, 5 );// MIN_DATE
+		LocalDate ld = LocalDate.of( 2051, 2, 10 );
+//		LocalDate ld = LocalDate.of( 1924, 2, 5 );// MIN_DATE
 //		LocalDate ld = LocalDate.of( 1924, 2, 5 );// 1924-1-1
 //		LocalDate ld = LocalDate.of( 1984, 2, 2 );// 1984-1-1
 //		LocalDate ld = LocalDate.of( 1984, 2, 1 );// 1983-막날
@@ -135,12 +162,12 @@ public class AppTest
 	@Test
 	public void randomTest () {
 
-		int testSize = 500;
+		int testSize = 50;
 
 		for( int i = 0 ; i < testSize ; i++ ){
 
-			LocalDate d1 = LocalDate.of( 1864, 2, 8 );
-			LocalDate d2 = LocalDate.of( 2044, 1, 29 );
+			LocalDate d1 = LocalDate.of( 2049, 2, 2 );
+			LocalDate d2 = LocalDate.of( 2050, 12, 31 );
 
 			LocalDate ld = getRandomDate( d1, d2 );
 

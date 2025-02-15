@@ -78,9 +78,26 @@ public class ApiService
 	 */
 	public List<Item> getFromLunDateTest(int lunYear, int lunMonth, int lunDay) {
 
+		{// 범위 초과
+			if( lunYear > 2050 ){
+				return List.of();
+			}
+			else if( lunYear == 2050 ){
+				if( lunMonth > 11 ){
+					return List.of();
+				}
+				else if( lunMonth == 11 ){
+					if( lunDay > 18 ){
+						return List.of();
+					}
+				}
+			}
+		}
+
 		Item item = new Item();
 		item.lunNday = 29;
 		item.lunLeapmonth = "평";
+		item.solJd = testCount++;
 
 		return List.of(item);
 	}
@@ -136,4 +153,6 @@ public class ApiService
 		if( i < 10 ) return "0" + i;
 		return i + "";
 	}
+
+	private static int testCount = 2401910;
 }

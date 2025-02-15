@@ -43,7 +43,7 @@ public final class KLunarDate implements java.io.Serializable
 	 *         yd >>> 17
 	 * 4비트: 몇 월에 윤달이 있나 (예: 이 값이 1이면 1월에 윤달이 있으며 2번째 달이 윤달이다.) (0xF인 경우 윤달 없음) (0인 경우 없음)
 	 *        (yd >>> 13) & 0xF
-	 * 13비트: 각 월의 대소 여부 (0번째 달부터 12번째 달까지 윤달도 똑같이 한 달로 취급, 1의자리부터 1월)
+	 * 13비트: 각 월의 대소(0:소 1:대) (0번째 달부터 12번째 달까지 윤달도 똑같이 한 달로 취급, 1의자리부터 1월)
 	 *         (yd >>> m0) & 0x1
 	 */
 	private static final int[][] ydss = {// yd = ydss[c0][y0]
@@ -71,16 +71,20 @@ public final class KLunarDate implements java.io.Serializable
 	                0x7235E6D2, 0x74F8CEA5, 0x77F9EEA5, 0x7ABFEE4A, 0x7D82AC96, 0x8081EC9B, 0x8347E55A, 0x860A6AD5, 0x890BEB69, 0x8BD17752, // 2024
 	                0x8ED1E752, 0x9195EB25, 0x9458D64B, 0x9759EA4B, 0x9A1DE4AB, 0x9CE0A55B, 0x9FE1E56D, 0xA2A7EB69, 0xA56C5B52, 0xA86DED92, // 2034
 	        },
+	        {
+	                0x0000FD25, 0x0301ED25, 0x05C5EA4D, 0x0888B4AD, 0x0B89E2B6, 0x0E4DE5B5, 0x11126DA9, // 2044
+	        },
 	};
 
 	/*
 	 * 지원범위 첫 날로부터 각 주기의 첫 날의 차이 (일 단위)
 	 */
 	private static final int[] jDays = {
-	        0,// 1864
-	        21911,// 1924
-	        43823,// 1984
-	        65735,// 2044 // 마지막 값은 지원범위 판별용
+	        2401910 - 2401910,// 1864
+	        2423821 - 2401910,// 1924
+	        2445733 - 2401910,// 1984
+	        2467645 - 2401910,// 2044
+	        2470214 - 2401910,// 마지막 값은 지원범위 판별용// 음력 2050-12-29의 다음 날에 해당. 한국천문연구원 API에서 지원범위의 막날은 2050-11-18이지만 2050-11이 대월, 30일까지 있음은 알 수 있으므로 이 라이브러리의 지원범위는 2050-12-29까지는 늘려짐.(이 해에 윤달이 이미 나왔고 그 이전의 두 달이 대월이므로 2050-12-29의 다음 날은 아마 2051-01-01일 거 같지만)
 	};
 
 	private KLunarDate( int year , int month , int day , boolean isLeapMonth , int c0 , int y0 , int m0 , int d0 ) {
@@ -112,7 +116,6 @@ public final class KLunarDate implements java.io.Serializable
 	public static KLunarDate of ( int year , int month , int day , boolean isLeapMonth ) {
 
 		if( year < YEAR_BASE ) throw new OutOfRangeException();
-		// if( year > YEAR_MAX ) throw new OutOfRangeException();// TODO 범위 판별 좀...
 		if( month < 1 ) throw new NonexistentDateException();
 		if( month > 12 ) throw new NonexistentDateException();
 		if( day < 1 ) throw new NonexistentDateException();
@@ -120,6 +123,8 @@ public final class KLunarDate implements java.io.Serializable
 		//// 몇번째 년도?
 		int c0 = ( year - YEAR_BASE ) / CYCLE_SIZE;
 		int y0 = ( year - YEAR_BASE ) % CYCLE_SIZE;
+		if( c0 >= ydss.length ) throw new OutOfRangeException();
+		if( y0 >= ydss[c0].length ) throw new OutOfRangeException();
 		int yd = ydss[c0][y0];
 
 		//// 몇번째 월인지 찾기
@@ -175,11 +180,12 @@ public final class KLunarDate implements java.io.Serializable
 	 */
 	public static KLunarDate of ( final int year , final int dayOfYear ) {
 
-		//// TODO 범위 판정 throw new OutOfRangeException();
-		if( dayOfYear < 1 ) throw new OutOfRangeException();
+		if( dayOfYear < 1 ) throw new NonexistentDateException();
 
 		int c0 = ( year - YEAR_BASE ) / CYCLE_SIZE;
 		int y0 = ( year - YEAR_BASE ) % CYCLE_SIZE;
+		if( c0 >= ydss.length ) throw new OutOfRangeException();
+		if( y0 >= ydss[c0].length ) throw new OutOfRangeException();
 		int yd = ydss[c0][y0];
 
 		int dayCount = dayOfYear;
@@ -221,11 +227,12 @@ public final class KLunarDate implements java.io.Serializable
 		 * 그 주기 내 년도별 적일 정보로 해당하는 음력년도를 찾는다.
 		 * 그 년도의 첫 날에 남은 적일 더해서 날짜 결정
 		 */
-		if( ld.isBefore( DATE_MIN ) )
+		if( ld.isBefore( DATE_MIN ) )// 지원범위보다 과거
 		    throw new OutOfRangeException();
 
 		//// 주기 찾기
 		int diff = (int) ChronoUnit.DAYS.between( DATE_MIN, ld );
+
 		int c0 = 1;
 		for( ; c0 < ydss.length + 1 ; c0 += 1 ){// XXX 일단 대충 선형탐색
 			if( diff < jDays[c0] ){
@@ -235,7 +242,8 @@ public final class KLunarDate implements java.io.Serializable
 				//// 년도 찾기
 				int[] yds = ydss[c0];
 				int y0 = 1;
-				for( ; y0 < CYCLE_SIZE ; y0 += 1 ){// XXX 일단 대충 선형탐색
+				int cycleSize = ydss[c0].length;
+				for( ; y0 < cycleSize ; y0 += 1 ){// XXX 일단 대충 선형탐색
 					if( diff < ( yds[y0] >>> 17 ) ){
 						break;
 					}
@@ -246,7 +254,7 @@ public final class KLunarDate implements java.io.Serializable
 			}
 		}
 
-		throw new OutOfRangeException();
+		throw new OutOfRangeException();// 지원범위보다 미래
 	}
 
 	/**
@@ -296,7 +304,7 @@ public final class KLunarDate implements java.io.Serializable
 	 *         예: 그 뒤로 윤 11월 30일이 다시는 나타나지 않았음.
 	 */
 	public KLunarDate nextYear () {
-		for( int n = 1 ; n < 2 ; n++ ){// TODO 범위
+		for( int n = 1 ; n < 999 ; n++ ){
 			KLunarDate kld;
 			try{
 				kld = plusHardYears( n );
