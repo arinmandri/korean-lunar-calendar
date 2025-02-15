@@ -1,8 +1,46 @@
-xyz.arinmandri.koreanLunarCalendar
 
-음력
+```java
+import xyz.arinmandri.koreanlunarcalendar.KLunarDate;
+```
 
-음력 날짜 구하는 법: 규칙은 모르겠고 그냥 한국천문연구원에서 제공하는 음력 월별 1일의 양력 날짜 하고 대월/소월 값만으로 일수 세기 했음.
+## 소개
+
+한국 음력.
+
+
+## 쓰는 법
+
+`java.time.LocalDate`를 양력을 나타내는 클래스라고 침.
+
+### 양력 음력 변환
+
+##### 양력에서 음력으로
+
+```java
+LocalDate ld = LocalDate.of( 2001, 1, 1 );
+KLunarDate kd = KLunarDate.from( ld );
+System.out.println( kd );
+```
+
+```
+2000-12-07
+```
+
+##### 음력에서 양력으로
+
+```java
+KLunarDate kd = KLunarDate.of( 2000, 12, 7 );
+LocalDate ld = kd.toLocalDate();
+System.out.println( ld );
+```
+
+```
+2000-02-05
+```
+
+
+
+
 
 ## 등장인물
 

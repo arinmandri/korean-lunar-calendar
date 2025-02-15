@@ -1,4 +1,4 @@
-package xyz.arinmandri.koreanLunarCalendar;
+package xyz.arinmandri.koreanlunarcalendar;
 
 public class NonexistentDateException extends java.time.DateTimeException
 {

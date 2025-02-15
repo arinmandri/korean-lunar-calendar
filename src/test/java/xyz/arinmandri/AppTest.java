@@ -10,7 +10,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import org.junit.jupiter.api.Test;
 import xyz.arinmandri.kasiapi.ApiService;
 import xyz.arinmandri.kasiapi.Item;
-import xyz.arinmandri.koreanLunarCalendar.KLunarDate;
+import xyz.arinmandri.koreanlunarcalendar.KLunarDate;
 
 
 public class AppTest

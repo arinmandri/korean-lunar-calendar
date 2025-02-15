@@ -1,4 +1,4 @@
-package xyz.arinmandri.koreanLunarCalendar;
+package xyz.arinmandri.koreanlunarcalendar;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

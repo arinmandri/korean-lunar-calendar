@@ -1,4 +1,4 @@
-package xyz.arinmandri.koreanLunarCalendar;
+package xyz.arinmandri.koreanlunarcalendar;
 
 public class OutOfRangeException extends java.time.DateTimeException
 {
