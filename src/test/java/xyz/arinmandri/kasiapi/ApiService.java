@@ -8,7 +8,9 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
 
-public class ApiService {
+
+public class ApiService
+{
 
 	private ApiInterface api;
 	String serviceKey = "HAHA HOHO";
@@ -19,14 +21,14 @@ public class ApiService {
 
 	boolean debugMode = false;
 
-	private void init() {
+	private void init () {
 
 		Retrofit retrofit = new Retrofit.Builder()
-		        .baseUrl("https://apis.data.go.kr/")
-		        .addConverterFactory(SimpleXmlConverterFactory.create())// XML
+		        .baseUrl( "https://apis.data.go.kr/" )
+		        .addConverterFactory( SimpleXmlConverterFactory.create() )// XML
 		        .build();
 
-		api = retrofit.create(ApiInterface.class);
+		api = retrofit.create( ApiInterface.class );
 	}
 
 	/**
@@ -37,15 +39,15 @@ public class ApiService {
 	 * @param solDay
 	 * @return
 	 */
-	public Item getFromSolDate(int solYear, int solMonth, int solDay) {
+	public Item getFromSolDate ( int solYear , int solMonth , int solDay ) {
 		Call<ResponseData> call = api.getLunCalInfo(
 		        serviceKey,
-		        i(solYear),
-		        i(solMonth),
-		        i(solDay));
+		        i( solYear ),
+		        i( solMonth ),
+		        i( solDay ) );
 
-		List<Item> items = request(call);
-		if (items.size() > 0) return items.get(0);
+		List<Item> items = request( call );
+		if( items.size() > 0 ) return items.get( 0 );
 
 		return null;
 	}
@@ -59,16 +61,28 @@ public class ApiService {
 	 * @return
 	 *         평월, 윤월이 있는 경우 응답이 2개이다.
 	 */
-	public List<Item> getFromLunDate(int lunYear, int lunMonth, int lunDay) {
+	public List<Item> getFromLunDate ( int lunYear , int lunMonth , int lunDay ) {
 		Call<ResponseData> call = api.getSolCalInfo(
 		        serviceKey,
-		        i(lunYear),
-		        i(lunMonth),
-		        i(lunDay));
+		        i( lunYear ),
+		        i( lunMonth ),
+		        i( lunDay ) );
 
-		List<Item> items = request(call);
+		List<Item> items = request( call );
 
 		return items;
+	}
+
+	/*
+	 * 출력 서식 확인만 하게
+	 */
+	public List<Item> getFromLunDateTest(int lunYear, int lunMonth, int lunDay) {
+
+		Item item = new Item();
+		item.lunNday = 29;
+		item.lunLeapmonth = "평";
+
+		return List.of(item);
 	}
 
 	/**
@@ -81,44 +95,45 @@ public class ApiService {
 	 * @param leapMonth
 	 * @return
 	 */
-	public List<Item> getSpcifyLunCalInfo(int fromSolYear, int toSolYear, int lunMonth, int lunDay, boolean leapMonth) {
+	public List<Item> getSpcifyLunCalInfo ( int fromSolYear , int toSolYear , int lunMonth , int lunDay , boolean leapMonth ) {
 		Call<ResponseData> call = api.getSpcifyLunCalInfo(
 		        serviceKey,
-		        i(fromSolYear),
-		        i(toSolYear),
-		        i(lunMonth),
-		        i(lunDay),
-		        leapMonth ? "평" : "윤");
+		        i( fromSolYear ),
+		        i( toSolYear ),
+		        i( lunMonth ),
+		        i( lunDay ),
+		        leapMonth ? "평" : "윤" );
 
-		return request(call);
+		return request( call );
 	}
 
-	private List<Item> request(Call<ResponseData> call) {
-		try {
+	private List<Item> request ( Call<ResponseData> call ) {
+		try{
 			// 동기 요청 실행
 			String requestUrl = call.request().url().toString();
-			if (debugMode) System.out.println("Request URL: " + requestUrl);
+			if( debugMode ) System.out.println( "Request URL: " + requestUrl );
 
 			Response<ResponseData> response = call.execute();
 
-			if (response.isSuccessful() && response.body() != null) {
+			if( response.isSuccessful() && response.body() != null ){
 
 				List<Item> items = response.body().getBody().getItems().getItemList();
 
 				return items;
 			}
-			else {
-				if (debugMode) System.err.println("Request failed: " + response.errorBody().string());
+			else{
+				if( debugMode ) System.err.println( "Request failed: " + response.errorBody().string() );
 			}
-		} catch (IOException e) {
-			if (debugMode) e.printStackTrace();
+		}
+		catch( IOException e ){
+			if( debugMode ) e.printStackTrace();
 		}
 
 		return null;
 	}
 
-	private String i(int i) {
-		if (i < 10) return "0" + i;
+	private String i ( int i ) {
+		if( i < 10 ) return "0" + i;
 		return i + "";
 	}
 }

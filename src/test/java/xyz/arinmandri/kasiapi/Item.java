@@ -26,7 +26,7 @@ public class Item
 	@Element( name = "solDay" , required = false ) int solDay;// 양력 일
 	@Element( name = "solWeek" , required = false ) String solWeek;// 요일
 
-	@Element( name = "solJd" , required = false ) long solJd;// 율리우스적일
+	@Element( name = "solJd" , required = false ) int solJd;// 율리우스적일
 
 	public String toLunString () {
 		StringBuilder sb = new StringBuilder()
