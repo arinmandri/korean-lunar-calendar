@@ -7,6 +7,8 @@ import xyz.arinmandri.koreanlunarcalendar.KLunarDate;
 
 한국 음력.
 
+아직 만드는 중임.
+
 
 ## 쓰는 법
 
