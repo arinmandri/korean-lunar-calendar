@@ -279,7 +279,7 @@ public final class KLunarDate implements java.io.Serializable
 
 		int cDiff = jDays[c0];
 		int yDiff = ydss[c0][y0] >>> 17;
-		return DATE_MIN.plusDays( cDiff + yDiff );
+		return DATE_MIN.plusDays( cDiff + yDiff + d0 );
 	}
 
 	/**

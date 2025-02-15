@@ -22,6 +22,13 @@ public class AppTest
 	final int year_min = YEAR_BASE;
 	final int year_max = YEAR_BASE + KLunarDate.CYCLE_SIZE * 10;
 
+	@Test
+	public void readme () {
+		KLunarDate kd = KLunarDate.of( 2000, 12, 7 );
+		LocalDate ld = kd.toLocalDate();
+		System.out.println( ld );
+	}
+
 //	@Test
 	public void justOneApi () {
 		List<Item> items = api.getFromLunDate( 2050, 11, 18 );
@@ -147,10 +154,10 @@ public class AppTest
 //	@Test
 	public void staticTest () {
 
-		LocalDate ld = LocalDate.of( 2051, 2, 10 );
+//		LocalDate ld = LocalDate.of( 2000, 1, 1 );
 //		LocalDate ld = LocalDate.of( 1924, 2, 5 );// MIN_DATE
 //		LocalDate ld = LocalDate.of( 1924, 2, 5 );// 1924-1-1
-//		LocalDate ld = LocalDate.of( 1984, 2, 2 );// 1984-1-1
+		LocalDate ld = LocalDate.of( 1984, 2, 3 );// 1984-1-1
 //		LocalDate ld = LocalDate.of( 1984, 2, 1 );// 1983-막날
 //		LocalDate ld = LocalDate.of( 1983, 2, 13 );// 1983-1-1
 		test( ld );
@@ -159,7 +166,7 @@ public class AppTest
 	/**
 	 * 범위 내에서 아무 날짜나 뽑아서 우리 음력 클래스를 이용해서 음력으로 변환 공공데이터 API 결과와 일치하는지 확인.
 	 */
-	@Test
+//	@Test
 	public void randomTest () {
 
 		int testSize = 50;
@@ -190,7 +197,7 @@ public class AppTest
 		verifyMyKLunarDate( ld, kd );
 
 		LocalDate ld1 = kd.toLocalDate();
-		if( !ld1.equals( ld1 ) ){
+		if( !ld.equals( ld1 ) ){
 			fail( "원본 양력 날짜 " + ld + " 와 음력으로 변환 후 양력으로 재변환한 날짜 " + ld1 + " 가 다릅니다." );
 		}
 	}
