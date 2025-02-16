@@ -28,6 +28,17 @@ public class Item
 
 	@Element( name = "solJd" , required = false ) int solJd;// 율리우스적일
 
+	public String toSolString () {
+		StringBuilder sb = new StringBuilder()
+		        .append( solYear )
+		        .append( solMonth < 10 ? "-0" : "-" )
+		        .append( solMonth )
+		        .append( solDay < 10 ? "-0" : "-" )
+		        .append( solDay );
+
+		return sb.toString();
+	}
+
 	public String toLunString () {
 		StringBuilder sb = new StringBuilder()
 		        .append( lunYear )

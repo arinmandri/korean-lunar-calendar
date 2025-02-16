@@ -2,14 +2,16 @@ package xyz.arinmandri.koreanlunarcalendar;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.Random;
 
 import xyz.arinmandri.kasiapi.ApiService;
+import xyz.arinmandri.kasiapi.Item;
 
 
 public class KLunarDateTest
 {
 	ApiService api = ApiService.getInstance();
+	Random random = new Random( System.currentTimeMillis() );
 
 	/*
 	 * KLunarDate private 값들 땜쳐옴
@@ -29,10 +31,32 @@ public class KLunarDateTest
 
 	//// ================================ util, private, etc
 
-	protected LocalDate getRandomDate ( LocalDate d1 , LocalDate d2 ) {
+	protected boolean checkEquality ( Item item , KLunarDate kd ) {
+		return item.getLunYear()  == kd.getYear()
+		    && item.getLunMonth() == kd.getMonth()
+		    && item.getLunDay()   == kd.getDay()
+		    && item.getLunLeapmonth().equals( "윤" ) == kd.isLeapMonth();
+	}
+
+	protected boolean checkEquality ( Item item , LocalDate ld ) {
+		return item.getSolYear()  == ld.getYear()
+		    && item.getSolMonth() == ld.getMonthValue()
+		    && item.getSolDay()   == ld.getDayOfMonth();
+	}
+
+	protected LocalDate getRandomDate ( LocalDate d1 , LocalDate d2 ) {// 이상, 이하
 
 		long n = ChronoUnit.DAYS.between( d1, d2 );// 시작일~종료일 일수
-		long randomDays = ThreadLocalRandom.current().nextLong( n + 1 );// 랜덤 숫자 뽑기
+		long randomDays = random.nextLong( n + 1 );// 랜덤 숫자 뽑기
 		return d1.plusDays( randomDays );
+	}
+
+	protected int getRandomInt ( int a , int b ) {// 이상, 이하
+		return random.nextInt( b - a + 1 ) + a;
+	}
+
+	protected String i ( int i ) {
+		if( i < 10 ) return "0" + i;
+		return i + "";
 	}
 }

@@ -227,16 +227,15 @@ public final class KLunarDate implements java.io.Serializable
 		 * 그 주기 내 년도별 적일 정보로 해당하는 음력년도를 찾는다.
 		 * 그 년도의 첫 날에 남은 적일 더해서 날짜 결정
 		 */
-		if( ld.isBefore( MIN ) )// 지원범위보다 과거
+		if( ld.isAfter( MAX ) )// 지원범위보다 미래
 		    throw new OutOfRangeException();
 
 		//// 주기 찾기
 		int diff = (int) ChronoUnit.DAYS.between( MIN, ld );
 
-		int c0 = 1;
-		for( ; c0 < ydss.length + 1 ; c0 += 1 ){// XXX 일단 대충 선형탐색
-			if( diff < jDays[c0] ){
-				c0 -= 1;
+		int c0 = ydss.length;
+		for( ; c0 >= 0 ; c0 -= 1 ){// 미래에서부터 선형탐색 (가장 미래 부분이 현재랑 가깝고 제일 많이 찾을 거 같으니….)
+			if( diff >= jDays[c0] ){
 				diff -= jDays[c0];
 
 				//// 년도 찾기
@@ -254,7 +253,7 @@ public final class KLunarDate implements java.io.Serializable
 			}
 		}
 
-		throw new OutOfRangeException();// 지원범위보다 미래
+		throw new OutOfRangeException();// 지원범위보다 과거
 	}
 
 	/**

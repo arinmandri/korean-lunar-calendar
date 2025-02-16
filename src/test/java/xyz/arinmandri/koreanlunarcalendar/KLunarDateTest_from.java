@@ -15,6 +15,7 @@ public class KLunarDateTest_from
 
 	@Test
 	public void test () {
+		System.out.println( "=== from ===" );
 		randomTest();
 		boundaryTest();
 	}
@@ -39,7 +40,7 @@ public class KLunarDateTest_from
 		 * 범위 내에서 아무 날짜나 뽑아서
 		 */
 
-		int testSize = 20;
+		int testSize = 50;
 
 		for( int i = 0 ; i < testSize ; i++ ){
 
@@ -69,11 +70,14 @@ public class KLunarDateTest_from
 		testOneWithoutKASI( MAX1, true );
 		testOneWithoutKASI( MAX1.plusDays( 1 ), false );
 
+		System.out.println( "지원범위 양끝 통과" );
+
 		//// 각 주기 양끝 (처음과 마지막은 지원범위 양끝과 동일하므로 생략)
 		for( int i = 1 ; i < jDays.length - 1 ; i += 1 ){
 			testOne( MIN.plusDays( jDays[i] - 1 ) );
 			testOne( MIN.plusDays( jDays[i] ) );
 			testOne( MIN.plusDays( jDays[i] + 1 ) );
+			System.out.println( "각 주기 끝: " + MIN.plusDays( jDays[i] ) + " 앞뒤 1일씩 통과" );
 		}
 	}
 
@@ -134,13 +138,7 @@ public class KLunarDateTest_from
 			}
 		}
 
-		if( item.getLunYear() == kd.getYear()
-		        && item.getLunMonth() == kd.getMonth()
-		        && item.getLunDay() == kd.getDay()
-		        && item.getLunLeapmonth().equals( "윤" ) == kd.isLeapMonth() ){
-			//
-		}
-		else{
+		if( !checkEquality( item, kd ) ){
 			fail( "양력 " + ld0 + " 을를 직접 변환한 음력 날짜 " + kd + " 와 KASI 제공 음력날짜 " + item.toLunString() + " 이가 다릅니다." );
 		}
 	}
