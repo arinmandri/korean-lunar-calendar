@@ -1,13 +1,10 @@
 package xyz.arinmandri;
 
-import static org.junit.jupiter.api.Assertions.fail;
-
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
 import org.junit.jupiter.api.Test;
+
 import xyz.arinmandri.kasiapi.ApiService;
 import xyz.arinmandri.kasiapi.Item;
 import xyz.arinmandri.koreanlunarcalendar.KLunarDate;
@@ -15,9 +12,8 @@ import xyz.arinmandri.koreanlunarcalendar.KLunarDate;
 
 public class AppTest
 {
-	ApiService api = new ApiService();
+	ApiService api = ApiService.getInstance();
 
-//	final int YEAR_BASE = 2044;
 	final int YEAR_BASE = 1864;// KLunarDate.YEAR_BASE
 	final int year_min = YEAR_BASE;
 	final int year_max = YEAR_BASE + KLunarDate.CYCLE_SIZE * 10;
@@ -151,97 +147,7 @@ public class AppTest
 		System.out.println( "jDays 마지막 항목은 손수 입력... (" + jDayC0 + ")" );
 	}
 
-//	@Test
-	public void staticTest () {
-
-//		LocalDate ld = LocalDate.of( 2000, 1, 1 );
-//		LocalDate ld = LocalDate.of( 1924, 2, 5 );// MIN_DATE
-//		LocalDate ld = LocalDate.of( 1924, 2, 5 );// 1924-1-1
-		LocalDate ld = LocalDate.of( 1984, 2, 3 );// 1984-1-1
-//		LocalDate ld = LocalDate.of( 1984, 2, 1 );// 1983-막날
-//		LocalDate ld = LocalDate.of( 1983, 2, 13 );// 1983-1-1
-		test( ld );
-	}
-
-	/**
-	 * 범위 내에서 아무 날짜나 뽑아서 우리 음력 클래스를 이용해서 음력으로 변환 공공데이터 API 결과와 일치하는지 확인.
-	 */
-//	@Test
-	public void randomTest () {
-
-		int testSize = 50;
-
-		for( int i = 0 ; i < testSize ; i++ ){
-
-			LocalDate d1 = LocalDate.of( 2049, 2, 2 );
-			LocalDate d2 = LocalDate.of( 2050, 12, 31 );
-
-			LocalDate ld = getRandomDate( d1, d2 );
-
-			test( ld );
-
-			if( i % 10 == 9 ){
-				System.out.println( i + 1 + "째 시험 통과" );
-			}
-		}
-	}
-
-	/*
-	 * TODO 경계값 테스트
-	 */
-
-	//// ================================
-
-	private void test ( LocalDate ld ) {
-		KLunarDate kd = getKLunarDate( ld );
-		verifyMyKLunarDate( ld, kd );
-
-		LocalDate ld1 = kd.toLocalDate();
-		if( !ld.equals( ld1 ) ){
-			fail( "원본 양력 날짜 " + ld + " 와 음력으로 변환 후 양력으로 재변환한 날짜 " + ld1 + " 가 다릅니다." );
-		}
-	}
-
-	private KLunarDate getKLunarDate ( LocalDate ld ) {
-
-		try{
-			KLunarDate kd = KLunarDate.from( ld );// 우리 클래스로 만든 음력 날짜
-			return kd;
-		}
-		catch( Exception e ){
-			e.printStackTrace();
-			fail( "양력 " + ld + " 을를 음력으로 바꾸기 실패 ... " + e.getMessage() );
-			return null;
-		}
-	}
-
-	private void verifyMyKLunarDate ( LocalDate ld0 , KLunarDate kd ) {
-
-		Item item = api.getFromSolDate(
-		        ld0.getYear(),
-		        ld0.getMonthValue(),
-		        ld0.getDayOfMonth() );
-		if( item == null ){
-			fail( "양력 " + ld0 + " 정보가 없습니다." );
-		}
-
-		if( item.getLunYear() == kd.getYear()
-		        && item.getLunMonth() == kd.getMonth()
-		        && item.getLunDay() == kd.getDay()
-		        && item.getLunLeapmonth().equals( "윤" ) == kd.isLeapMonth() ){
-			//
-		}
-		else{
-			fail( "양력 " + ld0 + " 을를 직접 변환한 음력 날짜 " + kd + " 와 KASI 제공 음력날짜 " + item.toLunString() + " 이가 다릅니다." );
-		}
-	}
-
-	private LocalDate getRandomDate ( LocalDate d1 , LocalDate d2 ) {
-
-		long n = ChronoUnit.DAYS.between( d1, d2 );// 시작일~종료일 일수
-		long randomDays = ThreadLocalRandom.current().nextLong( n + 1 );// 랜덤 숫자 뽑기
-		return d1.plusDays( randomDays );
-	}
+	//// ================================ util, private, etc
 
 	private String binaryYd ( int yd ) {
 		String b0 = Integer.toBinaryString( yd );

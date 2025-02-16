@@ -11,11 +11,16 @@ import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
 
 public class ApiService
 {
+	static private ApiService instance = new ApiService();
 
 	private ApiInterface api;
 	String serviceKey = "HAHA HOHO";
 
-	public ApiService() {
+	static public ApiService getInstance () {
+		return instance;
+	}
+
+	private ApiService() {
 		init();
 	}
 

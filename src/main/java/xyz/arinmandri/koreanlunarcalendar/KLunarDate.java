@@ -7,7 +7,7 @@ import java.time.temporal.ChronoUnit;
 
 /**
  * 한국 음력으로 특정 날짜를 가리킨다. 불변(immutable)이다.
- * A date in Korean lunar calendar system
+ * represents a date in Korean lunar calendar system
  * 
  * 음력 날짜는 다음 네 가지 값으로 특정된다: 년도, 월, 일, 윤달여부
  * 
@@ -26,10 +26,6 @@ public final class KLunarDate implements java.io.Serializable
 	private transient final int y0;// 이 주기의 몇 번째 년인가 (0부터 셈)
 	private transient final int m0;// 이 년도의 몇 번째 월인가 (0부터 셈)
 	private transient final int d0;// 이 년도의 몇 번째 일인가 (0부터 셈)
-
-	private static final int YEAR_BASE = 1864;// 최소 년도 (갑자년을 최소년도로 설정해야 (TODO 나중에) 갑자 계산이 맞게 동작)
-	// public static final int YEAR_MAX = 2019;// 최대 년도 TODO 범위를 어찌 따질지 점...
-	public static final LocalDate DATE_MIN = LocalDate.of( 1864, 2, 8 );
 
 	public static final int BIG_MONTH_SIZE = 30;// 대월의 일수
 	public static final int LIL_MONTH_SIZE = 29;// 소월의 일수
@@ -86,6 +82,10 @@ public final class KLunarDate implements java.io.Serializable
 	        2467645 - 2401910,// 2044
 	        2470214 - 2401910,// 마지막 값은 지원범위 판별용// 음력 2050-12-29의 다음 날에 해당. 한국천문연구원 API에서 지원범위의 막날은 2050-11-18이지만 2050-11이 대월, 30일까지 있음은 알 수 있으므로 이 라이브러리의 지원범위는 2050-12-29까지는 늘려짐.(이 해에 윤달이 이미 나왔고 그 이전의 두 달이 대월이므로 2050-12-29의 다음 날은 아마 2051-01-01일 거 같지만)
 	};
+
+	private static final int YEAR_BASE = 1864;// 최소 년도 (갑자년을 최소년도로 설정해야 (TODO 나중에) 갑자 계산이 맞게 동작)
+	public static final LocalDate MIN = LocalDate.of( 1864, 2, 8 );
+	public static final LocalDate MAX = MIN.plusDays( jDays[jDays.length - 1] - 1 );
 
 	private KLunarDate( int year , int month , int day , boolean isLeapMonth , int c0 , int y0 , int m0 , int d0 ) {
 		super();
@@ -227,11 +227,11 @@ public final class KLunarDate implements java.io.Serializable
 		 * 그 주기 내 년도별 적일 정보로 해당하는 음력년도를 찾는다.
 		 * 그 년도의 첫 날에 남은 적일 더해서 날짜 결정
 		 */
-		if( ld.isBefore( DATE_MIN ) )// 지원범위보다 과거
+		if( ld.isBefore( MIN ) )// 지원범위보다 과거
 		    throw new OutOfRangeException();
 
 		//// 주기 찾기
-		int diff = (int) ChronoUnit.DAYS.between( DATE_MIN, ld );
+		int diff = (int) ChronoUnit.DAYS.between( MIN, ld );
 
 		int c0 = 1;
 		for( ; c0 < ydss.length + 1 ; c0 += 1 ){// XXX 일단 대충 선형탐색
@@ -279,7 +279,7 @@ public final class KLunarDate implements java.io.Serializable
 
 		int cDiff = jDays[c0];
 		int yDiff = ydss[c0][y0] >>> 17;
-		return DATE_MIN.plusDays( cDiff + yDiff + d0 );
+		return MIN.plusDays( cDiff + yDiff + d0 );
 	}
 
 	/**
