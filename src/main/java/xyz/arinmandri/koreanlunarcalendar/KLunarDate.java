@@ -493,7 +493,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 
 	@Override
 	public Chronology getChronology () {
-		return null;// TODO
+		return KLunarChronology.INSTANCE;
 	}
 
 	@Override
