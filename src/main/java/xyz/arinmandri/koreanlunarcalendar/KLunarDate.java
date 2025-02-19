@@ -2,7 +2,22 @@ package xyz.arinmandri.koreanlunarcalendar;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.chrono.ChronoLocalDate;
+import java.time.chrono.ChronoLocalDateTime;
+import java.time.chrono.ChronoPeriod;
+import java.time.chrono.Chronology;
+import java.time.chrono.Era;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.time.temporal.Temporal;
+import java.time.temporal.TemporalAdjuster;
+import java.time.temporal.TemporalAmount;
+import java.time.temporal.TemporalField;
+import java.time.temporal.TemporalQuery;
+import java.time.temporal.TemporalUnit;
+import java.time.temporal.ValueRange;
+import java.util.Objects;
 
 
 /**
@@ -13,7 +28,7 @@ import java.time.temporal.ChronoUnit;
  * 
  * java.time.LocalDate랑 최대한 비슷한 형식 + 간지 등 추가정보 제공(하고싶다. TODO )
  */
-public final class KLunarDate implements java.io.Serializable
+public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 {
 	private static final long serialVersionUID = 0L;
 
@@ -31,6 +46,8 @@ public final class KLunarDate implements java.io.Serializable
 	public static final int LIL_MONTH_SIZE = 29;// 소월의 일수
 
 	public static final int CYCLE_SIZE = 60;
+
+	// TODO epoch day
 
 	/*
 	 * int 하나에 32비트로 한 해의 정보 저장
@@ -99,6 +116,8 @@ public final class KLunarDate implements java.io.Serializable
 		this.m0 = m0;
 		this.d0 = d0;
 	}
+
+	//// ================================ CREATION
 
 	/**
 	 * 음력 년월일로 새 날짜개체 생성
@@ -178,7 +197,7 @@ public final class KLunarDate implements java.io.Serializable
 	 * @throws NonexistentDateException 해당 날짜 없음
 	 * @throws OutOfRangeException      지원 범위 밖
 	 */
-	public static KLunarDate of ( final int year , final int dayOfYear ) {
+	public static KLunarDate ofYearDay ( final int year , final int dayOfYear ) {
 
 		if( dayOfYear < 1 ) throw new NonexistentDateException();
 
@@ -249,7 +268,7 @@ public final class KLunarDate implements java.io.Serializable
 				}
 				y0 -= 1;
 				diff -= ( yds[y0] >>> 17 );
-				return of( YEAR_BASE + c0 * CYCLE_SIZE + y0, diff + 1 );
+				return ofYearDay( YEAR_BASE + c0 * CYCLE_SIZE + y0, diff + 1 );
 			}
 		}
 
@@ -269,6 +288,10 @@ public final class KLunarDate implements java.io.Serializable
 		return from( ldt.toLocalDate() );
 	}
 
+	public static KLunarDate parse ( CharSequence text ) {
+		return null;// TODO
+	}
+
 	/**
 	 * 음력-->양력
 	 *
@@ -279,6 +302,124 @@ public final class KLunarDate implements java.io.Serializable
 		int cDiff = jDays[c0];
 		int yDiff = ydss[c0][y0] >>> 17;
 		return MIN.plusDays( cDiff + yDiff + d0 );
+	}
+
+	//// ================================ GETTER
+
+	public int getYear() {
+		return year;
+	}
+
+	public int getMonth() {
+		return month;
+	}
+
+	public int getDay() {
+		return day;
+	}
+
+	/**
+	 * 이번 년도의 몇 번째 달인가
+	 */
+	public int getMonthOfYear() {
+		return m0 + 1;
+	}
+
+	/**
+	 * 이번 년도의 몇 번째 날인가
+	 */
+	public int getDayOfYear() {
+		return d0 + 1;
+	}
+
+	public boolean isLeapMonth() {
+		return isLeapMonth;
+	}
+
+	public String getSecha () {
+		return null;// TODO
+	}
+
+	public String getWolgeon () {
+		return null;// TODO
+	}
+
+	public String getIljin () {
+		return null;// TODO
+	}
+
+	//// ================================ ChronoLocalDate - Temporal - TemporalAccessor
+
+	@Override
+	public boolean isSupported ( TemporalField field ) {
+		return false;// TODO
+	}
+
+	@Override
+	public ValueRange range ( TemporalField field ) {
+		return null;// TODO
+	}
+
+	@Override
+	public int get ( TemporalField field ) {
+		return 0;// TODO
+	}
+
+	@Override
+	public long getLong ( TemporalField field ) {
+		return 0;// TODO
+	}
+
+	@Override
+	public < R > R query ( TemporalQuery<R> query ) {
+		return null;// TODO
+	}
+
+	//// ================================ ChronoLocalDate - Temporal
+
+	@Override
+	public boolean isSupported ( TemporalUnit unit ) {
+		return false;// TODO
+	}
+
+	@Override
+	public KLunarDate with ( TemporalAdjuster adjuster ) {
+		return null;// TODO
+	}
+
+	@Override
+	public KLunarDate with ( TemporalField field , long newValue ) {
+		return null;// TODO
+	}
+
+	public KLunarDate withYear ( int year ) {
+		return null;// TODO
+	}
+
+	public KLunarDate withMonth ( int month ) {
+		return null;// TODO
+	}
+
+	public KLunarDate withDay ( int day ) {
+		return null;// TODO
+	}
+
+	public KLunarDate withLeapMonth () {
+		return null;// TODO
+	}
+
+	public KLunarDate withCommonMonth () {
+		return null;// TODO
+	}
+
+	@Override
+	public KLunarDate plus ( TemporalAmount amount ) {
+		return null;// TODO
+	}
+
+	@Override
+	public KLunarDate plus ( long amountToAdd , TemporalUnit unit ) {
+		return null;// TODO
 	}
 
 	/**
@@ -293,6 +434,10 @@ public final class KLunarDate implements java.io.Serializable
 	 */
 	public KLunarDate plusHardYears ( int n ) throws OutOfRangeException , NonexistentDateException {
 		return of( year + n, month, day, isLeapMonth );
+	}
+
+	public KLunarDate plusYears ( int a ) {
+		return null;// TODO
 	}
 
 	/**
@@ -319,47 +464,99 @@ public final class KLunarDate implements java.io.Serializable
 		return null;
 	}
 
-	public int getYear () {
-		return year;
-	}
-
-	public int getMonth () {
-		return month;
-	}
-
-	public int getDay () {
-		return day;
-	}
-
-	/**
-	 * 이번 년도의 몇 번째 달인가
-	 */
-	public int getMonthOfYear () {
-		return m0 + 1;
-	}
-
-	/**
-	 * 이번 년도의 몇 번째 날인가
-	 */
-	public int getDayOfYear () {
-		return d0 + 1;
-	}
-
-	public boolean isLeapMonth () {
-		return isLeapMonth;
+	@Override
+	public KLunarDate minus ( TemporalAmount amount ) {
+		return null;// TODO
 	}
 
 	@Override
-	public String toString () {
-		StringBuilder sb = new StringBuilder( 10 );
-		return sb.append( year )
-		        .append( month < 10 ? "-0" : "-" )
-		        .append( month )
-		        .append( day < 10 ? "-0" : "-" )
-		        .append( day )
-		        .append( isLeapMonth ? "L" : "" )
-		        .toString();
+	public KLunarDate minus ( long amountToSubtract , TemporalUnit unit ) {
+		return null;// TODO
 	}
+
+	@Override
+	public long until ( Temporal endExclusive , TemporalUnit unit ) {
+		return 0;// TODO
+	}
+
+	//// ================================ ChronoLocalDate - TemporalAdjuster
+
+	public Temporal adjustInto ( Temporal temporal ) {
+		return null;// TODO
+	}
+
+	//// ================================ ChronoLocalDate - Comparable
+
+	// TODO hmm 할필요없나?
+
+	//// ================================ ChronoLocalDate
+
+	@Override
+	public Chronology getChronology () {
+		return null;// TODO
+	}
+
+	@Override
+	public Era getEra () {
+		return null;// TODO
+	}
+
+	@Override
+	public boolean isLeapYear () {
+		return false;// TODO
+	}
+
+	@Override
+	public int lengthOfMonth () {
+		return 0;// TODO
+	}
+
+	@Override
+	public int lengthOfYear () {
+		return 0;// TODO
+	}
+
+	@Override
+	public ChronoPeriod until ( ChronoLocalDate endDateExclusive ) {
+		return null;// TODO
+	}
+
+	@Override
+	public String format ( DateTimeFormatter formatter ) {
+		return null;// TODO
+	}
+
+	@Override
+	public ChronoLocalDateTime<?> atTime ( LocalTime localTime ) {
+		return null;// TODO
+	}
+
+	@Override
+	public long toEpochDay () {
+		return 0;// TODO
+	}
+
+	@Override
+	public int compareTo ( ChronoLocalDate other ) {
+		return 0;// TODO
+	}
+
+	@Override
+	public boolean isAfter ( ChronoLocalDate other ) {
+		return this.toEpochDay() > other.toEpochDay();
+	}
+
+	@Override
+	public boolean isBefore ( ChronoLocalDate other ) {
+		return this.toEpochDay() < other.toEpochDay();
+	}
+
+	@Override
+	public boolean isEqual ( ChronoLocalDate other ) {
+		return this.toEpochDay() == other.toEpochDay();
+	}
+
+	//// ================================ Object
 
 	@Override
 	public boolean equals ( Object o ) {
@@ -376,4 +573,18 @@ public final class KLunarDate implements java.io.Serializable
 	public int hashCode () {
 		return ( y0 << 11 ) + ( m0 << 6 ) + ( d0 );
 	}
+
+	@Override
+	public String toString () {
+		StringBuilder sb = new StringBuilder( 10 );
+		return sb.append( year )
+		        .append( month < 10 ? "-0" : "-" )
+		        .append( month )
+		        .append( day < 10 ? "-0" : "-" )
+		        .append( day )
+		        .append( isLeapMonth ? "L" : "" )
+		        .toString();
+	}
+
+	//// ================================ TODO serialize
 }
