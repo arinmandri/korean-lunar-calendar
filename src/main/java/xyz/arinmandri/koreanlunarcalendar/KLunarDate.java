@@ -9,7 +9,6 @@ import java.time.chrono.ChronoPeriod;
 import java.time.chrono.Chronology;
 import java.time.chrono.Era;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAdjuster;
 import java.time.temporal.TemporalAmount;
@@ -17,7 +16,6 @@ import java.time.temporal.TemporalField;
 import java.time.temporal.TemporalQuery;
 import java.time.temporal.TemporalUnit;
 import java.time.temporal.ValueRange;
-import java.util.Objects;
 
 
 /**
@@ -46,8 +44,6 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	public static final int LIL_MONTH_SIZE = 29;// 소월의 일수
 
 	public static final int CYCLE_SIZE = 60;
-
-	// TODO epoch day
 
 	/*
 	 * int 하나에 32비트로 한 해의 정보 저장
@@ -89,20 +85,23 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	        },
 	};
 
-	/*
-	 * 지원범위 첫 날로부터 각 주기의 첫 날의 차이 (일 단위)
+	/**
+	 * 양력(그레고리력) 1970년 1월 1일 = 0 epoch day = 2440588 율리우스적일
 	 */
-	private static final int[] jDays = {
-	        2401910 - 2401910,// 1864
-	        2423821 - 2401910,// 1924
-	        2445733 - 2401910,// 1984
-	        2467645 - 2401910,// 2044
-	        2470214 - 2401910,// 마지막 값은 지원범위 판별용// 음력 2050-12-29의 다음 날에 해당. 한국천문연구원 API에서 지원범위의 막날은 2050-11-18이지만 2050-11이 대월, 30일까지 있음은 알 수 있으므로 이 라이브러리의 지원범위는 2050-12-29까지는 늘려짐.(이 해에 윤달이 이미 나왔고 그 이전의 두 달이 대월이므로 2050-12-29의 다음 날은 아마 2051-01-01일 거 같지만)
+	public static final int EPOCH_0_JDAY = 2440588;
+
+	/*
+	 * 각 주기 첫날의 epoch day
+	 */
+	private static final int[] epochDays = {
+	        2401910 - EPOCH_0_JDAY,// 1864
+	        2423821 - EPOCH_0_JDAY,// 1924
+	        2445733 - EPOCH_0_JDAY,// 1984
+	        2467645 - EPOCH_0_JDAY,// 2044
+	        2470214 - EPOCH_0_JDAY,// 마지막 값은 지원범위 판별용// 음력 2050-12-29의 다음 날에 해당. 한국천문연구원 API에서 지원범위의 막날은 2050-11-18이지만 2050-11이 대월, 30일까지 있음은 알 수 있으므로 이 라이브러리의 지원범위는 2050-12-29까지는 늘려짐.(이 해에 윤달이 이미 나왔고 그 이전의 두 달이 대월이므로 2050-12-29의 다음 날은 아마 2051-01-01일 거 같지만)
 	};
 
 	private static final int YEAR_BASE = 1864;// 최소 년도 (갑자년을 최소년도로 설정해야 (TODO 나중에) 갑자 계산이 맞게 동작)
-	public static final LocalDate MIN = LocalDate.of( 1864, 2, 8 );
-	public static final LocalDate MAX = MIN.plusDays( jDays[jDays.length - 1] - 1 );
 
 	private KLunarDate( int year , int month , int day , boolean isLeapMonth , int c0 , int y0 , int m0 , int d0 ) {
 		super();
@@ -201,15 +200,15 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 
 		if( dayOfYear < 1 ) throw new NonexistentDateException();
 
-		int c0 = ( year - YEAR_BASE ) / CYCLE_SIZE;
-		int y0 = ( year - YEAR_BASE ) % CYCLE_SIZE;
+		final int c0 = ( year - YEAR_BASE ) / CYCLE_SIZE;
+		final int y0 = ( year - YEAR_BASE ) % CYCLE_SIZE;
 		if( c0 >= ydss.length ) throw new OutOfRangeException();
 		if( y0 >= ydss[c0].length ) throw new OutOfRangeException();
-		int yd = ydss[c0][y0];
+		final int yd = ydss[c0][y0];
 
 		int dayCount = dayOfYear;
 
-		int leapMonth = ( yd >>> 13 ) & 0xF;
+		final int leapMonth = ( yd >>> 13 ) & 0xF;
 		int month = 0;
 		for( int m0 = 0 ; m0 < 13 ; m0 += 1 ){
 
@@ -221,7 +220,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 			        : LIL_MONTH_SIZE;
 
 			if( dayCount <= mSize ){// 세고 남은 날짜 수가 이번달 일수 이하임: 이번달임
-				return new KLunarDate( year , month , dayCount , ( ( yd >>> 13 ) & 0xF ) == m0 , c0 , y0 , m0 , dayOfYear - 1 );
+				return new KLunarDate( year , month , dayCount , leapMonth == m0 , c0 , y0 , m0 , dayOfYear - 1 );
 			}
 
 			dayCount -= mSize;// 세고 남은 일수
@@ -246,16 +245,17 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		 * 그 주기 내 년도별 적일 정보로 해당하는 음력년도를 찾는다.
 		 * 그 년도의 첫 날에 남은 적일 더해서 날짜 결정
 		 */
-		if( ld.isAfter( MAX ) )// 지원범위보다 미래
+
+		int diff = (int) ld.toEpochDay();
+
+		if( diff >= epochDays[epochDays.length - 1] )// 지원범위보다 미래
 		    throw new OutOfRangeException();
 
 		//// 주기 찾기
-		int diff = (int) ChronoUnit.DAYS.between( MIN, ld );
-
 		int c0 = ydss.length;
-		for( ; c0 >= 0 ; c0 -= 1 ){// 미래에서부터 선형탐색 (가장 미래 부분이 현재랑 가깝고 제일 많이 찾을 거 같으니….)
-			if( diff >= jDays[c0] ){
-				diff -= jDays[c0];
+		for( ; c0 >= 0 ; c0 -= 1 ){// 미래에서부터 선형탐색 (일단 주기 개수 적어서 걍 선형탐색... 가장 미래 부분이 현재랑 가깝고 제일 많이 찾을 거 같으니….)
+			if( diff >= epochDays[c0] ){
+				diff -= epochDays[c0];
 
 				//// 년도 찾기
 				int[] yds = ydss[c0];
@@ -299,9 +299,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	 */
 	public LocalDate toLocalDate () {
 
-		int cDiff = jDays[c0];
-		int yDiff = ydss[c0][y0] >>> 17;
-		return MIN.plusDays( cDiff + yDiff + d0 );
+		return LocalDate.ofEpochDay( toEpochDay() );
 	}
 
 	//// ================================ GETTER
@@ -533,7 +531,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 
 	@Override
 	public long toEpochDay () {
-		return 0;// TODO
+		return epochDays[c0] + ( ydss[c0][y0] >>> 17 ) + d0;
 	}
 
 	@Override

@@ -16,7 +16,7 @@ public class KLunarDateTest_of
 
 	@Test
 	public void testYmdl () {
-		int testSize = 100;
+		System.out.println( "=== of ymdl ===" );
 
 		/*
 		 * 랜덤으로 년월일을 각각 뽑아 음력날짜를 만든다.
@@ -24,7 +24,7 @@ public class KLunarDateTest_of
 		 * 정답에서 윤달이 확인되는 경우 윤달 날짜도 생성해서 양력날짜 비교 
 		 * 
 		 * NonexistentDateException 경우 정답에서도 없는 날짜인지 확인한다.
-		 * OutOfRangeException 경우 다시 테스트한다.
+		 * OutOfRangeException 경우 실패가 아니고 날짜 다시 뽑아서 테스트한다.
 		 * 
 		 */
 

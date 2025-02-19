@@ -40,8 +40,6 @@ public class KLunarDateTest_from
 		 * 범위 내에서 아무 날짜나 뽑아서
 		 */
 
-		int testSize = 50;
-
 		for( int i = 0 ; i < testSize ; i++ ){
 
 			LocalDate ld = getRandomDate( MIN, MAX0 );
@@ -73,11 +71,11 @@ public class KLunarDateTest_from
 		System.out.println( "지원범위 양끝 통과" );
 
 		//// 각 주기 양끝 (처음과 마지막은 지원범위 양끝과 동일하므로 생략)
-		for( int i = 1 ; i < jDays.length - 1 ; i += 1 ){
-			testOne( MIN.plusDays( jDays[i] - 1 ) );
-			testOne( MIN.plusDays( jDays[i] ) );
-			testOne( MIN.plusDays( jDays[i] + 1 ) );
-			System.out.println( "각 주기 끝: " + MIN.plusDays( jDays[i] ) + " 앞뒤 1일씩 통과" );
+		for( int i = 1 ; i < epochDays.length - 1 ; i += 1 ){
+			testOne( LocalDate.ofEpochDay( epochDays[i] - 1 ) );
+			testOne( LocalDate.ofEpochDay( epochDays[i] ) );
+			testOne( LocalDate.ofEpochDay( epochDays[i] + 1 ) );
+			System.out.println( "각 주기 끝: " + MIN.plusDays( epochDays[i] ) + " 앞뒤 1일씩 통과" );
 		}
 	}
 

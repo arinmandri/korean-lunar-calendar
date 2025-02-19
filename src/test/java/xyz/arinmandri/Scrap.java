@@ -10,36 +10,13 @@ import xyz.arinmandri.kasiapi.Item;
 import xyz.arinmandri.koreanlunarcalendar.KLunarDate;
 
 
-public class AppTest
+public class Scrap
 {
 	ApiService api = ApiService.getInstance();
 
 	final int YEAR_BASE = 1864;// KLunarDate.YEAR_BASE
 	final int year_min = YEAR_BASE;
 	final int year_max = YEAR_BASE + KLunarDate.CYCLE_SIZE * 10;
-
-	@Test
-	public void readme () {
-		KLunarDate kd = KLunarDate.of( 2000, 12, 7 );
-		LocalDate ld = kd.toLocalDate();
-		System.out.println( ld );
-	}
-
-//	@Test
-	public void justOneApi () {
-		List<Item> items = api.getFromLunDate( 2050, 11, 18 );
-		for( Item item : items ){
-			System.out.println( item );
-		}
-	}
-
-//	@Test
-	public void printYd () {
-		int yd = 0x11126DA9;
-		System.out.println( "적일: " + ( yd >>> 17 ) );
-		System.out.println( "윤달위치 " + ( ( yd >>> 13 ) & 0xF ) );
-		System.out.println( "각월대소 " + Integer.toBinaryString( yd & 0x1FFF ) );
-	}
 
 	/**
 	 * 모든 음력 월의 1일의 양력날짜, 평윤, 대소 정보 가져오기
@@ -136,7 +113,7 @@ public class AppTest
 			}// 주기 중 1년
 			System.out.print( "},\n" );
 
-			cDaySB.append( jDayC + " - " + jDayC0 + ",// " + c + "\n" );
+			cDaySB.append( jDayC + " - EPOCH_0_JDAY,// " + c + "\n" );
 
 			if( end ) break;
 		}// 매 주기
