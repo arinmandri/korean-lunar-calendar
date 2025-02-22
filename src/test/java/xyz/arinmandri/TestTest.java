@@ -1,11 +1,6 @@
 package xyz.arinmandri;
 
-import java.time.LocalDate;
-import java.time.chrono.Chronology;
-import java.time.chrono.Era;
 import java.util.List;
-
-import org.junit.jupiter.api.Test;
 
 import xyz.arinmandri.kasiapi.ApiService;
 import xyz.arinmandri.kasiapi.Item;
@@ -20,13 +15,8 @@ public class TestTest
 	final int year_min = YEAR_BASE;
 	final int year_max = YEAR_BASE + KLunarDate.CYCLE_SIZE * 10;
 
-	@Test
+//	@Test
 	public void test () {
-		LocalDate ld = LocalDate.of( 0, 1, 1 );
-		// System.out.println( ld.getEra() );
-		System.out.println( ld.getYear() );
-		// System.out.println( ld.toEpochDay() );
-		// System.out.println( ld.getMonthValue() );
 	}
 
 //	@Test

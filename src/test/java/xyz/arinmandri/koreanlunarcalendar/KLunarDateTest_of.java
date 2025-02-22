@@ -16,8 +16,19 @@ public class KLunarDateTest_of
 
 	@Test
 	public void testYmdl () {
-		System.out.println( "=== of ymdl ===" );
 
+		repeat( this::testYmdl_one, "of ymdl" );
+	}
+
+	private void testYmdl_one () {
+		final int y = getRandomInt( MIN.getYear(), MAX0.getYear() );
+		final int m = getRandomInt( 1, 12 );
+		final int d = getRandomInt( 1, 30 );
+
+		testYmdl_one( y, m, d );
+	}
+
+	private void testYmdl_one ( final int y , final int m , final int d ) {
 		/*
 		 * 랜덤으로 년월일을 각각 뽑아 음력날짜를 만든다.
 		 * 음력날짜에서 양력날짜로 변환한다. KLunarDate.toLocalDate의 양력날짜와 정답의 양력날짜가 일치하나 확인한다.
@@ -27,28 +38,6 @@ public class KLunarDateTest_of
 		 * OutOfRangeException 경우 실패가 아니고 날짜 다시 뽑아서 테스트한다.
 		 * 
 		 */
-
-		//// 음력날짜 생성, KLunarDate.toLocalDate의 양력날짜 확인
-		for( int i = 0 ; i < testSize ; i += 1 ){
-			final int y = getRandomInt( MIN.getYear(), MAX0.getYear() );
-			final int m = getRandomInt( 1, 12 );
-			final int d = getRandomInt( 1, 30 );
-
-			try{
-				testYmdl_one( y, m, d );
-			}
-			catch( NoNeedToTest e ){
-				i -= 1;
-				continue;
-			}
-
-			if( i % 10 == 9 ){
-				System.out.println( i + 1 + "째 시험 통과" );
-			}
-		}
-	}
-
-	private void testYmdl_one ( final int y , final int m , final int d ) {
 
 		KLunarDate kd1;
 		try{
@@ -99,7 +88,4 @@ public class KLunarDateTest_of
 			}
 		}
 	}
-
-	private class NoNeedToTest extends RuntimeException
-	{}
 }

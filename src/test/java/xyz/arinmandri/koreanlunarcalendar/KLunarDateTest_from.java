@@ -15,8 +15,7 @@ public class KLunarDateTest_from
 
 	@Test
 	public void test () {
-		System.out.println( "=== from ===" );
-		randomTest();
+		repeat( this::randomTest, "from" );
 		boundaryTest();
 	}
 
@@ -39,17 +38,8 @@ public class KLunarDateTest_from
 		/*
 		 * 범위 내에서 아무 날짜나 뽑아서
 		 */
-
-		for( int i = 0 ; i < testSize ; i++ ){
-
-			LocalDate ld = getRandomLd();
-
-			testOne( ld );
-
-			if( i % 10 == 9 ){
-				System.out.println( i + 1 + "째 시험 통과" );
-			}
-		}
+		LocalDate ld = getRandomLd();
+		testOne( ld );
 	}
 
 	public void boundaryTest () {

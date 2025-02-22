@@ -12,17 +12,10 @@ public class KLunarDateTest_epochDay extends KLunarDateTest
 
 	@Test
 	public void test () {
-		System.out.println( "=== epoch day ===" );
 
-		for( int i = 0 ; i < testSize ; i += 1 ){// XXX 그러고보니 그냥 이 반복이랑 10째 어쩌고 출력도 묶어내면 되지 않나
-			testOne_eke();
-			testOne_ekle();
-			testOne_elke();
-
-			if( i % 10 == 9 ){
-				System.out.println( i + 1 + "째 시험 통과" );
-			}
-		}
+		repeat( this::testOne_eke, "epoch day - eke" );
+		repeat( this::testOne_ekle, "epoch day - ekle" );
+		repeat( this::testOne_elke, "epoch day - elke" );
 	}
 
 	private void testOne_eke () {

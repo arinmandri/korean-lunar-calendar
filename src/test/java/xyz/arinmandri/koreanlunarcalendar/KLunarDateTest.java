@@ -36,38 +36,65 @@ public class KLunarDateTest
 	final LocalDate MAX0 = LocalDate.of( 2050, 12, 31 );// 정답의 기준이 한국천문연구원 API인데 의 지원범위보다 KLunarDate.MAX가 살짝 더 미래이기 때문에 한국천문연구원 API의 지원범위를 직접 입력함.
 	final LocalDate MAX1 = LocalDate.ofEpochDay( EPOCH_DAY_MAX );// 한국천문연구원 API를 안 쓰는 경우 여기까지 시험
 
+	//// ================================ repeat test
+
+	void repeat ( Runnable test , String title , int size ) {
+		System.out.println( "\n=== " + title + " ===" );
+
+		for( int i = 0 ; i < size ; i += 1 ){
+			try{
+				test.run();
+			}
+			catch( NoNeedToTest e ){
+				i -= 1;
+				continue;
+			}
+
+			if( i % 10 == 9 ){
+				System.out.println( i + 1 + "째 시험 통과" );
+			}
+		}
+	}
+
+	void repeat ( Runnable test , String title ) {
+		repeat( test, title, testSize );
+	}
+
 	//// ================================ util, private, etc
 
-	protected boolean checkEquality ( Item item , KLunarDate kd ) {
+	boolean checkEquality ( Item item , KLunarDate kd ) {
 		return item.getLunYear()  == kd.getYear()
 		    && item.getLunMonth() == kd.getMonth()
 		    && item.getLunDay()   == kd.getDay()
 		    && item.getLunLeapmonth().equals( "윤" ) == kd.isLeapMonth();
 	}
 
-	protected boolean checkEquality ( Item item , LocalDate ld ) {
+	boolean checkEquality ( Item item , LocalDate ld ) {
 		return item.getSolYear()  == ld.getYear()
 		    && item.getSolMonth() == ld.getMonthValue()
 		    && item.getSolDay()   == ld.getDayOfMonth();
 	}
 
-	protected LocalDate getRandomLd () {// 지원범위0 내에서
+	LocalDate getRandomLd () {// 지원범위0 내에서
 		return getRandomLd( MIN, MAX0 );
 	}
 
-	protected LocalDate getRandomLd ( LocalDate d1 , LocalDate d2 ) {// 이상, 이하
+	LocalDate getRandomLd ( LocalDate d1 , LocalDate d2 ) {// 이상, 이하
 
 		long n = ChronoUnit.DAYS.between( d1, d2 );// 시작일~종료일 일수
 		long randomDays = random.nextLong( n + 1 );// 랜덤 숫자 뽑기
 		return d1.plusDays( randomDays );
 	}
 
-	protected int getRandomInt ( int a , int b ) {// 이상, 이하
+	int getRandomInt ( int a , int b ) {// 이상, 이하
 		return random.nextInt( b - a + 1 ) + a;
 	}
 
-	protected String i ( int i ) {
+	String i ( int i ) {
 		if( i < 10 ) return "0" + i;
 		return i + "";
 	}
+
+	class NoNeedToTest extends RuntimeException
+	{}
 }
