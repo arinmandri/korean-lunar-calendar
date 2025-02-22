@@ -42,7 +42,7 @@ public class KLunarDateTest_from
 
 		for( int i = 0 ; i < testSize ; i++ ){
 
-			LocalDate ld = getRandomDate( MIN, MAX0 );
+			LocalDate ld = getRandomLd();
 
 			testOne( ld );
 

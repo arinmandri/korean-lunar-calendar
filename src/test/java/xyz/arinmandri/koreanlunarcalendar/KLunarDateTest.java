@@ -32,6 +32,8 @@ public class KLunarDateTest
 	final LocalDate MIN = LocalDate.ofEpochDay( epochDays[0] );
 	final LocalDate MAX0 = LocalDate.of( 2050, 12, 31 );// 정답의 기준이 한국천문연구원 API인데 의 지원범위보다 KLunarDate.MAX가 살짝 더 미래이기 때문에 한국천문연구원 API의 지원범위를 직접 입력함.
 	final LocalDate MAX1 = LocalDate.ofEpochDay( epochDays[epochDays.length - 1] - 1 );// 한국천문연구원 API를 안 쓰는 경우 여기까지 시험
+	final long MIN_EPOCH = MIN.toEpochDay();
+	final long MAX_EPOCH = MAX1.toEpochDay();
 
 	//// ================================ util, private, etc
 
@@ -48,7 +50,11 @@ public class KLunarDateTest
 		    && item.getSolDay()   == ld.getDayOfMonth();
 	}
 
-	protected LocalDate getRandomDate ( LocalDate d1 , LocalDate d2 ) {// 이상, 이하
+	protected LocalDate getRandomLd () {// 지원범위0 내에서
+		return getRandomLd( MIN, MAX0 );
+	}
+
+	protected LocalDate getRandomLd ( LocalDate d1 , LocalDate d2 ) {// 이상, 이하
 
 		long n = ChronoUnit.DAYS.between( d1, d2 );// 시작일~종료일 일수
 		long randomDays = random.nextLong( n + 1 );// 랜덤 숫자 뽑기
