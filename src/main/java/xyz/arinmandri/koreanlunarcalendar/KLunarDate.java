@@ -230,6 +230,46 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	}
 
 	/**
+	 * epoch day --> 음력 날짜
+	 * 
+	 * @param epochDay 1970년 1월 1일을 0으로 하는 누적일수
+	 * @return 음력 날짜
+	 */
+	public static KLunarDate ofEpochDay ( final long epochDay ) {
+		/*
+		 * 주기별 epoch day 정보로 해당하는 주기를 찾는다.
+		 * 그 주기 내 년도별 적일 정보로 해당하는 음력년도를 찾는다.
+		 * 그 년도의 첫 날에 남은 적일 더해서 날짜 결정
+		 */
+
+		if( epochDay >= epochDays[epochDays.length - 1] )// 지원범위보다 미래
+		    throw new OutOfRangeException();
+
+		//// 주기 찾기
+		int c0 = ydss.length;
+		for( ; c0 >= 0 ; c0 -= 1 ){// 미래에서부터 선형탐색 (일단 주기 개수 적어서 걍 선형탐색... 주기 수 많아지면 1주기의 대략의 크기로 점프 가능할 듯
+			if( epochDay >= epochDays[c0] ){
+				int jDay = (int) ( epochDay - epochDays[c0] );
+
+				//// 년도 찾기
+				int[] yds = ydss[c0];
+				int y0 = 1;
+				int cycleSize = ydss[c0].length;
+				for( ; y0 < cycleSize ; y0 += 1 ){// XXX 일단 대충 선형탐색. 1년의 크기로 계산하여 점프 가능할 듯
+					if( jDay < ( yds[y0] >>> 17 ) ){
+						break;
+					}
+				}
+				y0 -= 1;
+				jDay -= ( yds[y0] >>> 17 );
+				return ofYearDay( YEAR_BASE + c0 * CYCLE_SIZE + y0, jDay + 1 );
+			}
+		}
+
+		throw new OutOfRangeException();// 지원범위보다 과거
+	}
+
+	/**
 	 * 양력-->음력
 	 *
 	 * @param ld 양력 날짜
@@ -239,40 +279,10 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	 * @throws OutOfRangeException 지원 범위 밖
 	 */
 	public static KLunarDate from ( final LocalDate ld ) {
-		/*
-		 * 지원하는 첫날 ~ 파라미터 날짜 일수 차이
-		 * 주기별 적일 정보로 해당하는 주기를 찾는다.
-		 * 그 주기 내 년도별 적일 정보로 해당하는 음력년도를 찾는다.
-		 * 그 년도의 첫 날에 남은 적일 더해서 날짜 결정
-		 */
 
-		int diff = (int) ld.toEpochDay();
+		int epochDay = (int) ld.toEpochDay();
 
-		if( diff >= epochDays[epochDays.length - 1] )// 지원범위보다 미래
-		    throw new OutOfRangeException();
-
-		//// 주기 찾기
-		int c0 = ydss.length;
-		for( ; c0 >= 0 ; c0 -= 1 ){// 미래에서부터 선형탐색 (일단 주기 개수 적어서 걍 선형탐색... 가장 미래 부분이 현재랑 가깝고 제일 많이 찾을 거 같으니….)
-			if( diff >= epochDays[c0] ){
-				diff -= epochDays[c0];
-
-				//// 년도 찾기
-				int[] yds = ydss[c0];
-				int y0 = 1;
-				int cycleSize = ydss[c0].length;
-				for( ; y0 < cycleSize ; y0 += 1 ){// XXX 일단 대충 선형탐색
-					if( diff < ( yds[y0] >>> 17 ) ){
-						break;
-					}
-				}
-				y0 -= 1;
-				diff -= ( yds[y0] >>> 17 );
-				return ofYearDay( YEAR_BASE + c0 * CYCLE_SIZE + y0, diff + 1 );
-			}
-		}
-
-		throw new OutOfRangeException();// 지원범위보다 과거
+		return ofEpochDay( epochDay );
 	}
 
 	/**
