@@ -56,6 +56,8 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	 *        (yd >>> 13) & 0xF
 	 * 13비트: 각 월의 대소(0:소 1:대) (0번째 달부터 12번째 달까지 윤달도 똑같이 한 달로 취급, 1의자리부터 1월)
 	 *         (yd >>> m0) & 0x1
+	 *
+	 * 마지막 요소 빼고는 다 크기 60에 맞춰야 함.
 	 */
 	private static final int[][] ydss = {// yd = ydss[c0][y0]
 	        {
@@ -103,7 +105,8 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	        2470214 - EPOCH_0_JDAY,// 마지막 값은 지원범위 판별용// 음력 2050-12-29의 다음 날에 해당. 한국천문연구원 API에서 지원범위의 막날은 2050-11-18이지만 2050-11이 대월, 30일까지 있음은 알 수 있으므로 이 라이브러리의 지원범위는 2050-12-29까지는 늘려짐.(이 해에 윤달이 이미 나왔고 그 이전의 두 달이 대월이므로 2050-12-29의 다음 날은 아마 2051-01-01일 거 같지만)
 	};
 
-	private static final int YEAR_BASE = 1864;// 최소 년도 (갑자년부터 시작)
+	public static final int YEAR_MIN = 1864;// 최소 년도 (갑자년부터 시작)
+	public static final int YEAR_MAX = YEAR_MIN + ( ydss.length - 1 ) * CYCLE_SIZE + ydss[ydss.length - 1].length - 1;// 최대년도
 
 	private KLunarDate( int year , int month , int day , boolean isLeapMonth , int c0 , int y0 , int m0 , int d0 ) {
 		super();
@@ -135,14 +138,14 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	 */
 	public static KLunarDate of ( int year , int month , int day , boolean isLeapMonth ) {
 
-		if( year < YEAR_BASE ) throw new OutOfRangeException();
+		if( year < YEAR_MIN ) throw new OutOfRangeException();
 		if( month < 1 ) throw new NonexistentDateException();
 		if( month > 12 ) throw new NonexistentDateException();
 		if( day < 1 ) throw new NonexistentDateException();
 
 		//// 몇번째 년도?
-		int c0 = ( year - YEAR_BASE ) / CYCLE_SIZE;
-		int y0 = ( year - YEAR_BASE ) % CYCLE_SIZE;
+		int c0 = ( year - YEAR_MIN ) / CYCLE_SIZE;
+		int y0 = ( year - YEAR_MIN ) % CYCLE_SIZE;
 		if( c0 >= ydss.length ) throw new OutOfRangeException();
 		if( y0 >= ydss[c0].length ) throw new OutOfRangeException();
 		int yd = ydss[c0][y0];
@@ -202,8 +205,8 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 
 		if( dayOfYear < 1 ) throw new NonexistentDateException();
 
-		final int c0 = ( year - YEAR_BASE ) / CYCLE_SIZE;
-		final int y0 = ( year - YEAR_BASE ) % CYCLE_SIZE;
+		final int c0 = ( year - YEAR_MIN ) / CYCLE_SIZE;
+		final int y0 = ( year - YEAR_MIN ) % CYCLE_SIZE;
 		if( c0 >= ydss.length ) throw new OutOfRangeException();
 		if( y0 >= ydss[c0].length ) throw new OutOfRangeException();
 		final int yd = ydss[c0][y0];
@@ -264,7 +267,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 				}
 				y0 -= 1;
 				jDay -= ( yds[y0] >>> 17 );
-				return ofYearDay( YEAR_BASE + c0 * CYCLE_SIZE + y0, jDay + 1 );
+				return ofYearDay( YEAR_MIN + c0 * CYCLE_SIZE + y0, jDay + 1 );
 			}
 		}
 
@@ -389,7 +392,6 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 			case DAY_OF_YEAR:
 			case EPOCH_DAY:
 			case MONTH_OF_YEAR:
-			case PROLEPTIC_MONTH:
 			case YEAR:
 			case YEAR_OF_ERA:
 			case ERA:
@@ -404,31 +406,88 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		return false;
 	}
 
+	/**
+	 * the range of valid values for the specified field.
+	 * 
+	 * @param field not null
+	 */
 	@Override
 	public ValueRange range ( TemporalField field ) {
-		if( field == null )
-		    throw new NullPointerException( "field" );
 
 		if( field instanceof ChronoField ){
-			if( isSupported( field ) ){
-				return field.range();
+			switch( (ChronoField) field ){
+			case DAY_OF_MONTH:
+				return ValueRange.of( 1, lengthOfMonth() );
+			case DAY_OF_YEAR:
+				return ValueRange.of( 1, lengthOfYear() );
+			case EPOCH_DAY:
+				return ValueRange.of( epochDays[0], epochDays[epochDays.length - 1] - 1 );
+			case MONTH_OF_YEAR:
+				return ValueRange.of( 1, 12 );
+			case YEAR:
+			case YEAR_OF_ERA:
+				return ValueRange.of( YEAR_MIN, YEAR_MAX );
+			case ERA:
+				return ValueRange.of( 1, 1 );
 			}
 			throw new UnsupportedTemporalTypeException( "Unsupported field: " + field );
 		}
 		if( field instanceof GanjiField ){
-			return null;// TODO
+			return field.range();
 		}
 		return field.rangeRefinedBy( this );
 	}
 
 	@Override
 	public int get ( TemporalField field ) {
-		return 0;// TODO
+		if( field == null ) throw new NullPointerException();
+		if( field instanceof ChronoField ){
+			switch( (ChronoField) field ){
+			case DAY_OF_MONTH:
+				return getDay();
+			case DAY_OF_YEAR:
+				return getDayOfYear();
+			case EPOCH_DAY:
+				return (int) toEpochDay();
+			case MONTH_OF_YEAR:
+				return getMonth();
+			case YEAR:
+				return year;
+			case YEAR_OF_ERA:
+				return year;
+			case ERA:
+				return 1;
+			default:
+				throw new UnsupportedTemporalTypeException( "Unsupported field: " + field );
+			}
+		}
+		if( field instanceof GanjiField ){
+			switch( (GanjiField) field ){
+			case SECHA:
+				return getSecha().ordinal() + 1;
+			case WOLGEON:
+				return getWolgeon().ordinal() + 1;
+			case ILJIN:
+				return getIljin().ordinal() + 1;
+			default:
+				break;
+			}
+			throw new UnsupportedTemporalTypeException( "Unsupported field: " + field );
+		}
+
+		throw new UnsupportedTemporalTypeException( "Unsupported field: " + field );
 	}
 
 	@Override
 	public long getLong ( TemporalField field ) {
-		return 0;// TODO
+		/*
+		 * 지원범위 내에서 int 범위를 넘는 속성이 없으니 get에 기능구현하고 getLong에서는 캐스팅만 함.
+		 * epoch day만 바로 리턴해줌
+		 */
+		if( field == ChronoField.EPOCH_DAY )
+		    return toEpochDay();
+
+		return (long) get( field );
 	}
 
 	@Override

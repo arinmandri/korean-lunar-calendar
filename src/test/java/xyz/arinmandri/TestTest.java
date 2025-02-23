@@ -1,5 +1,6 @@
 package xyz.arinmandri;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -19,6 +20,7 @@ public class TestTest
 
 	@Test
 	public void test () {
+		LocalDate ld = LocalDate.now();
 	}
 
 //	@Test
