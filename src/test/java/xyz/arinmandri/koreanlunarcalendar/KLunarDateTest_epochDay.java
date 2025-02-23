@@ -52,9 +52,4 @@ public class KLunarDateTest_epochDay extends KLunarDateTest
 
 		assertEquals( e0, e1 );
 	}
-
-	private int getRandomEpochDay () {
-		return getRandomInt( EPOCH_DAY_MIN, EPOCH_DAY_MAX );
-	}
-
 }

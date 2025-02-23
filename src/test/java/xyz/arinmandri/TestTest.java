@@ -2,6 +2,8 @@ package xyz.arinmandri;
 
 import java.util.List;
 
+import org.junit.jupiter.api.Test;
+
 import xyz.arinmandri.kasiapi.ApiService;
 import xyz.arinmandri.kasiapi.Item;
 import xyz.arinmandri.koreanlunarcalendar.KLunarDate;
@@ -15,7 +17,7 @@ public class TestTest
 	final int year_min = YEAR_BASE;
 	final int year_max = YEAR_BASE + KLunarDate.CYCLE_SIZE * 10;
 
-//	@Test
+	@Test
 	public void test () {
 	}
 

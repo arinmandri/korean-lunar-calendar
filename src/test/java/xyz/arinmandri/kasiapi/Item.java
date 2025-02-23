@@ -16,9 +16,9 @@ public class Item
 	@Element( name = "lunDay" , required = false ) int lunDay;// 음력 일
 	@Element( name = "lunNday" , required = false ) int lunNday;// 월일수(음력) 오류인지? 문서에는 그렇게 나와있는데 getSpcifyLunCalInfo 에서는 lunDay랑 똑같은 값 나옴. 오류 제보는? 했?는데?
 
-	@Element( name = "lunSecha" , required = false ) String lunSecha;// 간지(년)
-	@Element( name = "lunWolgeon" , required = false ) String lunWolgeon;// 간지(월)
-	@Element( name = "lunIljin" , required = false ) String lunIljin;// 간지(일)
+	@Element( name = "lunSecha" , required = false ) String secha;// 간지(년)
+	@Element( name = "lunWolgeon" , required = false ) String wolgeon;// 간지(월)
+	@Element( name = "lunIljin" , required = false ) String iljin;// 간지(일)
 
 	@Element( name = "solYear" , required = false ) int solYear;// 양력 년도
 	@Element( name = "solLeapyear" , required = false ) String solLeapyear;// 양력 윤년구분 (평/윤)

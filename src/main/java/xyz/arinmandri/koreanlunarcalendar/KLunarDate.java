@@ -9,12 +9,14 @@ import java.time.chrono.ChronoPeriod;
 import java.time.chrono.Chronology;
 import java.time.chrono.Era;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoField;
 import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAdjuster;
 import java.time.temporal.TemporalAmount;
 import java.time.temporal.TemporalField;
 import java.time.temporal.TemporalQuery;
 import java.time.temporal.TemporalUnit;
+import java.time.temporal.UnsupportedTemporalTypeException;
 import java.time.temporal.ValueRange;
 
 
@@ -35,7 +37,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	final int day;
 	final boolean isLeapMonth;// 윤달 여부
 
-	private transient final int c0;// 해들을 주기(육십갑자 60년) 단위로 묶는다. 여기 정의된 묶음들 중 몇 번째 묶음에 속하는가 (0부터 셈)
+	private transient final int c0;// 해들을 주기 단위로 묶는다. 여기 정의된 묶음들 중 몇 번째 묶음에 속하는가 (0부터 셈)// 주기: 육십갑자에 대응되는 60년. 그냥 갑자라고 하면 60년을 가리키나? 아니면 60갑자는 단순히 순서있는 60가지이고 그걸 년도에 붙일 뿐인가? 모르겠으니까 애매하니까 그냥 별개의 용어 지어 쓴다.
 	private transient final int y0;// 이 주기의 몇 번째 년인가 (0부터 셈)
 	private transient final int m0;// 이 년도의 몇 번째 월인가 (0부터 셈)
 	private transient final int d0;// 이 년도의 몇 번째 일인가 (0부터 셈)
@@ -101,7 +103,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	        2470214 - EPOCH_0_JDAY,// 마지막 값은 지원범위 판별용// 음력 2050-12-29의 다음 날에 해당. 한국천문연구원 API에서 지원범위의 막날은 2050-11-18이지만 2050-11이 대월, 30일까지 있음은 알 수 있으므로 이 라이브러리의 지원범위는 2050-12-29까지는 늘려짐.(이 해에 윤달이 이미 나왔고 그 이전의 두 달이 대월이므로 2050-12-29의 다음 날은 아마 2051-01-01일 거 같지만)
 	};
 
-	private static final int YEAR_BASE = 1864;// 최소 년도 (갑자년을 최소년도로 설정해야 (TODO 나중에) 갑자 계산이 맞게 동작)
+	private static final int YEAR_BASE = 1864;// 최소 년도 (갑자년부터 시작)
 
 	private KLunarDate( int year , int month , int day , boolean isLeapMonth , int c0 , int y0 , int m0 , int d0 ) {
 		super();
@@ -328,9 +330,11 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 
 	/**
 	 * 이번 년도의 몇 번째 달인가
+	 * 0부터 셈
+	 * 예를 들어 이 해에 윤1월이 있다면 이 해의 1월은 0, 윤1월은 1, 2월은 2, ...
 	 */
-	public int getMonthOfYear() {
-		return m0 + 1;
+	public int getMonthOrdinal () {
+		return m0;
 	}
 
 	/**
@@ -344,28 +348,77 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		return isLeapMonth;
 	}
 
-	public String getSecha () {
-		return null;// TODO
+	/**
+	 * 이 날짜의 세차(년의 간지)
+	 * 
+	 * @return
+	 */
+	public Ganji getSecha () {
+		return Ganji.values()[y0];
 	}
 
-	public String getWolgeon () {
-		return null;// TODO
+	/**
+	 * 이 날짜의 월건(월의 간지)
+	 * 5년(=윤달 제외 60개월)마다 같은 월건이 반복되며 윤달은 월건이 없다.
+	 * 
+	 * @return wolgeon
+	 *         null if it is in a leap month
+	 */
+	public Ganji getWolgeon () {
+		if( isLeapMonth ) return null;
+		return Ganji.values()[( y0 * 12 + month + 1 ) % CYCLE_SIZE];// 갑자년 1월은 병인(丙寅)월 = O2
 	}
 
-	public String getIljin () {
-		return null;// TODO
+	/**
+	 * 이 날짜의 일진(일의 간지)
+	 * 
+	 * @return iljin
+	 */
+	public Ganji getIljin () {
+		return Ganji.values()[( ( (int) toEpochDay() + 17 ) % CYCLE_SIZE + CYCLE_SIZE ) % CYCLE_SIZE];// 0 epoch day 는 신사(辛巳)일 = O18 // epoch day가 음수일 수도 있어서 a%c 대신 (a%c+c)%c
 	}
 
 	//// ================================ ChronoLocalDate - Temporal - TemporalAccessor
 
 	@Override
 	public boolean isSupported ( TemporalField field ) {
-		return false;// TODO
+		if( field == null ) return false;
+		if( field instanceof ChronoField ){
+			switch( (ChronoField) field ){
+			case DAY_OF_MONTH:
+			case DAY_OF_YEAR:
+			case EPOCH_DAY:
+			case MONTH_OF_YEAR:
+			case PROLEPTIC_MONTH:
+			case YEAR:
+			case YEAR_OF_ERA:
+			case ERA:
+				return true;
+			default:
+				return false;
+			}
+		}
+		if( field instanceof GanjiField ){
+			return true;
+		}
+		return false;
 	}
 
 	@Override
 	public ValueRange range ( TemporalField field ) {
-		return null;// TODO
+		if( field == null )
+		    throw new NullPointerException( "field" );
+
+		if( field instanceof ChronoField ){
+			if( isSupported( field ) ){
+				return field.range();
+			}
+			throw new UnsupportedTemporalTypeException( "Unsupported field: " + field );
+		}
+		if( field instanceof GanjiField ){
+			return null;// TODO
+		}
+		return field.rangeRefinedBy( this );
 	}
 
 	@Override

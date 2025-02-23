@@ -52,9 +52,9 @@ public class ApiService
 		        i( solDay ) );
 
 		List<Item> items = request( call );
-		if( items.size() > 0 ) return items.get( 0 );
-
-		return null;
+		if( items.size() == 0 ) return null;
+		if( items.size() == 1 ) return items.get( 0 );
+		throw new RuntimeException( "결과가 여러개!?" );
 	}
 
 	/**
@@ -127,6 +127,23 @@ public class ApiService
 		        leapMonth ? "평" : "윤" );
 
 		return request( call );
+	}
+
+	/**
+	 * 여러 해(양력)에 걽여 음력 날짜(월, 일)들 모두 조회
+	 *
+	 * @param jDay 율리우스적일
+	 * @return
+	 */
+	public Item getFromJDay ( int jDay ) {
+		Call<ResponseData> call = api.getJulDayInfo(
+		        serviceKey,
+		        String.valueOf( jDay ) );
+
+		List<Item> items = request( call );
+		if( items.size() == 0 ) return null;
+		if( items.size() == 1 ) return items.get( 0 );
+		throw new RuntimeException( "결과가 여러개!?" );
 	}
 
 	private List<Item> request ( Call<ResponseData> call ) {
