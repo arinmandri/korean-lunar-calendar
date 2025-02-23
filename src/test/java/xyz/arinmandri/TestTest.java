@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import xyz.arinmandri.kasiapi.ApiService;
 import xyz.arinmandri.kasiapi.Item;
-import xyz.arinmandri.koreanlunarcalendar.KLunarDate;
+import xyz.arinmandri.koreanlunarcalendar.Ganji;
 
 
 public class TestTest
@@ -15,7 +15,7 @@ public class TestTest
 
 	final int YEAR_BASE = 1864;// KLunarDate.YEAR_BASE
 	final int year_min = YEAR_BASE;
-	final int year_max = YEAR_BASE + KLunarDate.CYCLE_SIZE * 10;
+	final int year_max = YEAR_BASE + Ganji.CYCLE_SIZE * 10;
 
 	@Test
 	public void test () {

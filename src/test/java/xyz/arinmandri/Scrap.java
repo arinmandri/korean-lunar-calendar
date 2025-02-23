@@ -1,13 +1,11 @@
 package xyz.arinmandri;
 
-import java.time.LocalDate;
-import java.util.List;
+import static xyz.arinmandri.koreanlunarcalendar.Ganji.CYCLE_SIZE;
 
-import org.junit.jupiter.api.Test;
+import java.util.List;
 
 import xyz.arinmandri.kasiapi.ApiService;
 import xyz.arinmandri.kasiapi.Item;
-import xyz.arinmandri.koreanlunarcalendar.KLunarDate;
 
 
 public class Scrap
@@ -16,7 +14,7 @@ public class Scrap
 
 	final int YEAR_BASE = 1864;// KLunarDate.YEAR_BASE
 	final int year_min = YEAR_BASE;
-	final int year_max = YEAR_BASE + KLunarDate.CYCLE_SIZE * 10;
+	final int year_max = YEAR_BASE + CYCLE_SIZE * 10;
 
 	/**
 	 * 모든 음력 월의 1일의 양력날짜, 평윤, 대소 정보 가져오기
@@ -32,7 +30,7 @@ public class Scrap
 		String endDate = "";
 
 		StringBuilder cDaySB = new StringBuilder();
-		for( int c = year_min ; c < year_max ; c += KLunarDate.CYCLE_SIZE ){// 매 주기
+		for( int c = year_min ; c < year_max ; c += CYCLE_SIZE ){// 매 주기
 			System.out.print( "{\n" );
 
 			int jDayC = 0;// 지원범위 첫날 ~ 이 주기 첫날 적일 차이
@@ -40,7 +38,7 @@ public class Scrap
 
 			int decade = -999;// 주석용
 
-			for( int y0 = 0 ; y0 < KLunarDate.CYCLE_SIZE ; y0++ ){// 주기 중 1년
+			for( int y0 = 0 ; y0 < CYCLE_SIZE ; y0++ ){// 주기 중 1년
 				int y = c + y0;
 				decade = ( y0 % 10 == 0 ) ? y : decade;
 				int yd = 0;// KLunarDate.ydss에 듦

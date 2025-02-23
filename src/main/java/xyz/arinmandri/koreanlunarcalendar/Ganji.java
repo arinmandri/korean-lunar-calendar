@@ -9,6 +9,8 @@ public enum Ganji
 	O49, O50, O51, O52, O53, O54, O55, O56, O57, O58, O59, O60, // 임자 계축 갑인 을묘 병진 정사 무오 기미 경신 신유 임술 계해
 	;
 
+	public static final int CYCLE_SIZE = 60;
+
 	public final Gan gan;
 	public final Ji ji;
 

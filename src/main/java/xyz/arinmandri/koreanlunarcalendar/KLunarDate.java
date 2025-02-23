@@ -1,5 +1,7 @@
 package xyz.arinmandri.koreanlunarcalendar;
 
+import static xyz.arinmandri.koreanlunarcalendar.Ganji.CYCLE_SIZE;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -17,7 +19,7 @@ import java.time.temporal.TemporalField;
 import java.time.temporal.TemporalQuery;
 import java.time.temporal.TemporalUnit;
 import java.time.temporal.UnsupportedTemporalTypeException;
-import java.time.temporal.ValueRange;
+import java.time.temporal.ValueRange;;
 
 
 /**
@@ -44,8 +46,6 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 
 	public static final int BIG_MONTH_SIZE = 30;// 대월의 일수
 	public static final int LIL_MONTH_SIZE = 29;// 소월의 일수
-
-	public static final int CYCLE_SIZE = 60;
 
 	/*
 	 * int 하나에 32비트로 한 해의 정보 저장
