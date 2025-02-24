@@ -10,6 +10,7 @@ import java.time.chrono.ChronoLocalDateTime;
 import java.time.chrono.ChronoPeriod;
 import java.time.chrono.Chronology;
 import java.time.chrono.Era;
+import java.time.chrono.IsoEra;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
 import java.time.temporal.Temporal;
@@ -43,6 +44,8 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	private transient final int y0;// 이 주기의 몇 번째 년인가 (0부터 셈)
 	private transient final int m0;// 이 년도의 몇 번째 월인가 (0부터 셈)
 	private transient final int d0;// 이 년도의 몇 번째 일인가 (0부터 셈)
+
+	public static final int TIME_ZONE_OFFSET = 9 * 60 * 60;// UTC 기준 한국 시간대의 초단위 offset
 
 	public static final int BIG_MONTH_SIZE = 30;// 대월의 일수
 	public static final int LIL_MONTH_SIZE = 29;// 소월의 일수
@@ -122,6 +125,11 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	}
 
 	//// ================================ CREATION
+
+	public static KLunarDate now () {
+		long epochDay = (System.currentTimeMillis() / 1000 + TIME_ZONE_OFFSET) / (24 * 60 * 60);
+		return ofEpochDay( epochDay );
+	}
 
 	/**
 	 * 음력 년월일로 새 날짜개체 생성
@@ -487,7 +495,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		if( field == ChronoField.EPOCH_DAY )
 		    return toEpochDay();
 
-		return (long) get( field );
+		return get( field );
 	}
 
 	@Override
@@ -618,7 +626,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 
 	@Override
 	public Era getEra () {
-		return null;// TODO
+		return IsoEra.CE;
 	}
 
 	@Override

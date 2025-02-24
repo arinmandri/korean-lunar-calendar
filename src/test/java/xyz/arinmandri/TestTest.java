@@ -1,26 +1,23 @@
 package xyz.arinmandri;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
 import xyz.arinmandri.kasiapi.ApiService;
 import xyz.arinmandri.kasiapi.Item;
-import xyz.arinmandri.koreanlunarcalendar.Ganji;
 
 
 public class TestTest
 {
 	ApiService api = ApiService.getInstance();
 
-	final int YEAR_BASE = 1864;// KLunarDate.YEAR_BASE
-	final int year_min = YEAR_BASE;
-	final int year_max = YEAR_BASE + Ganji.CYCLE_SIZE * 10;
-
 	@Test
 	public void test () {
 		LocalDate ld = LocalDate.now();
+		LocalDateTime ldt = LocalDateTime.now();
 	}
 
 //	@Test

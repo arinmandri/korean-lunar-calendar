@@ -1,7 +1,9 @@
 package xyz.arinmandri.koreanlunarcalendar;
 
 import static xyz.arinmandri.koreanlunarcalendar.Ganji.CYCLE_SIZE;
+
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Random;
 
@@ -15,6 +17,7 @@ public class KLunarDateTest
 
 	ApiService api = ApiService.getInstance();
 	Random random = new Random( System.currentTimeMillis() );
+	ZoneId zoneId = ZoneId.of("Asia/Seoul");
 
 	/*
 	 * KLunarDate private 값들 땜쳐옴
