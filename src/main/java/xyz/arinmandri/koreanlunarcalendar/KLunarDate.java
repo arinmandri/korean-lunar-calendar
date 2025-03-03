@@ -524,19 +524,8 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 				throw new UnsupportedTemporalTypeException( "Unsupported field: " + field );
 			}
 		}
-		// XXX TemporalField.getFrom(TemporalAccessor)
 		if( field instanceof GanjiField ){
-			switch( (GanjiField) field ){
-			case SECHA:
-				return getSecha().ordinal() + 1;
-			case WOLGEON:
-				return getWolgeon().ordinal() + 1;
-			case ILJIN:
-				return getIljin().ordinal() + 1;
-			default:
-				break;
-			}
-			throw new UnsupportedTemporalTypeException( "Unsupported field: " + field );
+			field.getFrom( this );
 		}
 
 		throw new UnsupportedTemporalTypeException( "Unsupported field: " + field );

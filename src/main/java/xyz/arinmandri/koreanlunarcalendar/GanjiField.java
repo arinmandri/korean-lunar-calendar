@@ -5,6 +5,7 @@ import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAccessor;
 import java.time.temporal.TemporalField;
 import java.time.temporal.TemporalUnit;
+import java.time.temporal.UnsupportedTemporalTypeException;
 import java.time.temporal.ValueRange;
 
 
@@ -65,8 +66,20 @@ public enum GanjiField implements TemporalField
 
 	@Override
 	public long getFrom ( TemporalAccessor temporal ) {
-		// TODO Auto-generated method stub
-		return 0;
+		if( temporal instanceof KLunarDate ){
+			KLunarDate kd = (KLunarDate) temporal;
+			switch( this ){
+			case SECHA:
+				return kd.getSecha().ordinal() + 1;
+			case WOLGEON:
+				return kd.getWolgeon().ordinal() + 1;
+			case ILJIN:
+				return kd.getIljin().ordinal() + 1;
+			default:
+				break;
+			}
+		}
+		throw new UnsupportedTemporalTypeException( "Unsupported field: " + this );
 	}
 
 	@Override
