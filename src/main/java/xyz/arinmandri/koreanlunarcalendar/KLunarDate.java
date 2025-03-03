@@ -13,6 +13,7 @@ import java.time.chrono.Era;
 import java.time.chrono.IsoEra;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAdjuster;
 import java.time.temporal.TemporalAmount;
@@ -562,7 +563,21 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 
 	@Override
 	public boolean isSupported ( TemporalUnit unit ) {
-		return false;// TODO
+		if( unit == null ) return false;
+		if( unit instanceof ChronoUnit ){
+			switch( (ChronoUnit) unit ){
+			case DAYS:
+			case MONTHS:
+			case YEARS:
+				return true;
+			default:
+				return false;
+			}
+		}
+		if( unit instanceof KLunarAdditionalUnit ){
+			return true;
+		}
+		return false;
 	}
 
 	@Override
@@ -587,7 +602,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		return null;// TODO
 	}
 
-	public KLunarDate withLeapMonth () {
+	public KLunarDate withMonthLeap () {
 		return null;// TODO
 	}
 
