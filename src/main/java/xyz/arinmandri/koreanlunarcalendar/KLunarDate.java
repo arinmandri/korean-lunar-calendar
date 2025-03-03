@@ -2,6 +2,7 @@ package xyz.arinmandri.koreanlunarcalendar;
 
 import static xyz.arinmandri.koreanlunarcalendar.Ganji.CYCLE_SIZE;
 
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -574,9 +575,50 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		return null;// TODO
 	}
 
+	/**
+	 * 지정한 필드 값을 바꾼 KLunarDate 개체를 반환.
+	 * 하지만 지정한 그 필드만 바뀌는 게 아니다 두둥.
+	 * - 대월에서 소월로 바꾸면 30일이 29일로 자동 조정된다.
+	 * - 윤달이 없는 달로 바꾸면 윤달이 평달로 바뀐다.
+	 * 말일로 하고 싶으면 lastDayOfMonth같은 메서드나 따로 만들지 왜 수치를 마음대로 바꿔버리는지 모르겠지만 LocalDate도 그리 구현돼있고 인터페이스에 그리 적혀있다.
+	 * 거꾸로 30일이 없는 달에서 30일을 설정하는 경우는 에러이다.
+	 * 
+	 * @param field    조정할 필드 not null
+	 * @param newValue 그 필드에 새로 넣을 값
+	 * 
+	 * @return 값 조정된 개체 not null
+	 * 
+	 * @throws DateTimeException                if the field cannot be set
+	 * @throws UnsupportedTemporalTypeException if the field is not supported
+	 */
 	@Override
 	public KLunarDate with ( TemporalField field , long newValue ) {
-		return null;// TODO
+
+		if( field instanceof ChronoField ){
+			ChronoField chronoField = (ChronoField) field;
+			chronoField.checkValidValue( newValue );
+			switch( chronoField ){
+			case DAY_OF_MONTH:
+				return withDay( (int) newValue );
+			case DAY_OF_YEAR:
+				return withDayOfYear( (int) newValue );
+			case EPOCH_DAY:
+				return KLunarDate.ofEpochDay( newValue );
+			case MONTH_OF_YEAR:
+				return withMonth( (int) newValue );
+			case YEAR:
+			case YEAR_OF_ERA:
+				return withYear( (int) newValue );
+			case ERA:
+				if( getLong( ChronoField.ERA ) == newValue )
+				    return this;
+				else
+				    throw new OutOfRangeException();
+			default:
+				throw new UnsupportedTemporalTypeException( "Unsupported field: " + field );
+			}
+		}
+		return field.adjustInto( this, newValue );
 	}
 
 	public KLunarDate withYear ( int year ) {
@@ -591,6 +633,10 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		return null;// TODO
 	}
 
+	public KLunarDate withDayOfYear ( int day ) {
+		return null;// TODO
+	}
+
 	public KLunarDate withMonthLeap () {
 		return null;// TODO
 	}
@@ -598,6 +644,8 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	public KLunarDate withCommonMonth () {
 		return null;// TODO
 	}
+
+	// TODO with 간지
 
 	@Override
 	public KLunarDate plus ( TemporalAmount amount ) {
