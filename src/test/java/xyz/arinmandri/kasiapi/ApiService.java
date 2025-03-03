@@ -14,7 +14,7 @@ public class ApiService
 	static private ApiService instance = new ApiService();
 
 	private ApiInterface api;
-	String serviceKey = "HAHA HOHO";
+	String serviceKey = ServiceKey.KEY;
 
 	static public ApiService getInstance () {
 		return instance;
