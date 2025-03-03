@@ -55,10 +55,11 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	 * 왼쪽부터
 	 * 15비트: 이 주기의 첫날과 이 년의 첫 날의 날짜 차이 (일 단위)
 	 *         yd >>> 17
-	 * 4비트: 몇 월에 윤달이 있나 (예: 이 값이 1이면 1월에 윤달이 있으며 2번째 달이 윤달이다.) (0xF인 경우 윤달 없음) (0인 경우 없음)
+	 * 4비트: 몇 월에 윤달이 있나 (예: 이 값이 1이면 1월에 윤달이 있으며 2번째 달이 윤달이다.) (0xF인 경우 윤달 없음) (이 값이 0인 경우는 없음)
 	 *        (yd >>> 13) & 0xF
 	 * 13비트: 각 월의 대소(0:소 1:대) (0번째 달부터 12번째 달까지 윤달도 똑같이 한 달로 취급, 1의자리부터 1월)
-	 *         (yd >>> m0) & 0x1
+	 *         if( ( ( yd >>> m0 ) & 0x1 ) == 0x1 ) 대
+	 *         if( ( ( yd >>> m0 ) & 0x1 ) == 0x0 ) 소
 	 *
 	 * 마지막 요소 빼고는 다 크기 60에 맞춰야 함.
 	 */
@@ -327,6 +328,16 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 
 	//// ================================ GETTER
 
+	@Override
+	public Chronology getChronology () {
+		return KLunarChronology.INSTANCE;
+	}
+
+	@Override
+	public Era getEra () {
+		return IsoEra.CE;
+	}
+
 	public int getYear() {
 		return year;
 	}
@@ -340,8 +351,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	}
 
 	/**
-	 * 이번 년도의 몇 번째 달인가
-	 * 0부터 셈
+	 * 이번 년도의 몇 번째 달인가 (0부터 셈)
 	 * 예를 들어 이 해에 윤1월이 있다면 이 해의 1월은 0, 윤1월은 1, 2월은 2, ...
 	 */
 	public int getMonthOrdinal () {
@@ -355,6 +365,26 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		return d0 + 1;
 	}
 
+	/**
+	 * 윤년 여부 (윤달이 포함된 해인 여부)
+	 * 고려대 한국어대사전에서 윤년을 "윤달이나 윤일이 드는 해"로 정의하므로 그에 따름.
+	 * 그러나 윤년이 아니라고 해서 해의 길이가 일정하지는 않다.
+	 * 
+	 * @return true 이 해에 윤달 있음
+	 *         false 이 해에 윤달 없음
+	 */
+	@Override
+	public boolean isLeapYear () {
+		int yd = ydss[c0][y0];
+		return ( ( yd >>> 13 ) & 0xF ) == 0xF ? false : true;
+	}
+
+	/**
+	 * 윤달 여부
+	 * 
+	 * @return true 윤달
+	 *         false 평달
+	 */
 	public boolean isLeapMonth() {
 		return isLeapMonth;
 	}
@@ -387,6 +417,30 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	 */
 	public Ganji getIljin () {
 		return Ganji.values()[( ( (int) toEpochDay() + 17 ) % CYCLE_SIZE + CYCLE_SIZE ) % CYCLE_SIZE];// 0 epoch day 는 신사(辛巳)일 = O18 // epoch day가 음수일 수도 있어서 a%c 대신 (a%c+c)%c
+	}
+
+	@Override
+	public int lengthOfMonth () {
+		int yd = ydss[c0][y0];
+		if( ( ( yd >>> m0 ) & 0x1 ) == 0x1 )
+		    return BIG_MONTH_SIZE;
+		else
+		    return LIL_MONTH_SIZE;
+	}
+
+	@Override
+	public int lengthOfYear () {
+		int yd = ydss[c0][y0];
+
+		int count = 0;
+		int n = ( ( yd >>> 13 ) & 0xF ) == 0xF ? 12 : 13;
+		for( int m = 0 ; m < n ; m++ ){
+			if( ( ( yd >>> m ) & 0x1 ) == 0x1 )
+			    count += BIG_MONTH_SIZE;
+			else
+			    count += LIL_MONTH_SIZE;
+		}
+		return count;
 	}
 
 	//// ================================ ChronoLocalDate - Temporal - TemporalAccessor
@@ -469,6 +523,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 				throw new UnsupportedTemporalTypeException( "Unsupported field: " + field );
 			}
 		}
+		// XXX TemporalField.getFrom(TemporalAccessor)
 		if( field instanceof GanjiField ){
 			switch( (GanjiField) field ){
 			case SECHA:
@@ -618,31 +673,6 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	// TODO hmm 할필요없나?
 
 	//// ================================ ChronoLocalDate
-
-	@Override
-	public Chronology getChronology () {
-		return KLunarChronology.INSTANCE;
-	}
-
-	@Override
-	public Era getEra () {
-		return IsoEra.CE;
-	}
-
-	@Override
-	public boolean isLeapYear () {
-		return false;// TODO
-	}
-
-	@Override
-	public int lengthOfMonth () {
-		return 0;// TODO
-	}
-
-	@Override
-	public int lengthOfYear () {
-		return 0;// TODO
-	}
 
 	@Override
 	public ChronoPeriod until ( ChronoLocalDate endDateExclusive ) {
