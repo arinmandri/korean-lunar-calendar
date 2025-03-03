@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import xyz.arinmandri.kasiapi.ApiService;
 import xyz.arinmandri.kasiapi.Item;
+import xyz.arinmandri.koreanlunarcalendar.KLunarDate;
 
 
 public class TestTest
@@ -18,6 +19,7 @@ public class TestTest
 	public void test () {
 		LocalDate ld = LocalDate.now();
 		LocalDateTime ldt = LocalDateTime.now();
+		KLunarDate kd = KLunarDate.now();
 	}
 
 //	@Test
