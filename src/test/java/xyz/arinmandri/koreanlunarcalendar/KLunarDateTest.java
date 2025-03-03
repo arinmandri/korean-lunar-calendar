@@ -75,7 +75,7 @@ public class KLunarDateTest
 	//// ================================ repeat test
 
 	void repeat ( Runnable test , String title , int size ) {
-		System.out.println( "\n=== " + title + " ===" );
+		printTitle( title );
 
 		for( int i = 0 ; i < size ; i += 1 ){
 			try{
@@ -97,6 +97,10 @@ public class KLunarDateTest
 	}
 
 	//// ================================ util, private, etc
+
+	void printTitle ( String title ) {
+		System.out.println( "\n=== " + title + " ===" );
+	}
 
 	boolean checkEquality ( Item item , KLunarDate kd ) {
 		return item.getLunYear()  == kd.getYear()
