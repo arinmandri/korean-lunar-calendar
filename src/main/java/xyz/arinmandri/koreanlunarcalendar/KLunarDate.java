@@ -467,6 +467,9 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		if( field instanceof GanjiField ){
 			return true;
 		}
+		if( field instanceof Leap ){
+			return true;
+		}
 		return false;
 	}
 
