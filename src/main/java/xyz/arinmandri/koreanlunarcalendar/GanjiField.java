@@ -60,8 +60,10 @@ public enum GanjiField implements TemporalField
 
 	@Override
 	public ValueRange rangeRefinedBy ( TemporalAccessor temporal ) {
-		// TODO Auto-generated method stub
-		return null;
+		if( temporal instanceof KLunarDate ){
+			return range;
+		}
+		throw new UnsupportedTemporalTypeException( "Unsupported field: " + this );
 	}
 
 	@Override

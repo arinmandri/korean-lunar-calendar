@@ -392,6 +392,18 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	}
 
 	/**
+	 * 몇 월에 윤달이 있는지 반환
+	 * 
+	 * @return 윤달이 있는 월
+	 *         윤달이 없는 해인 경우 0
+	 */
+	public int getLeapMonth () {
+		int yd = ydss[c0][y0];
+		int lm = ( yd >>> 13 ) & 0xF;
+		return lm == 0xF ? 0 : lm;
+	}
+
+	/**
 	 * 이 날짜의 세차(년의 간지)
 	 * 
 	 * @return
@@ -499,9 +511,6 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 			}
 			throw new UnsupportedTemporalTypeException( "Unsupported field: " + field );
 		}
-		if( field instanceof GanjiField ){
-			return field.range();
-		}
 		return field.rangeRefinedBy( this );
 	}
 
@@ -528,11 +537,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 				throw new UnsupportedTemporalTypeException( "Unsupported field: " + field );
 			}
 		}
-		if( field instanceof GanjiField ){
-			field.getFrom( this );
-		}
-
-		throw new UnsupportedTemporalTypeException( "Unsupported field: " + field );
+		return (int) field.getFrom( this );
 	}
 
 	@Override
