@@ -630,7 +630,9 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	}
 
 	public KLunarDate withYear ( int year ) {
-		return null;// TODO
+		if( year == this.year )
+		    return this;
+		return KLunarDate.of( year, month, day );
 	}
 
 	public KLunarDate withMonth ( int month ) {
