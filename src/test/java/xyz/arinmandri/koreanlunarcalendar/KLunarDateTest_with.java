@@ -27,13 +27,20 @@ public class KLunarDateTest_with extends KLunarDateTest
 		int d0 = getRandomInt( 1, 30 );
 
 		KLunarDate kd0;
+		KLunarDate kd1;
 		try{
 			kd0 = KLunarDate.of( y0, m0, d0 );
 		}
 		catch( NonexistentDateException e ){
 			throw new NoNeedToTest();
 		}
-		KLunarDate kd1 = kd0.withYear( y1 );
+		try{
+			kd1 = kd0.withYear( y1 );
+		}
+		catch( NonexistentDateException e ){
+			System.out.println( kd0 );
+			throw e;
+		}
 
 		try{
 			assertEquals( y1, kd1.getYear() );
@@ -59,13 +66,20 @@ public class KLunarDateTest_with extends KLunarDateTest
 		int d0 = getRandomInt( 1, 30 );
 
 		KLunarDate kd0;
+		KLunarDate kd1;
 		try{
 			kd0 = KLunarDate.of( y0, m0, d0 );
 		}
 		catch( NonexistentDateException e ){
 			throw new NoNeedToTest();
 		}
-		KLunarDate kd1 = kd0.withMonth( m1 );
+		try{
+			kd1 = kd0.withMonth( m1 );
+		}
+		catch( NonexistentDateException e ){
+			System.out.println( kd0 );
+			throw e;
+		}
 
 		try{
 			assertEquals( y0, kd1.getYear() );
@@ -91,13 +105,20 @@ public class KLunarDateTest_with extends KLunarDateTest
 		int d1 = getRandomInt( 1, 30 );
 
 		KLunarDate kd0;
+		KLunarDate kd1;
 		try{
 			kd0 = KLunarDate.of( y0, m0, d0 );
 		}
 		catch( NonexistentDateException e ){
 			throw new NoNeedToTest();
 		}
-		KLunarDate kd1 = kd0.withDay( d1 );
+		try{
+			kd1 = kd0.withDay( d1 );
+		}
+		catch( NonexistentDateException e ){
+			System.out.println( kd0 );
+			throw e;
+		}
 
 		try{
 			assertEquals( y0, kd1.getYear() );
