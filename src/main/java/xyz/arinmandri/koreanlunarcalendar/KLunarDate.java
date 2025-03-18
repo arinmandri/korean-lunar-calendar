@@ -173,7 +173,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		        : LIL_MONTH_SIZE;
 
 		//// 이 해의 몇번째 날인지 찾기
-		if( day > monthSize ) throw new NonexistentDateException();
+		if( day > monthSize ) throw new NonexistentDateException( "The size of " + year + '-' + month + " is smaller than " + day );
 		int d0 = 0;
 		for( int i = 0 ; i < m0 ; i++ ){// 이전월까지의 일수 합
 			d0 += ( ( yd >>> i ) & 0x1 ) == 1

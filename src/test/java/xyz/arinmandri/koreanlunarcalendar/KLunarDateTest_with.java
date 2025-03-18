@@ -28,11 +28,17 @@ public class KLunarDateTest_with extends KLunarDateTest
 		int m0 = getRandomInt( 1, 12 );
 		int d0 = getRandomInt( 1, 30 );
 
-		KLunarDate kd0 = KLunarDate.of( y0, m0, d0 );
+		KLunarDate kd0;
+		try{
+			kd0 = KLunarDate.of( y0, m0, d0 );
+		}
+		catch( NonexistentDateException e ){
+			throw new NoNeedToTest();
+		}
 		KLunarDate kd1 = kd0.withYear( y1 );
 
 		try{
-			System.out.println( kd0 + " --> " + kd1 );
+//			System.out.println( kd0 + " --> " + kd1 );
 			assertEquals( y1, kd1.getYear() );
 			assertEquals( m0, kd1.getMonth() );
 

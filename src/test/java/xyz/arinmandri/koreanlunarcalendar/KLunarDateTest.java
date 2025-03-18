@@ -139,6 +139,9 @@ public class KLunarDateTest
 		return i + "";
 	}
 
+	/**
+	 * 테스트 반복에서 반복횟수 차감 취소하고 다시하려면 이 예외를 던지세요.
+	 */
 	class NoNeedToTest extends RuntimeException
 	{}
 }
