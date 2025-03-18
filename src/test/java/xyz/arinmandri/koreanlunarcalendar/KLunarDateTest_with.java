@@ -8,11 +8,9 @@ public class KLunarDateTest_with extends KLunarDateTest
 {
 	@Test
 	public void test () {
-		repeat( this::with, "with" );
-	}
-
-	public void with () {
-		withYear();
+		repeat( this::withYear, "with - year" );
+		repeat( this::withMonth, "with - month" );
+		repeat( this::withDay, "with - day" );
 	}
 
 	public void withYear () {
@@ -38,7 +36,6 @@ public class KLunarDateTest_with extends KLunarDateTest
 		KLunarDate kd1 = kd0.withYear( y1 );
 
 		try{
-//			System.out.println( kd0 + " --> " + kd1 );
 			assertEquals( y1, kd1.getYear() );
 			assertEquals( m0, kd1.getMonth() );
 
@@ -54,4 +51,69 @@ public class KLunarDateTest_with extends KLunarDateTest
 			throw e;
 		}
 	}
+
+	public void withMonth () {
+		int y0 = getRandomInt( YEAR_MIN, YEAR_MAX );
+		int m0 = getRandomInt( 1, 12 );
+		int m1 = getRandomInt( 1, 12 );
+		int d0 = getRandomInt( 1, 30 );
+
+		KLunarDate kd0;
+		try{
+			kd0 = KLunarDate.of( y0, m0, d0 );
+		}
+		catch( NonexistentDateException e ){
+			throw new NoNeedToTest();
+		}
+		KLunarDate kd1 = kd0.withMonth( m1 );
+
+		try{
+			assertEquals( y0, kd1.getYear() );
+			assertEquals( m1, kd1.getMonth() );
+
+			int d1 = kd1.getDay();
+			if( d0 != d1 ){
+				assertEquals( 30, d0 );
+				assertEquals( 29, d1 );
+				assertEquals( false, kd1.isLeapMonth() );
+			}
+		}
+		catch( Exception e ){
+			System.out.println( kd0 + " --> " + kd1 );
+			throw e;
+		}
+	}
+
+	public void withDay () {
+		int y0 = getRandomInt( YEAR_MIN, YEAR_MAX );
+		int m0 = getRandomInt( 1, 12 );
+		int d0 = getRandomInt( 1, 30 );
+		int d1 = getRandomInt( 1, 30 );
+
+		KLunarDate kd0;
+		try{
+			kd0 = KLunarDate.of( y0, m0, d0 );
+		}
+		catch( NonexistentDateException e ){
+			throw new NoNeedToTest();
+		}
+		KLunarDate kd1 = kd0.withDay( d1 );
+
+		try{
+			assertEquals( y0, kd1.getYear() );
+			assertEquals( m0, kd1.getMonth() );
+
+			if( d1 != kd1.getDay() ){
+				assertEquals( 30, d1 );
+				assertEquals( 29, kd1.getDay() );
+				assertEquals( false, kd1.isLeapMonth() );
+			}
+		}
+		catch( Exception e ){
+			System.out.println( kd0 + " --> " + kd1 );
+			throw e;
+		}
+	}
+
+	// TODO 윤달
 }
