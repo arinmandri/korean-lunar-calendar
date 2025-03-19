@@ -328,6 +328,29 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		return LocalDate.ofEpochDay( toEpochDay() );
 	}
 
+	/**
+	 * 날짜 셈 결과가 무효한 날짜일 때 유효한 날짜로 자동조정.
+	 * 조정대상은 일 부분뿐이다. 월, 년, 윤달여부가 무효한 경우 그냥 무효한 날짜.
+	 * 
+	 * @param year
+	 * @param month
+	 * @param day
+	 * @param isLeapMonth
+	 * @return
+	 */
+	private static KLunarDate resolvePreviousValid ( int year , int month , int day , boolean isLeapMonth ) {
+		if( day == 30 ){
+			KLunarDate withDay29 = KLunarDate.of( year, month, 29, isLeapMonth );
+			if( withDay29.isBigMonth() ){
+				return KLunarDate.of( year, month, 30, isLeapMonth );
+			}
+			else{
+				return withDay29;
+			}
+		}
+		return KLunarDate.of( year, month, day, isLeapMonth );
+	}
+
 	//// ================================ GETTER
 
 	@Override
@@ -401,6 +424,19 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		int yd = ydss[c0][y0];
 		int lm = ( yd >>> 13 ) & 0xF;
 		return lm == 0xF ? 0 : lm;
+	}
+
+	/**
+	 * 대월소월
+	 * 
+	 * @return true 대월
+	 *         false 소월
+	 */
+	public boolean isBigMonth () {
+		final int yd = ydss[c0][y0];
+		if( ( ( yd >>> m0 ) & 0x1 ) == 0x1 )
+		    return true;
+		return false;
 	}
 
 	/**
