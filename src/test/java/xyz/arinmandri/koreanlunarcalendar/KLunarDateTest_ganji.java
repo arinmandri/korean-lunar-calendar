@@ -13,7 +13,7 @@ public class KLunarDateTest_ganji extends KLunarDateTest
 	@Test
 	public void test () {
 
-		repeat( this::testOne, "ganji" );
+		repeatShortly( this::testOne, "ganji" );
 	}
 
 	private void testOne () {

@@ -122,6 +122,22 @@ public class Scrap
 		System.out.println( "jDays 마지막 항목은 손수 입력... (" + jDayC0 + ")" );
 	}
 
+	/*
+	 * 년도별 일수 긁어오기
+	 */
+//	@Test
+	public void jDays () {
+
+		int jDay = 0;
+		for( int y = year_min ; y <= 2049 ; y++ ){
+			List<Item> items = api.getFromLunDate( y, 1, 1 );
+			Item item = items.get( 0 );
+			int jDay1 = item.getSolJd();
+			System.out.println( jDay1 - jDay + "// " + ( y - 1 ) );
+			jDay = jDay1;
+		}
+	}
+
 	//// ================================ util, private, etc
 
 	private String binaryYd ( int yd ) {

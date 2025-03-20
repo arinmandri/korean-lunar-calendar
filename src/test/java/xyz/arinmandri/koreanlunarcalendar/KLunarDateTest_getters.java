@@ -3,11 +3,7 @@ package xyz.arinmandri.koreanlunarcalendar;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
-
-import xyz.arinmandri.kasiapi.Item;
 
 
 public class KLunarDateTest_getters extends KLunarDateTest
@@ -60,21 +56,4 @@ public class KLunarDateTest_getters extends KLunarDateTest
 			assertEquals( lengthOfYear, kd1.lengthOfYear() );
 		}
 	}
-
-	/*
-	 * 년도별 일수 긁어오기
-	 */
-//	@Test
-	public void jDays () {
-
-		int jDay = 0;
-		for( int y = YEAR_MIN ; y <= 2049 ; y++ ){
-			List<Item> items = api.getFromLunDate( y, 1, 1 );
-			Item item = items.get( 0 );
-			int jDay1 = item.getSolJd();
-			System.out.println( jDay1 - jDay + "// " + ( y - 1 ) );
-			jDay = jDay1;
-		}
-	}
-
 }

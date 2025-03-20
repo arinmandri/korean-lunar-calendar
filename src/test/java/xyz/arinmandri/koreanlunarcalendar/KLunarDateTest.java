@@ -13,7 +13,8 @@ import xyz.arinmandri.kasiapi.Item;
 
 public class KLunarDateTest
 {
-	protected final int testSize = 100;
+	protected final int testSize = 1000;
+	protected final int shortTestSize = 100;
 
 	ApiService api = ApiService.getInstance();
 	Random random = new Random( System.currentTimeMillis() );
@@ -85,22 +86,24 @@ public class KLunarDateTest
 				i -= 1;
 				continue;
 			}
-
-			if( i % 10 == 9 ){
-				System.out.println( i + 1 + "째 시험 통과" );
-			}
 		}
+
+		System.out.println( "GOOD" );
+	}
+
+	void printTitle ( String title ) {
+		System.out.println( "\n=== " + title + " ===" );
 	}
 
 	void repeat ( Runnable test , String title ) {
 		repeat( test, title, testSize );
 	}
 
-	//// ================================ util, private, etc
-
-	void printTitle ( String title ) {
-		System.out.println( "\n=== " + title + " ===" );
+	void repeatShortly ( Runnable test , String title ) {
+		repeat( test, title, shortTestSize );
 	}
+
+	//// ================================ util, private, etc
 
 	boolean checkEquality ( Item item , KLunarDate kd ) {
 		return item.getLunYear()  == kd.getYear()
