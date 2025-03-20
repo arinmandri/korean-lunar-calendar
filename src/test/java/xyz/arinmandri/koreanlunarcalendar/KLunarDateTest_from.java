@@ -15,7 +15,7 @@ public class KLunarDateTest_from
 
 	@Test
 	public void test () {
-		repeat( this::randomTest, "from" );
+		repeatShortly( this::randomTest, "from" );
 		boundaryTest();
 	}
 

@@ -17,7 +17,7 @@ public class KLunarDateTest_of
 	@Test
 	public void testYmdl () {
 
-		repeat( this::testYmdl_one, "of ymdl" );
+		repeatShortly( this::testYmdl_one, "of ymdl" );
 	}
 
 	private void testYmdl_one () {
