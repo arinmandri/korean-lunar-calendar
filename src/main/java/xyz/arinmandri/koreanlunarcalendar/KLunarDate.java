@@ -330,7 +330,9 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 
 	/**
 	 * 날짜 셈 결과가 무효한 날짜일 때 유효한 날짜로 자동조정.
-	 * 조정대상은 일 부분뿐이다. 월, 년, 윤달여부가 무효한 경우 그냥 무효한 날짜.
+	 * - 소월 30일을 29일로 조정.
+	 * - 없는 윤달을 평달로 조정.
+	 * 이 외엔 조정하지 않고 에러로 취급
 	 * 
 	 * @param year
 	 * @param month
@@ -339,6 +341,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	 * @return
 	 */
 	private static KLunarDate resolvePreviousValid ( int year , int month , int day , boolean isLeapMonth ) {
+		// TODO 윤달 어케함?
 		if( day == 30 ){
 			KLunarDate withDay29 = KLunarDate.of( year, month, 29, isLeapMonth );
 			if( withDay29.isBigMonth() ){
@@ -668,15 +671,20 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	public KLunarDate withYear ( int year ) {
 		if( year == this.year )
 		    return this;
-		return KLunarDate.of( year, month, day );
+		return resolvePreviousValid( year, month, day, isLeapMonth );
 	}
 
 	public KLunarDate withMonth ( int month ) {
-		return null;// TODO
+		if( month == this.month )
+		    return this;
+		return resolvePreviousValid( year, month, day, isLeapMonth );
 	}
 
 	public KLunarDate withDay ( int day ) {
-		return null;// TODO
+		if( day == this.day )
+		    return this;
+		// TODO 대월 30일에서 소월로 바꾸는 경우에는 29일로 자동조정 하는데 소월에서 with 30일 하면 에러 돼야 함.
+		return resolvePreviousValid( year, month, day, isLeapMonth );
 	}
 
 	public KLunarDate withDayOfYear ( int day ) {
