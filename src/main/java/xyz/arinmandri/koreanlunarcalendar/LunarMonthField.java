@@ -8,25 +8,24 @@ import java.time.temporal.TemporalUnit;
 import java.time.temporal.ValueRange;
 
 
-public enum Leap implements TemporalField
+public enum LunarMonthField implements TemporalField
 {
 	/**
-	 * 이 필드가 0이면 평달, 1이면 윤달이다.
-	 * 음력의 윤달 때문에 [년-월-일]만으로 날짜를 다 표현하지 못한다.
-	 * 예: 2004년에는 1월, 2월, 윤2월, 3월, ...이 있다.
-	 * 이를 (1월), (2월, 윤2월), (3월), ... 식으로 같은 수의 월끼리 묶는다.
-	 * 이 묶음의 단위 내에서 몇 번째 월인지를 0부터 센 것과 같다.
-	 * 
-	 * @see KLunarAdditionalUnit#MONTH_GROUPS
+	 * 몇월달인가
 	 */
-	MONTH(ChronoUnit.MONTHS, KLunarAdditionalUnit.MONTH_GROUPS, ValueRange.of( 0, 1 )),
+	MONTH_N (LunarMonthUnit.LMONTH_BUNDLES, ChronoUnit.YEARS, ValueRange.of( 1, 12 )),
+
+	/**
+	 * 윤달여부
+	 */
+	MONTH_LEAP (LunarMonthUnit.LMONTHS, LunarMonthUnit.LMONTH_BUNDLES, ValueRange.of( 0, 1 )),
 	;
 
 	private final TemporalUnit baseUnit;
 	private final TemporalUnit rangeUnit;
 	private final ValueRange range;
 
-	private Leap( TemporalUnit baseUnit , TemporalUnit rangeUnit , ValueRange range ) {
+	private LunarMonthField( TemporalUnit baseUnit , TemporalUnit rangeUnit , ValueRange range ) {
 		this.baseUnit = baseUnit;
 		this.rangeUnit = rangeUnit;
 		this.range = range;
