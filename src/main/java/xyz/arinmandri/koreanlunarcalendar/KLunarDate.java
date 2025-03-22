@@ -515,13 +515,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 				return false;
 			}
 		}
-		if( field instanceof GanjiField ){
-			return true;
-		}
-		if( field instanceof Leap ){
-			return true;
-		}
-		return false;
+		return field != null && field.isSupportedBy( this );
 	}
 
 	/**
@@ -611,10 +605,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 				return false;
 			}
 		}
-		if( unit instanceof KLunarAdditionalUnit ){
-			return true;
-		}
-		return false;
+		return unit != null && unit.isSupportedBy( this );
 	}
 
 	@Override

@@ -51,6 +51,11 @@ public enum LunarMonthUnit implements TemporalUnit
 	}
 
 	@Override
+	public boolean isSupportedBy ( Temporal temporal ) {
+		return temporal.getClass() == KLunarDate.class;
+	}
+
+	@Override
 	public < R extends Temporal > R addTo ( R temporal , long amount ) {
 		// TODO Auto-generated method stub
 		return null;
