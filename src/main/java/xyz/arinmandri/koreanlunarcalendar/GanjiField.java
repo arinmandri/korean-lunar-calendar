@@ -11,9 +11,9 @@ import java.time.temporal.ValueRange;
 
 public enum GanjiField implements TemporalField
 {
-	SECHA   (ChronoUnit.YEARS,  KLunarAdditionalUnit.YEAR_GAPJAS,  ValueRange.of( 1, 60 )),// 세차(년의 간지)
-	WOLGEON (ChronoUnit.MONTHS, KLunarAdditionalUnit.MONTH_GAPJAS, ValueRange.of( 1, 60 )),// 월건(월의 간지)
-	ILJIN   (ChronoUnit.DAYS,   KLunarAdditionalUnit.DAY_GAPJAS,   ValueRange.of( 1, 60 )),// 일진(일의 간지)
+	SECHA   (ChronoUnit.YEARS,  Gapja.YEAR_GAPJAS,  ValueRange.of( 1, 60 )),// 세차(년의 간지)
+	WOLGEON (ChronoUnit.MONTHS, Gapja.MONTH_GAPJAS, ValueRange.of( 1, 60 )),// 월건(월의 간지)
+	ILJIN   (ChronoUnit.DAYS,   Gapja.DAY_GAPJAS,   ValueRange.of( 1, 60 )),// 일진(일의 간지)
 	// XXX 시진도...?
 	;
 

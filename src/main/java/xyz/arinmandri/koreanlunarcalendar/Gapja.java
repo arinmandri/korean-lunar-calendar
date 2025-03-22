@@ -5,19 +5,8 @@ import java.time.temporal.Temporal;
 import java.time.temporal.TemporalUnit;
 
 
-public enum KLunarAdditionalUnit implements TemporalUnit {
+public enum Gapja implements TemporalUnit {
 	DAY_GAPJAS   (Duration.ofSeconds( 60 * 60 * 60 * 24 ), false),// 60일
-
-	/**
-	 * 음력의 윤달 때문에 [년-월-일]만으로 날짜를 다 표현하지 못한다.
-	 * 예: 2004년에는 1월, 2월, 윤2월, 3월, ...이 있다.
-	 * 이를 (1월), (2월, 윤2월), (3월), ... 식으로 같은 수의 월끼리 묶는다.
-	 * 이 묶음 단위를 나타낸다.
-	 * 
-	 * @see Leap#MONTH
-	 */
-	MONTH_GROUPS(Duration.ofSeconds( 153_084_657L ), true),// 1개월이나 2개월
-
 	MONTH_GAPJAS (Duration.ofSeconds( 153_084_657L ), true),// 60개월 // 19년마다 7개 윤달이라 치자. 19년마다 19*12+7개월. 1년마다 ((19*12+7)/19)개월 ... 60 * 31_556_925L / ( ( 19 * 12 + 7 ) / 19.0 )
 	YEAR_GAPJAS  (Duration.ofSeconds( 60 * 31_556_925L ), true),// 60년 // 1년 평균 Tropical Year 365.2421896698일 * 하루 86400초 = 1년 31,556,925.18747072초 https://en.wikipedia.org/wiki/Tropical_year
 	;
@@ -25,7 +14,7 @@ public enum KLunarAdditionalUnit implements TemporalUnit {
 	private final Duration duration;
 	private final boolean isDurationEstimated;
 
-	private KLunarAdditionalUnit( Duration duration , boolean isDurationEstimated ) {
+	private Gapja( Duration duration , boolean isDurationEstimated ) {
 		this.duration = duration;
 		this.isDurationEstimated = isDurationEstimated;
 	}
