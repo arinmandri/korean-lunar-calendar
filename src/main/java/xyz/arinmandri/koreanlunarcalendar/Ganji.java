@@ -16,7 +16,7 @@ public enum Ganji
 
 	private Ganji() {
 		this.gan = Gan.values()[ordinal() % Gan.values().length];
-		this.ji  = Ji .values()[ordinal() % Ji .values().length];
+		this.ji = Ji.values()[ordinal() % Ji.values().length];
 	}
 
 	public String toString () {
@@ -38,17 +38,18 @@ public enum Ganji
 		return String.valueOf( gan.c ) + String.valueOf( ji.c );
 	}
 
-	public enum Gan {
-		O1('갑', '甲'),
-		O2('을', '乙'),
-		O3('병', '丙'),
-		O4('정', '丁'),
-		O5('무', '戊'),
-		O6('기', '己'),
-		O7('경', '庚'),
-		O8('신', '辛'),
-		O9('임', '壬'),
-		O10('계', '癸'),
+	public enum Gan
+	{
+		O1 ('갑', '甲'),
+		O2 ('을', '乙'),
+		O3 ('병', '丙'),
+		O4 ('정', '丁'),
+		O5 ('무', '戊'),
+		O6 ('기', '己'),
+		O7 ('경', '庚'),
+		O8 ('신', '辛'),
+		O9 ('임', '壬'),
+		O10 ('계', '癸'),
 		;
 
 		public final char k;
@@ -64,19 +65,20 @@ public enum Ganji
 		}
 	}
 
-	public enum Ji {
-		O1('자', '子'),
-		O2('축', '丑'),
-		O3('인', '寅'),
-		O4('묘', '卯'),
-		O5('진', '辰'),
-		O6('사', '巳'),
-		O7('오', '午'),
-		O8('미', '未'),
-		O9('신', '申'),
-		O10('유', '酉'),
-		O11('술', '戌'),
-		O12('해', '亥'),
+	public enum Ji
+	{
+		O1 ('자', '子'),
+		O2 ('축', '丑'),
+		O3 ('인', '寅'),
+		O4 ('묘', '卯'),
+		O5 ('진', '辰'),
+		O6 ('사', '巳'),
+		O7 ('오', '午'),
+		O8 ('미', '未'),
+		O9 ('신', '申'),
+		O10 ('유', '酉'),
+		O11 ('술', '戌'),
+		O12 ('해', '亥'),
 		;
 
 		public final char k;
