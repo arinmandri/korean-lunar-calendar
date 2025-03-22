@@ -64,9 +64,9 @@ public enum LunarMonthField implements TemporalField
 
 	@Override
 	public ValueRange rangeRefinedBy ( TemporalAccessor temporal ) {
-		if(temporal instanceof KLunarDate) {
+		if( temporal instanceof KLunarDate ){
 			KLunarDate kd = (KLunarDate) temporal;
-			switch(this) {
+			switch( this ){
 			case MONTH_N:{
 				return ValueRange.of( 0, 12 );
 			}

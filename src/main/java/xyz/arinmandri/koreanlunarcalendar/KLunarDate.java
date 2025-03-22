@@ -130,7 +130,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	//// ================================ CREATION
 
 	public static KLunarDate now () {
-		long epochDay = (System.currentTimeMillis() / 1000 + TIME_ZONE_OFFSET) / (24 * 60 * 60);
+		long epochDay = ( System.currentTimeMillis() / 1000 + TIME_ZONE_OFFSET ) / ( 24 * 60 * 60 );
 		return ofEpochDay( epochDay );
 	}
 
@@ -366,15 +366,15 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		return IsoEra.CE;
 	}
 
-	public int getYear() {
+	public int getYear () {
 		return year;
 	}
 
-	public int getMonth() {
+	public int getMonth () {
 		return month;
 	}
 
-	public int getDay() {
+	public int getDay () {
 		return day;
 	}
 
@@ -389,7 +389,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	/**
 	 * 이번 년도의 몇 번째 날인가
 	 */
-	public int getDayOfYear() {
+	public int getDayOfYear () {
 		return d0 + 1;
 	}
 
@@ -413,7 +413,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	 * @return true 윤달
 	 *         false 평달
 	 */
-	public boolean isLeapMonth() {
+	public boolean isLeapMonth () {
 		return isLeapMonth;
 	}
 
