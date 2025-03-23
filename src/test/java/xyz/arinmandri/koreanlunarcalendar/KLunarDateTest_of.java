@@ -74,7 +74,7 @@ public class KLunarDateTest_of
 
 			KLunarDate kd2;
 			try{
-				kd2 = KLunarDate.of( y, m, d, true );
+				kd2 = KLunarDate.of( y, m, true, d );
 			}
 			catch( NonexistentDateException e ){
 				fail( "음력 날짜 " + '-' + i( m ) + '-' + i( d ) + "L(윤달) 이 KLunarDate에서 없는 날짜로 나오지만 KASI 제공 날짜가 확인됩니다." );
