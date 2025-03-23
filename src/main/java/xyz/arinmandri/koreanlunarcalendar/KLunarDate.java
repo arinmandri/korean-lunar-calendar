@@ -147,7 +147,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	 * @throws NonexistentDateException 해당 날짜 없음
 	 * @throws OutOfRangeException      지원 범위 밖
 	 */
-	public static KLunarDate of ( int year , int month , int day , boolean isLeapMonth ) {
+	public static KLunarDate of ( int year , int month , boolean isLeapMonth , int day ) {
 
 		if( year < YEAR_MIN ) throw new OutOfRangeException();
 		if( month < 1 ) throw new NonexistentDateException();
@@ -198,7 +198,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	 * @throws OutOfRangeException      지원 범위 밖
 	 */
 	public static KLunarDate of ( int year , int month , int day ) {
-		return of( year, month, day, false );
+		return of( year, month, false, day );
 	}
 
 	/**
@@ -713,7 +713,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	 * @throws NonexistentDateException 그런 날짜가 없으면 (예: 이년도 1월이 대월이고 1월 30일에서 plusYears(n) 했는데 n년 후 1월이 소월이라 1월 30일이 없는 경우)
 	 */
 	public KLunarDate plusHardYears ( int n ) throws OutOfRangeException , NonexistentDateException {
-		return of( year + n, month, day, isLeapMonth );
+		return null;// TODO
 	}
 
 	public KLunarDate plusYears ( int a ) {
