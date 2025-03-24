@@ -22,7 +22,7 @@ import java.time.temporal.TemporalField;
 import java.time.temporal.TemporalQuery;
 import java.time.temporal.TemporalUnit;
 import java.time.temporal.UnsupportedTemporalTypeException;
-import java.time.temporal.ValueRange;;
+import java.time.temporal.ValueRange;
 
 
 /**
@@ -58,14 +58,16 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	 * 15비트: 이 주기의 첫날과 이 년의 첫 날의 날짜 차이 (일 단위)
 	 *         yd >>> 17
 	 * 4비트: 몇 월에 윤달이 있나 (예: 이 값이 1이면 1월에 윤달이 있으며 2번째 달이 윤달이다.) (0xF인 경우 윤달 없음) (이 값이 0인 경우는 없음)
-	 *        (yd >>> 13) & 0xF
+	 *        int leapMonth = ( yd >>> 13 ) & 0xF // 윤달이 있는 달
+	 *        leapMonth == 0xF // 이 해에 윤달 없음
+	 *        leapMonth == month // 이 달에 윤달 있음
 	 * 13비트: 각 월의 대소(0:소 1:대) (0번째 달부터 12번째 달까지 윤달도 똑같이 한 달로 취급, 1의자리부터 1월)
 	 *         if( ( ( yd >>> m0 ) & 0x1 ) == 0x1 ) 대
 	 *         if( ( ( yd >>> m0 ) & 0x1 ) == 0x0 ) 소
 	 *
 	 * 마지막 요소 빼고는 다 크기 60에 맞춰야 함.
 	 */
-	private static final int[][] ydss = {// yd = ydss[c0][y0]
+	private static final int[][] ydss = {// int yd = ydss[c0][y0]
 	        {
 	                0x0001E6D4, 0x02C4ADA9, 0x05C5EEC9, 0x088BEE92, 0x0B4E8D26, 0x0E4DE527, 0x11114A57, 0x1411E95B, 0x16D7EB5A, 0x199CD6D4, // 1864
 	                0x1C9DE754, 0x1F61E749, 0x2224B693, 0x2525EA93, 0x27E9E52B, 0x2AAC6A5B, 0x2DADE96D, 0x3072EB6A, 0x3373EDAA, 0x3639EBA4, // 1874
@@ -638,7 +640,6 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	public KLunarDate withMonth ( int month ) {
 		if( month == this.month )
 		    return this;
-		// TODO 범위판정 ???
 		return resolvePreviousValidDay_LD( year, month, isLeapMonth, day );
 	}
 
@@ -727,37 +728,38 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		return 0;// TODO
 	}
 
-	/**
-	 * 윤달 조정, 일 조정
-	 * 
-	 * @param year
-	 * @param month
-	 * @param isLeapMonth
-	 * @param day
-	 * @return
-	 */
-	private static KLunarDate resolvePreviousValidDay_LD ( int year , int month , boolean isLeapMonth , int day ) {
-		// TODO
-		return KLunarDate.of( year, month, isLeapMonth, day );
+	private static KLunarDate resolvePreviousValidDay_LD ( final int year , final int month , boolean isLeapMonth , int day ) {
+		/*
+		 * 윤달 조정
+		 * │ 입력값이 평달이면 윤달 조정 할 거 없음
+		 * └ 입력값으로 윤달이 없는 달이 지정된 경우 평달로 조정
+		 * 그 뒤에 일 조정
+		 */
+
+		if( !isLeapMonth ){
+			return resolvePreviousValidDay_D( year, month, isLeapMonth, day );
+		}
+
+		final int c0 = ( year - YEAR_MIN ) / CYCLE_SIZE;
+		final int y0 = ( year - YEAR_MIN ) % CYCLE_SIZE;
+		final int yd = ydss[c0][y0];
+		final int leapMonth = ( yd >>> 13 ) & 0xF;
+		if( leapMonth == month ){// 윤달이 있는 달
+			return resolvePreviousValidDay_D( year, month, isLeapMonth, day );
+		}
+		return resolvePreviousValidDay_D( year, month, false, day );
 	}
 
-	/**
-	 * 일 조정
-	 * 
-	 * @param year
-	 * @param month
-	 * @param isLeapMonth
-	 * @param day
-	 * @return
-	 */
 	private static KLunarDate resolvePreviousValidDay_D ( int year , int month , boolean isLeapMonth , int day ) {
-		if( day <= LIL_MONTH_SIZE )
-		    return KLunarDate.of( year, month, isLeapMonth, day );
+		/*
+		 * 일 조정
+		 * 지정된 달이 소월인데 30일이면 29일로 조정
+		 */
 
 		if( day > LIL_MONTH_SIZE ){
 			KLunarDate withDay29 = of( year, month, isLeapMonth, LIL_MONTH_SIZE );
 			if( withDay29.isBigMonth() ){
-				return of( year, month, isLeapMonth, LIL_MONTH_SIZE );
+				return of( year, month, isLeapMonth, day );
 			}
 			else{
 				return withDay29;
