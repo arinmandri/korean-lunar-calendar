@@ -328,32 +328,6 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		return LocalDate.ofEpochDay( toEpochDay() );
 	}
 
-	/**
-	 * 날짜 셈 결과가 무효한 날짜일 때 유효한 날짜로 자동조정.
-	 * - 소월 30일을 29일로 조정.
-	 * - 없는 윤달을 평달로 조정.
-	 * 이 외엔 조정하지 않고 에러로 취급
-	 * 
-	 * @param year
-	 * @param month
-	 * @param day
-	 * @param isLeapMonth
-	 * @return
-	 */
-	private static KLunarDate resolvePreviousValid ( int year , int month , int day , boolean isLeapMonth ) {
-		// TODO 윤달 어케함?
-		if( day == 30 ){
-			KLunarDate withDay29 = KLunarDate.of( year, month, 29, isLeapMonth );
-			if( withDay29.isBigMonth() ){
-				return KLunarDate.of( year, month, 30, isLeapMonth );
-			}
-			else{
-				return withDay29;
-			}
-		}
-		return KLunarDate.of( year, month, day, isLeapMonth );
-	}
-
 	//// ================================ GETTER
 
 	@Override
@@ -615,11 +589,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 
 	/**
 	 * 지정한 필드 값을 바꾼 KLunarDate 개체를 반환.
-	 * 하지만 지정한 그 필드만 바뀌는 게 아니다 두둥.
-	 * - 대월에서 소월로 바꾸면 30일이 29일로 자동 조정된다.
-	 * - 윤달이 없는 달로 바꾸면 윤달이 평달로 바뀐다.
-	 * 말일로 하고 싶으면 lastDayOfMonth같은 메서드나 따로 만들지 왜 수치를 마음대로 바꿔버리는지 모르겠지만 LocalDate도 그리 구현돼있고 인터페이스에 그리 적혀있다.
-	 * 거꾸로 30일이 없는 달에서 30일을 설정하는 경우는 에러이다.
+	 * TODO
 	 * 
 	 * @param field    조정할 필드 not null
 	 * @param newValue 그 필드에 새로 넣을 값
@@ -662,32 +632,30 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	public KLunarDate withYear ( int year ) {
 		if( year == this.year )
 		    return this;
-		return resolvePreviousValid( year, month, day, isLeapMonth );
+		return resolvePreviousValidDay_LD( year, month, isLeapMonth, day );
 	}
 
 	public KLunarDate withMonth ( int month ) {
 		if( month == this.month )
 		    return this;
-		return resolvePreviousValid( year, month, day, isLeapMonth );
+		// TODO 범위판정 ???
+		return resolvePreviousValidDay_LD( year, month, isLeapMonth, day );
+	}
+
+	public KLunarDate withMonthLeap ( boolean isLeapMonth ) {
+		if( isLeapMonth == this.isLeapMonth )
+		    return this;
+		return resolvePreviousValidDay_D( year, month, isLeapMonth, day );
 	}
 
 	public KLunarDate withDay ( int day ) {
 		if( day == this.day )
 		    return this;
-		// TODO 대월 30일에서 소월로 바꾸는 경우에는 29일로 자동조정 하는데 소월에서 with 30일 하면 에러 돼야 함.
-		return resolvePreviousValid( year, month, day, isLeapMonth );
+		return of( year, month, isLeapMonth, day );
 	}
 
-	public KLunarDate withDayOfYear ( int day ) {
-		return null;// TODO
-	}
-
-	public KLunarDate withMonthLeap () {
-		return null;// TODO
-	}
-
-	public KLunarDate withCommonMonth () {
-		return null;// TODO
+	public KLunarDate withDayOfYear ( int dayOfYear ) {
+		return ofYearDay( year, dayOfYear );
 	}
 
 	// TODO with 간지
@@ -757,6 +725,45 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	@Override
 	public long until ( Temporal endExclusive , TemporalUnit unit ) {
 		return 0;// TODO
+	}
+
+	/**
+	 * 윤달 조정, 일 조정
+	 * 
+	 * @param year
+	 * @param month
+	 * @param isLeapMonth
+	 * @param day
+	 * @return
+	 */
+	private static KLunarDate resolvePreviousValidDay_LD ( int year , int month , boolean isLeapMonth , int day ) {
+		// TODO
+		return KLunarDate.of( year, month, isLeapMonth, day );
+	}
+
+	/**
+	 * 일 조정
+	 * 
+	 * @param year
+	 * @param month
+	 * @param isLeapMonth
+	 * @param day
+	 * @return
+	 */
+	private static KLunarDate resolvePreviousValidDay_D ( int year , int month , boolean isLeapMonth , int day ) {
+		if( day <= LIL_MONTH_SIZE )
+		    return KLunarDate.of( year, month, isLeapMonth, day );
+
+		if( day > LIL_MONTH_SIZE ){
+			KLunarDate withDay29 = of( year, month, isLeapMonth, LIL_MONTH_SIZE );
+			if( withDay29.isBigMonth() ){
+				return of( year, month, isLeapMonth, LIL_MONTH_SIZE );
+			}
+			else{
+				return withDay29;
+			}
+		}
+		return of( year, month, isLeapMonth, day );
 	}
 
 	//// ================================ ChronoLocalDate - TemporalAdjuster
