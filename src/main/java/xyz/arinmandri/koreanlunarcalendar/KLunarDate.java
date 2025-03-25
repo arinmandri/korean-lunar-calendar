@@ -634,19 +634,19 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	public KLunarDate withYear ( int year ) {
 		if( year == this.year )
 		    return this;
-		return resolvePreviousValidDay_LD( year, month, isLeapMonth, day );
+		return resolvePreviousValid_LD( year, month, isLeapMonth, day );
 	}
 
 	public KLunarDate withMonth ( int month ) {
 		if( month == this.month )
 		    return this;
-		return resolvePreviousValidDay_LD( year, month, isLeapMonth, day );
+		return resolvePreviousValid_LD( year, month, isLeapMonth, day );
 	}
 
 	public KLunarDate withMonthLeap ( boolean isLeapMonth ) {
 		if( isLeapMonth == this.isLeapMonth )
 		    return this;
-		return resolvePreviousValidDay_D( year, month, isLeapMonth, day );
+		return resolvePreviousValid_D( year, month, isLeapMonth, day );
 	}
 
 	public KLunarDate withDay ( int day ) {
@@ -728,7 +728,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		return 0;// TODO
 	}
 
-	private static KLunarDate resolvePreviousValidDay_LD ( final int year , final int month , boolean isLeapMonth , int day ) {
+	private static KLunarDate resolvePreviousValid_LD ( final int year , final int month , boolean isLeapMonth , int day ) {
 		/*
 		 * 윤달 조정
 		 * │ 입력값이 평달이면 윤달 조정 할 거 없음
@@ -737,7 +737,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		 */
 
 		if( !isLeapMonth ){
-			return resolvePreviousValidDay_D( year, month, isLeapMonth, day );
+			return resolvePreviousValid_D( year, month, isLeapMonth, day );
 		}
 
 		final int c0 = ( year - YEAR_MIN ) / CYCLE_SIZE;
@@ -745,12 +745,12 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		final int yd = ydss[c0][y0];
 		final int leapMonth = ( yd >>> 13 ) & 0xF;
 		if( leapMonth == month ){// 윤달이 있는 달
-			return resolvePreviousValidDay_D( year, month, isLeapMonth, day );
+			return resolvePreviousValid_D( year, month, isLeapMonth, day );
 		}
-		return resolvePreviousValidDay_D( year, month, false, day );
+		return resolvePreviousValid_D( year, month, false, day );
 	}
 
-	private static KLunarDate resolvePreviousValidDay_D ( int year , int month , boolean isLeapMonth , int day ) {
+	private static KLunarDate resolvePreviousValid_D ( int year , int month , boolean isLeapMonth , int day ) {
 		/*
 		 * 일 조정
 		 * 지정된 달이 소월인데 30일이면 29일로 조정
