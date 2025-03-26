@@ -2,6 +2,7 @@ package xyz.arinmandri.koreanlunarcalendar;
 
 import static xyz.arinmandri.koreanlunarcalendar.Ganji.CYCLE_SIZE;
 
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -13,6 +14,7 @@ import java.time.chrono.Era;
 import java.time.chrono.IsoEra;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAdjuster;
 import java.time.temporal.TemporalAmount;
@@ -20,7 +22,7 @@ import java.time.temporal.TemporalField;
 import java.time.temporal.TemporalQuery;
 import java.time.temporal.TemporalUnit;
 import java.time.temporal.UnsupportedTemporalTypeException;
-import java.time.temporal.ValueRange;;
+import java.time.temporal.ValueRange;
 
 
 /**
@@ -56,14 +58,16 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	 * 15비트: 이 주기의 첫날과 이 년의 첫 날의 날짜 차이 (일 단위)
 	 *         yd >>> 17
 	 * 4비트: 몇 월에 윤달이 있나 (예: 이 값이 1이면 1월에 윤달이 있으며 2번째 달이 윤달이다.) (0xF인 경우 윤달 없음) (이 값이 0인 경우는 없음)
-	 *        (yd >>> 13) & 0xF
+	 *        int leapMonth = ( yd >>> 13 ) & 0xF // 윤달이 있는 달
+	 *        leapMonth == 0xF // 이 해에 윤달 없음
+	 *        leapMonth == month // 이 달에 윤달 있음
 	 * 13비트: 각 월의 대소(0:소 1:대) (0번째 달부터 12번째 달까지 윤달도 똑같이 한 달로 취급, 1의자리부터 1월)
 	 *         if( ( ( yd >>> m0 ) & 0x1 ) == 0x1 ) 대
 	 *         if( ( ( yd >>> m0 ) & 0x1 ) == 0x0 ) 소
 	 *
 	 * 마지막 요소 빼고는 다 크기 60에 맞춰야 함.
 	 */
-	private static final int[][] ydss = {// yd = ydss[c0][y0]
+	private static final int[][] ydss = {// int yd = ydss[c0][y0]
 	        {
 	                0x0001E6D4, 0x02C4ADA9, 0x05C5EEC9, 0x088BEE92, 0x0B4E8D26, 0x0E4DE527, 0x11114A57, 0x1411E95B, 0x16D7EB5A, 0x199CD6D4, // 1864
 	                0x1C9DE754, 0x1F61E749, 0x2224B693, 0x2525EA93, 0x27E9E52B, 0x2AAC6A5B, 0x2DADE96D, 0x3072EB6A, 0x3373EDAA, 0x3639EBA4, // 1874
@@ -128,7 +132,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	//// ================================ CREATION
 
 	public static KLunarDate now () {
-		long epochDay = (System.currentTimeMillis() / 1000 + TIME_ZONE_OFFSET) / (24 * 60 * 60);
+		long epochDay = ( System.currentTimeMillis() / 1000 + TIME_ZONE_OFFSET ) / ( 24 * 60 * 60 );
 		return ofEpochDay( epochDay );
 	}
 
@@ -171,7 +175,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		        : LIL_MONTH_SIZE;
 
 		//// 이 해의 몇번째 날인지 찾기
-		if( day > monthSize ) throw new NonexistentDateException();
+		if( day > monthSize ) throw new NonexistentDateException( "The size of " + year + '-' + month + " is smaller than " + day );
 		int d0 = 0;
 		for( int i = 0 ; i < m0 ; i++ ){// 이전월까지의 일수 합
 			d0 += ( ( yd >>> i ) & 0x1 ) == 1
@@ -338,15 +342,15 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		return IsoEra.CE;
 	}
 
-	public int getYear() {
+	public int getYear () {
 		return year;
 	}
 
-	public int getMonth() {
+	public int getMonth () {
 		return month;
 	}
 
-	public int getDay() {
+	public int getDay () {
 		return day;
 	}
 
@@ -361,7 +365,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	/**
 	 * 이번 년도의 몇 번째 날인가
 	 */
-	public int getDayOfYear() {
+	public int getDayOfYear () {
 		return d0 + 1;
 	}
 
@@ -385,8 +389,33 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	 * @return true 윤달
 	 *         false 평달
 	 */
-	public boolean isLeapMonth() {
+	public boolean isLeapMonth () {
 		return isLeapMonth;
+	}
+
+	/**
+	 * 몇 월에 윤달이 있는지 반환
+	 * 
+	 * @return 윤달이 있는 월
+	 *         윤달이 없는 해인 경우 0
+	 */
+	public int getLeapMonth () {
+		int yd = ydss[c0][y0];
+		int lm = ( yd >>> 13 ) & 0xF;
+		return lm == 0xF ? 0 : lm;
+	}
+
+	/**
+	 * 대월소월
+	 * 
+	 * @return true 대월
+	 *         false 소월
+	 */
+	public boolean isBigMonth () {
+		final int yd = ydss[c0][y0];
+		if( ( ( yd >>> m0 ) & 0x1 ) == 0x1 )
+		    return true;
+		return false;
 	}
 
 	/**
@@ -462,10 +491,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 				return false;
 			}
 		}
-		if( field instanceof GanjiField ){
-			return true;
-		}
-		return false;
+		return field != null && field.isSupportedBy( this );
 	}
 
 	/**
@@ -494,9 +520,6 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 			}
 			throw new UnsupportedTemporalTypeException( "Unsupported field: " + field );
 		}
-		if( field instanceof GanjiField ){
-			return field.range();
-		}
 		return field.rangeRefinedBy( this );
 	}
 
@@ -523,22 +546,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 				throw new UnsupportedTemporalTypeException( "Unsupported field: " + field );
 			}
 		}
-		// XXX TemporalField.getFrom(TemporalAccessor)
-		if( field instanceof GanjiField ){
-			switch( (GanjiField) field ){
-			case SECHA:
-				return getSecha().ordinal() + 1;
-			case WOLGEON:
-				return getWolgeon().ordinal() + 1;
-			case ILJIN:
-				return getIljin().ordinal() + 1;
-			default:
-				break;
-			}
-			throw new UnsupportedTemporalTypeException( "Unsupported field: " + field );
-		}
-
-		throw new UnsupportedTemporalTypeException( "Unsupported field: " + field );
+		return (int) field.getFrom( this );
 	}
 
 	@Override
@@ -562,7 +570,18 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 
 	@Override
 	public boolean isSupported ( TemporalUnit unit ) {
-		return false;// TODO
+		if( unit == null ) return false;
+		if( unit instanceof ChronoUnit ){
+			switch( (ChronoUnit) unit ){
+			case DAYS:
+			case MONTHS:
+			case YEARS:
+				return true;
+			default:
+				return false;
+			}
+		}
+		return unit != null && unit.isSupportedBy( this );
 	}
 
 	@Override
@@ -570,30 +589,95 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		return null;// TODO
 	}
 
+	/**
+	 * 지정한 필드 값을 바꾼 KLunarDate 개체를 반환.
+	 * TODO
+	 * 
+	 * @param field    조정할 필드 not null
+	 * @param newValue 그 필드에 새로 넣을 값
+	 * 
+	 * @return 값 조정된 개체 not null
+	 * 
+	 * @throws DateTimeException                if the field cannot be set
+	 * @throws UnsupportedTemporalTypeException if the field is not supported
+	 */
 	@Override
 	public KLunarDate with ( TemporalField field , long newValue ) {
-		return null;// TODO
+
+		if( field instanceof ChronoField ){
+			ChronoField chronoField = (ChronoField) field;
+			chronoField.checkValidValue( newValue );
+			switch( chronoField ){
+			case DAY_OF_MONTH:
+				return withDay( (int) newValue );
+			case DAY_OF_YEAR:
+				return withDayOfYear( (int) newValue );
+			case EPOCH_DAY:
+				return KLunarDate.ofEpochDay( newValue );
+			case MONTH_OF_YEAR:
+				return withMonth( (int) newValue );
+			case YEAR:
+			case YEAR_OF_ERA:
+				return withYear( (int) newValue );
+			case ERA:
+				if( getLong( ChronoField.ERA ) == newValue )
+				    return this;
+				else
+				    throw new OutOfRangeException();
+			default:
+				throw new UnsupportedTemporalTypeException( "Unsupported field: " + field );
+			}
+		}
+		return field.adjustInto( this, newValue );
 	}
 
 	public KLunarDate withYear ( int year ) {
-		return null;// TODO
+		if( year == this.year )
+		    return this;
+		return resolvePreviousValid_LD( year, month, isLeapMonth, day );
+	}
+
+	public KLunarDate withMonth ( int year , int month ) {
+		if( year == this.year && month == this.month )
+		    return this;
+		return resolvePreviousValid_LD( year, month, isLeapMonth, day );
+	}
+
+	public KLunarDate withMonth ( int year , int month , boolean isLeapMonth ) {
+		if( year == this.year && month == this.month && isLeapMonth == this.isLeapMonth )
+		    return this;
+		return resolvePreviousValid_D( year, month, isLeapMonth, day );
 	}
 
 	public KLunarDate withMonth ( int month ) {
-		return null;// TODO
+		if( month == this.month )
+		    return this;
+		return resolvePreviousValid_LD( year, month, isLeapMonth, day );
+	}
+
+	public KLunarDate withMonth ( int month , boolean isLeapMonth ) {
+		if( month == this.month && isLeapMonth == this.isLeapMonth )
+		    return this;
+		return resolvePreviousValid_D( year, month, isLeapMonth, day );
+	}
+
+	public KLunarDate withMonthLeap ( boolean isLeapMonth ) {
+		if( isLeapMonth == this.isLeapMonth )
+		    return this;
+		return resolvePreviousValid_D( year, month, isLeapMonth, day );
 	}
 
 	public KLunarDate withDay ( int day ) {
-		return null;// TODO
+		if( day == this.day )
+		    return this;
+		return of( year, month, isLeapMonth, day );
 	}
 
-	public KLunarDate withLeapMonth () {
-		return null;// TODO
+	public KLunarDate withDayOfYear ( int dayOfYear ) {
+		return ofYearDay( year, dayOfYear );
 	}
 
-	public KLunarDate withCommonMonth () {
-		return null;// TODO
-	}
+	// TODO with 간지
 
 	@Override
 	public KLunarDate plus ( TemporalAmount amount ) {
@@ -660,6 +744,46 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	@Override
 	public long until ( Temporal endExclusive , TemporalUnit unit ) {
 		return 0;// TODO
+	}
+
+	private static KLunarDate resolvePreviousValid_LD ( final int year , final int month , boolean isLeapMonth , int day ) {
+		/*
+		 * 윤달 조정
+		 * │ 입력값이 평달이면 윤달 조정 할 거 없음
+		 * └ 입력값으로 윤달이 없는 달이 지정된 경우 평달로 조정
+		 * 그 뒤에 일 조정
+		 */
+
+		if( !isLeapMonth ){
+			return resolvePreviousValid_D( year, month, isLeapMonth, day );
+		}
+
+		final int c0 = ( year - YEAR_MIN ) / CYCLE_SIZE;
+		final int y0 = ( year - YEAR_MIN ) % CYCLE_SIZE;
+		final int yd = ydss[c0][y0];
+		final int leapMonth = ( yd >>> 13 ) & 0xF;
+		if( leapMonth == month ){// 윤달이 있는 달
+			return resolvePreviousValid_D( year, month, isLeapMonth, day );
+		}
+		return resolvePreviousValid_D( year, month, false, day );
+	}
+
+	private static KLunarDate resolvePreviousValid_D ( int year , int month , boolean isLeapMonth , int day ) {
+		/*
+		 * 일 조정
+		 * 지정된 달이 소월인데 30일이면 29일로 조정
+		 */
+
+		if( day > LIL_MONTH_SIZE ){
+			KLunarDate withDay29 = of( year, month, isLeapMonth, LIL_MONTH_SIZE );
+			if( withDay29.isBigMonth() ){
+				return of( year, month, isLeapMonth, day );
+			}
+			else{
+				return withDay29;
+			}
+		}
+		return of( year, month, isLeapMonth, day );
 	}
 
 	//// ================================ ChronoLocalDate - TemporalAdjuster

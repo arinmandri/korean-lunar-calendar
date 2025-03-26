@@ -5,6 +5,7 @@ import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAccessor;
 import java.time.temporal.TemporalField;
 import java.time.temporal.TemporalUnit;
+import java.time.temporal.UnsupportedTemporalTypeException;
 import java.time.temporal.ValueRange;
 
 
@@ -58,20 +59,50 @@ public enum LunarMonthField implements TemporalField
 
 	@Override
 	public boolean isSupportedBy ( TemporalAccessor temporal ) {
-		// TODO Auto-generated method stub
-		return false;
+		return temporal.getClass() == KLunarDate.class;
 	}
 
 	@Override
 	public ValueRange rangeRefinedBy ( TemporalAccessor temporal ) {
-		// TODO Auto-generated method stub
+		if( temporal instanceof KLunarDate ){
+			KLunarDate kd = (KLunarDate) temporal;
+			switch( this ){
+			case MONTH_N:{
+				return ValueRange.of( 0, 12 );
+			}
+			case MONTH_LEAP:{
+				if( kd.isLeapMonth() )
+				    return range;
+				if( kd.getLeapMonth() == kd.getMonth() )// TODO ??? 이거 맞음?
+				    return range;
+				return ValueRange.of( 0, 0 );
+			}
+			default:
+				break;
+			}
+		}
 		return null;
 	}
 
 	@Override
 	public long getFrom ( TemporalAccessor temporal ) {
-		// TODO Auto-generated method stub
-		return 0;
+		if( temporal instanceof KLunarDate ){
+			KLunarDate kd = (KLunarDate) temporal;
+			switch( this ){
+			case MONTH_N:{
+				return kd.getMonth();
+			}
+			case MONTH_LEAP:{
+				if( kd.isLeapMonth() )
+				    return 1;
+				else
+				    return 0;
+			}
+			default:
+				break;
+			}
+		}
+		throw new UnsupportedTemporalTypeException( "Unsupported field: " + this );
 	}
 
 	@Override
