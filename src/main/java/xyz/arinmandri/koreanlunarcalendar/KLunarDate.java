@@ -637,10 +637,28 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		return resolvePreviousValid_LD( year, month, isLeapMonth, day );
 	}
 
+	public KLunarDate withMonth ( int year , int month ) {
+		if( year == this.year && month == this.month )
+		    return this;
+		return resolvePreviousValid_LD( year, month, isLeapMonth, day );
+	}
+
+	public KLunarDate withMonth ( int year , int month , boolean isLeapMonth ) {
+		if( year == this.year && month == this.month && isLeapMonth == this.isLeapMonth )
+		    return this;
+		return resolvePreviousValid_D( year, month, isLeapMonth, day );
+	}
+
 	public KLunarDate withMonth ( int month ) {
 		if( month == this.month )
 		    return this;
 		return resolvePreviousValid_LD( year, month, isLeapMonth, day );
+	}
+
+	public KLunarDate withMonth ( int month , boolean isLeapMonth ) {
+		if( month == this.month && isLeapMonth == this.isLeapMonth )
+		    return this;
+		return resolvePreviousValid_D( year, month, isLeapMonth, day );
 	}
 
 	public KLunarDate withMonthLeap ( boolean isLeapMonth ) {
