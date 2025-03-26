@@ -809,21 +809,6 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		return null;// TODO
 	}
 
-	@Override
-	public boolean isAfter ( ChronoLocalDate other ) {
-		return this.toEpochDay() > other.toEpochDay();
-	}
-
-	@Override
-	public boolean isBefore ( ChronoLocalDate other ) {
-		return this.toEpochDay() < other.toEpochDay();
-	}
-
-	@Override
-	public boolean isEqual ( ChronoLocalDate other ) {
-		return this.toEpochDay() == other.toEpochDay();
-	}
-
 	//// ================================ 변환
 
 	/**
