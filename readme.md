@@ -22,9 +22,9 @@ KLunarDate kd = KLunarDate.now();
 
 // 특정 음력 날짜(평달)
 kd = KLunarDate.of( 2004, 2, 1 );
-kd = KLunarDate.of( 2004, 2, 1, false );
+kd = KLunarDate.of( 2004, 2, false, 1 );
 // 특정 음력 날짜(윤달)
-kd = KLunarDate.of( 2004, 2, 1, true );
+kd = KLunarDate.of( 2004, 2, true, 1 );
 // 특정 년의 n번째 날짜
 kd = KLunarDate.ofYearDay( 2004, 30 );
 ```
