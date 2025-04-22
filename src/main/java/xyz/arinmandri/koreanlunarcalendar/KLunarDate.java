@@ -262,7 +262,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 
 		//// 주기 찾기
 		int c0 = ydss.length;
-		for( ; c0 >= 0 ; c0 -= 1 ){// 미래에서부터 선형탐색 (일단 주기 개수 적어서 걍 선형탐색... 주기 수 많아지면 1주기의 대략의 크기로 점프 가능할 듯
+		for( ; c0 >= 0 ; c0 -= 1 ){// 미래에서부터 선형탐색 (XXX 일단 주기 개수 적어서 걍 선형탐색... 주기 수 많아지면 1주기의 대략의 크기로 점프 가능할 듯
 			if( epochDay >= epochDays[c0] ){
 				int jDay = (int) ( epochDay - epochDays[c0] );
 
@@ -759,7 +759,10 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	 * @return n년 뒤의 날짜
 	 */
 	public KLunarDate plusMonths ( int n ) {
-		return null;// TODO
+		int mAvgLength = LunarMonthUnit.LMONTHS.getDurationInDays();
+
+		long e = toEpochDay() + (long) n * mAvgLength;// XXX range
+		return resolveClosestDayOfMonth( ofEpochDay( e ), day );// XXX 지원범위 끝에서 끝까지 가도 한 달의 평균길이의 실제와 LunarMonthUnit.LMONTHS의 차이가 일정 범위를 안 벗어나는가?
 	}
 
 	/**
@@ -770,7 +773,84 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	 * @return n년 앞의 날짜
 	 */
 	public KLunarDate minusMonths ( int n ) {
-		return null;// TODO
+		int mAvgLength = LunarMonthUnit.LMONTHS.getDurationInDays();
+
+		long e = toEpochDay() - (long) n * mAvgLength;// XXX range
+		return resolveClosestDayOfMonth( ofEpochDay( e ), day );
+	}
+
+	private KLunarDate resolveClosestDayOfMonth ( KLunarDate kd , int day ) {
+		int kdd = kd.getDay();
+		if( kdd == day )
+		    return kd;
+
+		int diff = kdd - kdd;
+		if( diff < -15 ){
+			return kd.nextMonth().withDay( day );
+		}
+		if( 15 < diff ){
+			return kd.prevMonth().withDay( day );
+		}
+		return kd.withDay( day );
+	}
+
+	public KLunarDate nextMonth () {
+		int yd = ydss[c0][y0];
+		int leapMonth = ( yd >>> 13 ) & 0xF;
+
+		//// 이 달이 올해의 마지막 달인가?
+		boolean thisIsLastMonthOfYear;{
+			if( month < 12 ){
+				thisIsLastMonthOfYear = false;
+			}
+			else{// 12월임
+				if( leapMonth == 12 && !isLeapMonth ){// 올해 윤12월 있고 이 날짜는 평달임
+					thisIsLastMonthOfYear = false;
+				}
+				else{
+					thisIsLastMonthOfYear = true;
+				}
+			}
+		}
+
+		if( thisIsLastMonthOfYear ){
+			return resolvePreviousValid_D( year + 1, 1, false, day );
+		}
+		else{
+			if( leapMonth == month )
+			    return resolvePreviousValid_D( year, month, true, day );
+			else
+			    return resolvePreviousValid_D( year, month + 1, false, day );
+		}
+	}
+
+	public KLunarDate prevMonth () {
+		if( isLeapMonth ){
+			return resolvePreviousValid_D( year, month, false, day );
+		}
+
+		if( m0 == 0 ){// 이 달이 올해의 첫 달
+			int yd;
+			{
+				if( y0 > 0 ){
+					yd = ydss[c0][y0 - 1];
+				}
+				else{
+					if( c0 > 0 ){
+						yd = ydss[c0 - 1][ydss[c0 - 1].length - 1];
+					}
+					throw new OutOfRangeException();
+				}
+			}
+			int leapMonth = ( yd >>> 13 ) & 0xF;
+			if( leapMonth == 12 )
+			    return resolvePreviousValid_D( year, 12, true, day );
+			else
+			    return resolvePreviousValid_D( year, 12, false, day );
+		}
+		else{
+			return resolvePreviousValid_LD( year, month, true, day );
+		}
 	}
 
 	/**
