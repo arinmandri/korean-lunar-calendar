@@ -1,5 +1,6 @@
 package xyz.arinmandri.koreanlunarcalendar;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static xyz.arinmandri.koreanlunarcalendar.Ganji.CYCLE_SIZE;
 
 import java.time.LocalDate;
@@ -116,6 +117,13 @@ public class KLunarDateTest
 		return item.getSolYear()  == ld.getYear()
 		    && item.getSolMonth() == ld.getMonthValue()
 		    && item.getSolDay()   == ld.getDayOfMonth();
+	}
+
+	void checkValue ( KLunarDate kd , int y , int m , boolean isLeapMonth , int d ) {
+		assertEquals( y, kd.getYear() );
+		assertEquals( m, kd.getMonth() );
+		assertEquals( isLeapMonth, kd.isLeapMonth() );
+		assertEquals( d, kd.getDay() );
 	}
 
 	LocalDate getRandomLd () {// 지원범위0 내에서
