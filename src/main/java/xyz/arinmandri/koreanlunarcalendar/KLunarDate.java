@@ -15,7 +15,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
-import java.time.temporal.TemporalAmount;
 import java.time.temporal.TemporalField;
 import java.time.temporal.TemporalUnit;
 import java.time.temporal.UnsupportedTemporalTypeException;
@@ -665,23 +664,38 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	//// ================================ 셈 - plus, minus
 
 	@Override
-	public KLunarDate plus ( TemporalAmount amount ) {
-		return null;// TODO
-	}
-
-	@Override
 	public KLunarDate plus ( long amountToAdd , TemporalUnit unit ) {
-		return null;// TODO
-	}
+		if( amountToAdd > Integer.MAX_VALUE || amountToAdd < Integer.MIN_VALUE )
+		    throw new OutOfRangeException();
 
-	@Override
-	public KLunarDate minus ( TemporalAmount amount ) {
-		return null;// TODO
+		int amountToAddInt = (int) amountToAdd;
+
+		if( unit instanceof ChronoUnit ){
+			ChronoUnit chronoUnit = (ChronoUnit) unit;
+			switch( chronoUnit ){
+			case DAYS:
+				return plusDays( amountToAddInt );
+			case MONTHS:
+				return plusMonths( amountToAddInt );
+			case YEARS:
+				return plusYears( amountToAddInt );
+			case DECADES:
+				return plusYears( Math.multiplyExact( amountToAddInt, 10 ) );
+			case CENTURIES:
+				return plusYears( Math.multiplyExact( amountToAddInt, 100 ) );
+			case MILLENNIA:
+				return plusYears( Math.multiplyExact( amountToAddInt, 1000 ) );
+			default:
+				throw new UnsupportedTemporalTypeException( "Unsupported unit: " + unit );
+			}
+		}
+
+		return unit.addTo( this, amountToAdd );
 	}
 
 	@Override
 	public KLunarDate minus ( long amountToSubtract , TemporalUnit unit ) {
-		return null;// TODO
+		return plus( -amountToSubtract, unit );
 	}
 
 	/**
@@ -974,6 +988,9 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 //	@Override public < R > R query ( TemporalQuery<R> query )
 //	@Override public KLunarDate with ( TemporalAdjuster adjuster )
 //	@Override public int compareTo ( ChronoLocalDate other )
+
+//	@Override public KLunarDate plus ( TemporalAmount amount )
+//	@Override public KLunarDate minus ( TemporalAmount amount )
 
 	//// ================================ TODO serialize
 
