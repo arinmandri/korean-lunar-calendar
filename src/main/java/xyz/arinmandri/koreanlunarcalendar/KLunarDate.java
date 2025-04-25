@@ -161,11 +161,17 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		int yd = ydss[c0][y0];
 
 		//// 몇번째 월인지 찾기
+		int m0;
 		int leapMonth = ( yd >>> 13 ) & 0xF;
 		boolean hasLeapMonth = leapMonth < month;
-		int m0 = month - 1
-		        + ( hasLeapMonth ? 1 : 0 )
-		        + ( isLeapMonth ? 1 : 0 );
+		if( isLeapMonth ){
+			if( leapMonth != month )
+			    throw new NonexistentDateException( "No leap month in " + year + '-' + month );
+			m0 = month + ( hasLeapMonth ? 1 : 0 );
+		}
+		else{
+			m0 = month - 1 + ( hasLeapMonth ? 1 : 0 );
+		}
 
 		int monthSize = ( ( yd >> m0 ) & 0x1 ) == 0x1
 		        ? BIG_MONTH_SIZE
