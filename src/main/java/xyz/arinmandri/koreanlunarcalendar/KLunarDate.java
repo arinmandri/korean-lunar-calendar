@@ -979,13 +979,14 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 
 	@Override
 	public String toString () {
+		int d = isLeapMonth ? day + BIG_MONTH_SIZE : day;
+
 		StringBuilder sb = new StringBuilder( 10 );
 		return sb.append( year )
 		        .append( month < 10 ? "-0" : "-" )
 		        .append( month )
-		        .append( day < 10 ? "-0" : "-" )
-		        .append( day )
-		        .append( isLeapMonth ? "L" : "" )
+		        .append( d < 10 ? "-0" : "-" )
+		        .append( d )
 		        .toString();
 	}
 
