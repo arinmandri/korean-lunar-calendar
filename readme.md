@@ -138,7 +138,7 @@ System.out.println( kd.getIljin().toChineseString() + "일" );
 
 TODO 덧뺄셈, 특정 필드 값 변경, 비교
 
-※ `KLunarDate`는 `java.time.LocalDate`와 마찬가지로 불변의 데이터클래스이며 셈 메서드들은 개체의 값이 바꾸는 기능이 아니고 새 값의 새 개체를 반환한다.
+※ `KLunarDate`는 `java.time.LocalDate`와 마찬가지로 불변의 데이터클래스이며 셈 메서드들은 개체의 값이 바뀌는 기능이 아니고 새 값의 새 개체를 반환한다.
 
 
 
