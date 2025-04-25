@@ -119,6 +119,13 @@ public class KLunarDateTest
 		    && item.getSolDay()   == ld.getDayOfMonth();
 	}
 
+	void checkKdRoundtrip ( int y , int m , boolean isLeapMonth , int d ) {
+		KLunarDate kd = KLunarDate.of( y, m, isLeapMonth, d );
+		LocalDate ld = kd.toLocalDate();
+		kd = KLunarDate.from( ld );
+		checkValue( kd, y, m, isLeapMonth, d );
+	}
+
 	void checkValue ( KLunarDate kd , int y , int m , boolean isLeapMonth , int d ) {
 		assertEquals( y, kd.getYear() );
 		assertEquals( m, kd.getMonth() );
