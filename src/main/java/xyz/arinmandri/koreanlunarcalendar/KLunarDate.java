@@ -15,7 +15,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
-import java.time.temporal.TemporalAmount;
 import java.time.temporal.TemporalField;
 import java.time.temporal.TemporalUnit;
 import java.time.temporal.UnsupportedTemporalTypeException;
@@ -268,7 +267,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 
 		//// 주기 찾기
 		int c0 = ydss.length;
-		for( ; c0 >= 0 ; c0 -= 1 ){// 미래에서부터 선형탐색 (일단 주기 개수 적어서 걍 선형탐색... 주기 수 많아지면 1주기의 대략의 크기로 점프 가능할 듯
+		for( ; c0 >= 0 ; c0 -= 1 ){// 미래에서부터 선형탐색 (XXX 일단 주기 개수 적어서 걍 선형탐색... 주기 수 많아지면 1주기의 대략의 크기로 점프 가능할 듯
 			if( epochDay >= epochDays[c0] ){
 				int jDay = (int) ( epochDay - epochDays[c0] );
 
@@ -671,31 +670,69 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	//// ================================ 셈 - plus, minus
 
 	@Override
-	public KLunarDate plus ( TemporalAmount amount ) {
-		return null;// TODO
+	public KLunarDate plus ( long amountToAdd , TemporalUnit unit ) {
+		if( amountToAdd > Integer.MAX_VALUE || amountToAdd < Integer.MIN_VALUE )
+		    throw new OutOfRangeException();
+
+		int amountToAddInt = (int) amountToAdd;
+
+		if( unit instanceof ChronoUnit ){
+			ChronoUnit chronoUnit = (ChronoUnit) unit;
+			switch( chronoUnit ){
+			case DAYS:
+				return plusDays( amountToAddInt );
+			case MONTHS:
+				return plusMonths( amountToAddInt );
+			case YEARS:
+				return plusYears( amountToAddInt );
+			case DECADES:
+				return plusYears( Math.multiplyExact( amountToAddInt, 10 ) );
+			case CENTURIES:
+				return plusYears( Math.multiplyExact( amountToAddInt, 100 ) );
+			case MILLENNIA:
+				return plusYears( Math.multiplyExact( amountToAddInt, 1000 ) );
+			default:
+				throw new UnsupportedTemporalTypeException( "Unsupported unit: " + unit );
+			}
+		}
+
+		return unit.addTo( this, amountToAdd );
 	}
 
 	@Override
-	public KLunarDate plus ( long amountToAdd , TemporalUnit unit ) {
-		return null;// TODO
+	public KLunarDate minus ( long amountToSubtract , TemporalUnit unit ) {
+		return plus( -amountToSubtract, unit );
 	}
 
 	/**
-	 * n년 뒤의 날짜.
+	 * n년 뒤.
 	 *
 	 * @param n 몇년 뒤의 날짜?
 	 * 
 	 * @return n년 뒤의 날짜.
+	 *         null : 그런 날짜가 없으면 (예: 이년도 1월이 대월이고 1월 30일에서 plusYears(n) 했는데 n년 후 1월이 소월이라 1월 30일이 없는 경우)
 	 * 
-	 * @throws OutOfRangeException      지원 범위 내에 그런 날짜가 없으면
-	 * @throws NonexistentDateException 그런 날짜가 없으면 (예: 이년도 1월이 대월이고 1월 30일에서 plusYears(n) 했는데 n년 후 1월이 소월이라 1월 30일이 없는 경우)
+	 * @throws OutOfRangeException 지원 범위 내에 그런 날짜가 없으면
 	 */
-	public KLunarDate plusHardYears ( int n ) throws OutOfRangeException , NonexistentDateException {
-		return null;// TODO
+	public KLunarDate plusHardYears ( int n ) throws OutOfRangeException {
+		try{
+			return of( year + n, month, isLeapMonth, day );
+		}
+		catch( NonexistentDateException e ){
+			return null;
+		}
 	}
 
-	public KLunarDate plusYears ( int a ) {
-		return null;// TODO
+	/**
+	 * n년 뒤.
+	 * 윤달에서 윤달 없는 년도로 가면 평달로 조정.
+	 * 대월 30일에서 소월로 가면 29일로 조정.
+	 * 
+	 * @param n
+	 * @return n년 뒤의 날짜
+	 */
+	public KLunarDate plusYears ( int n ) {
+		return resolvePreviousValid_LD( year + n, month, isLeapMonth, day );
 	}
 
 	/**
@@ -706,13 +743,13 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	 *         예: 그 뒤로 윤 11월 30일이 다시는 나타나지 않았음.
 	 */
 	public KLunarDate nextYear () {
-		for( int n = 1 ; n < 999 ; n++ ){
+		int max = YEAR_MAX - YEAR_MIN;
+		for( int n = 1 ; n < max ; n++ ){
 			KLunarDate kld;
 			try{
 				kld = plusHardYears( n );
-			}
-			catch( NonexistentDateException e ){
-				continue;
+				if( kld == null )
+				    continue;
 			}
 			catch( OutOfRangeException e ){
 				return null;
@@ -722,14 +759,138 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		return null;
 	}
 
-	@Override
-	public KLunarDate minus ( TemporalAmount amount ) {
-		return null;// TODO
+	/**
+	 * n년 앞.
+	 * 윤달에서 윤달 없는 년도로 가면 평달로 조정.
+	 * 대월 30일에서 소월로 가면 29일로 조정.
+	 * 
+	 * @param n
+	 * @return n년 앞의 날짜
+	 */
+	public KLunarDate minusYears ( int n ) {
+		return resolvePreviousValid_LD( year - n, month, isLeapMonth, day );
 	}
 
-	@Override
-	public KLunarDate minus ( long amountToSubtract , TemporalUnit unit ) {
-		return null;// TODO
+	/**
+	 * n월 뒤.
+	 * 대월 30일에서 소월로 가면 29일로 조정.
+	 * 
+	 * @param n
+	 * @return n년 뒤의 날짜
+	 */
+	public KLunarDate plusMonths ( int n ) {
+		int mAvgLength = LunarMonthUnit.LMONTHS.getDurationInDays();
+
+		long e = toEpochDay() + (long) n * mAvgLength;// XXX range
+		return resolveClosestDayOfMonth( ofEpochDay( e ), day );// XXX 지원범위 끝에서 끝까지 가도 한 달의 평균길이의 실제와 LunarMonthUnit.LMONTHS의 차이가 일정 범위를 안 벗어나는가?
+	}
+
+	/**
+	 * n월 앞.
+	 * 대월 30일에서 소월로 가면 29일로 조정.
+	 * 
+	 * @param n
+	 * @return n년 앞의 날짜
+	 */
+	public KLunarDate minusMonths ( int n ) {
+		int mAvgLength = LunarMonthUnit.LMONTHS.getDurationInDays();
+
+		long e = toEpochDay() - (long) n * mAvgLength;// XXX range
+		return resolveClosestDayOfMonth( ofEpochDay( e ), day );
+	}
+
+	private KLunarDate resolveClosestDayOfMonth ( KLunarDate kd , int day ) {
+		int kdd = kd.getDay();
+		if( kdd == day )
+		    return kd;
+
+		int diff = kdd - kdd;
+		if( diff < -15 ){
+			return kd.nextMonth().withDay( day );
+		}
+		if( 15 < diff ){
+			return kd.prevMonth().withDay( day );
+		}
+		return kd.withDay( day );
+	}
+
+	public KLunarDate nextMonth () {
+		int yd = ydss[c0][y0];
+		int leapMonth = ( yd >>> 13 ) & 0xF;
+
+		//// 이 달이 올해의 마지막 달인가?
+		boolean thisIsLastMonthOfYear;{
+			if( month < 12 ){
+				thisIsLastMonthOfYear = false;
+			}
+			else{// 12월임
+				if( leapMonth == 12 && !isLeapMonth ){// 올해 윤12월 있고 이 날짜는 평달임
+					thisIsLastMonthOfYear = false;
+				}
+				else{
+					thisIsLastMonthOfYear = true;
+				}
+			}
+		}
+
+		if( thisIsLastMonthOfYear ){
+			return resolvePreviousValid_D( year + 1, 1, false, day );
+		}
+		else{
+			if( leapMonth == month )
+			    return resolvePreviousValid_D( year, month, true, day );
+			else
+			    return resolvePreviousValid_D( year, month + 1, false, day );
+		}
+	}
+
+	public KLunarDate prevMonth () {
+		if( isLeapMonth ){
+			return resolvePreviousValid_D( year, month, false, day );
+		}
+
+		if( m0 == 0 ){// 이 달이 올해의 첫 달
+			int yd;
+			{
+				if( y0 > 0 ){
+					yd = ydss[c0][y0 - 1];
+				}
+				else{
+					if( c0 > 0 ){
+						yd = ydss[c0 - 1][ydss[c0 - 1].length - 1];
+					}
+					throw new OutOfRangeException();
+				}
+			}
+			int leapMonth = ( yd >>> 13 ) & 0xF;
+			if( leapMonth == 12 )
+			    return resolvePreviousValid_D( year, 12, true, day );
+			else
+			    return resolvePreviousValid_D( year, 12, false, day );
+		}
+		else{
+			return resolvePreviousValid_LD( year, month, true, day );
+		}
+	}
+
+	/**
+	 * n일 뒤
+	 * 
+	 * @param n
+	 * @return
+	 */
+	public KLunarDate plusDays ( int n ) {
+		return ofEpochDay( toEpochDayInt() + n );// 여기 다들 범위가 int 한참 아래랍니다.
+	}
+
+	/**
+	 * n일 전
+	 * 
+	 * @param n
+	 * @return
+	 */
+	public KLunarDate minusDays ( int n ) {
+		return ofEpochDay( toEpochDayInt() - n );
 	}
 
 	//// ================================ 셈 - 비교
@@ -792,6 +953,10 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 
 	@Override
 	public long toEpochDay () {
+		return toEpochDayInt();
+	}
+
+	public int toEpochDayInt () {
 		return epochDays[c0] + ( ydss[c0][y0] >>> 17 ) + d0;
 	}
 
@@ -829,6 +994,9 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 //	@Override public < R > R query ( TemporalQuery<R> query )
 //	@Override public KLunarDate with ( TemporalAdjuster adjuster )
 //	@Override public int compareTo ( ChronoLocalDate other )
+
+//	@Override public KLunarDate plus ( TemporalAmount amount )
+//	@Override public KLunarDate minus ( TemporalAmount amount )
 
 	//// ================================ TODO serialize
 
