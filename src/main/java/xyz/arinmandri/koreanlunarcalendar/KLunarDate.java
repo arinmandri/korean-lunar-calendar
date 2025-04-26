@@ -934,6 +934,23 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	//// ================================ 변환
 
 	/**
+	 * 다른(날짜/시각)값-->음력
+	 *
+	 * @param temporal TemporalAccessor
+	 * 
+	 * @return 음력 날짜
+	 * 
+	 * @throws OutOfRangeException 지원 범위 밖
+	 */
+	public static KLunarDate from ( final TemporalAccessor temporal ) {
+		Objects.requireNonNull( temporal, "temporal" );
+
+		long epochDay = temporal.get( ChronoField.EPOCH_DAY );
+
+		return ofEpochDay( epochDay );
+	}
+
+	/**
 	 * 음력-->양력
 	 *
 	 * @return 양력 날짜
@@ -941,22 +958,6 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	public LocalDate toLocalDate () {
 
 		return LocalDate.ofEpochDay( toEpochDay() );
-	}
-
-	/**
-	 * 양력-->음력
-	 *
-	 * @param ld 양력 날짜
-	 * 
-	 * @return 음력 날짜
-	 * 
-	 * @throws OutOfRangeException 지원 범위 밖
-	 */
-	public static KLunarDate from ( final LocalDate ld ) {
-
-		int epochDay = (int) ld.toEpochDay();
-
-		return ofEpochDay( epochDay );
 	}
 
 	@Override
