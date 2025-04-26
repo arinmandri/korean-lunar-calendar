@@ -705,7 +705,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 			switch( chronoUnit ){
 			case DAYS:
 				return plusDays( amountToAddInt );
-			case MONTHS:// TODO month: LMONTHS, LMONTH_BUNDLES 어느 쪽에 대응할까가 늘 고민
+			case MONTHS:
 				return plusMonths( amountToAddInt );
 			case YEARS:
 				return plusYears( amountToAddInt );
@@ -813,6 +813,8 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		return resolveClosestDayOfMonth( ofEpochDay( e ), day );// XXX 지원범위 끝에서 끝까지 가도 한 달의 평균길이의 실제와 LunarMonthUnit.LMONTHS의 차이가 일정 범위를 안 벗어나는가?
 	}
 
+//	TODO public KLunarDate plusOrdinaryMonths(int n) {}
+
 	/**
 	 * n월 앞.
 	 * 대월 30일에서 소월로 가면 29일로 조정.
@@ -826,6 +828,8 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		long e = toEpochDay() - (long) n * mAvgLength;// XXX range
 		return resolveClosestDayOfMonth( ofEpochDay( e ), day );
 	}
+
+//	TODO public KLunarDate minusOrdinaryMonths(int n) {}
 
 	private KLunarDate resolveClosestDayOfMonth ( KLunarDate kd , int day ) {
 		int kdd = kd.getDay();
@@ -942,8 +946,8 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		switch( chronoUnit ){
 		case DAYS:
 			return end.toEpochDay() - toEpochDay();
-		case MONTHS:// TODO month: LMONTHS, LMONTH_BUNDLES 어느 쪽에 대응할까가 늘 고민
-			throw new RuntimeException( "TODO" );
+		case MONTHS:
+			return LunarMonthUnit.LMONTHS.between( this, end );
 		case YEARS:
 			return untilYear( end );
 		case DECADES:
