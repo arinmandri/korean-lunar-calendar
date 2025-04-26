@@ -931,27 +931,32 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	public long until ( Temporal endExclusive , TemporalUnit unit ) {
 		KLunarDate end = KLunarDate.from( endExclusive );
 		if( unit instanceof ChronoUnit ){
-			ChronoUnit chronoUnit = (ChronoUnit) unit;
-			switch( chronoUnit ){
-			case DAYS:
-				return end.toEpochDay() - toEpochDay();
-			case MONTHS:// TODO month: LMONTHS, LMONTH_BUNDLES 어느 쪽에 대응할까가 늘 고민
-				throw new RuntimeException( "TODO" );
-			case YEARS:
-				return untilYear( end );
-			case DECADES:
-				return untilYear( end ) / 10;
-			case CENTURIES:
-				return untilYear( end ) / 100;
-			case MILLENNIA:
-				return untilYear( end ) / 1000;// 사실 지원범위가 1000년이 안 됨.
-			case ERAS:
-				return 0;
-			default:
-				throw new UnsupportedTemporalTypeException( "Unsupported unit: " + unit );
-			}
+			if( end.isBefore( this ) )
+			    return end.until0( this, (ChronoUnit) unit );
+			return until0( end, (ChronoUnit) unit );
 		}
 		return unit.between( this, end );
+	}
+
+	private long until0 ( KLunarDate end , ChronoUnit chronoUnit ) {// this>=end
+		switch( chronoUnit ){
+		case DAYS:
+			return end.toEpochDay() - toEpochDay();
+		case MONTHS:// TODO month: LMONTHS, LMONTH_BUNDLES 어느 쪽에 대응할까가 늘 고민
+			throw new RuntimeException( "TODO" );
+		case YEARS:
+			return untilYear( end );
+		case DECADES:
+			return untilYear( end ) / 10;
+		case CENTURIES:
+			return untilYear( end ) / 100;
+		case MILLENNIA:
+			return untilYear( end ) / 1000;// 사실 지원범위가 1000년이 안 됨.
+		case ERAS:
+			return 0;
+		default:
+			throw new UnsupportedTemporalTypeException( "Unsupported unit: " + chronoUnit );
+		}
 	}
 
 	@Override
