@@ -15,10 +15,12 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
+import java.time.temporal.TemporalAccessor;
 import java.time.temporal.TemporalField;
 import java.time.temporal.TemporalUnit;
 import java.time.temporal.UnsupportedTemporalTypeException;
 import java.time.temporal.ValueRange;
+import java.util.Objects;
 
 
 /**
@@ -1005,7 +1007,9 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		int d = isLeapMonth ? day + BIG_MONTH_SIZE : day;
 
 		StringBuilder sb = new StringBuilder( 10 );
-		return sb.append( year )
+		return sb.append( getChronology().toString() )
+		        .append( ' ' )
+		        .append( year )
 		        .append( month < 10 ? "-0" : "-" )
 		        .append( month )
 		        .append( d < 10 ? "-0" : "-" )
