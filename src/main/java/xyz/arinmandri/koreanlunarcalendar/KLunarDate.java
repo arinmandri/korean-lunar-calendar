@@ -15,10 +15,12 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
+import java.time.temporal.TemporalAccessor;
 import java.time.temporal.TemporalField;
 import java.time.temporal.TemporalUnit;
 import java.time.temporal.UnsupportedTemporalTypeException;
 import java.time.temporal.ValueRange;
+import java.util.Objects;
 
 
 /**
@@ -703,7 +705,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 			switch( chronoUnit ){
 			case DAYS:
 				return plusDays( amountToAddInt );
-			case MONTHS:
+			case MONTHS:// TODO month: LMONTHS, LMONTH_BUNDLES 어느 쪽에 대응할까가 늘 고민
 				return plusMonths( amountToAddInt );
 			case YEARS:
 				return plusYears( amountToAddInt );
@@ -713,6 +715,10 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 				return plusYears( Math.multiplyExact( amountToAddInt, 100 ) );
 			case MILLENNIA:
 				return plusYears( Math.multiplyExact( amountToAddInt, 1000 ) );
+			case ERAS:
+				if( amountToAdd != 0L )
+				    throw new OutOfRangeException();
+				return this;
 			default:
 				throw new UnsupportedTemporalTypeException( "Unsupported unit: " + unit );
 			}
@@ -923,12 +929,61 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 
 	@Override
 	public long until ( Temporal endExclusive , TemporalUnit unit ) {
-		return 0;// TODO
+		KLunarDate end = KLunarDate.from( endExclusive );
+		if( unit instanceof ChronoUnit ){
+			ChronoUnit chronoUnit = (ChronoUnit) unit;
+			switch( chronoUnit ){
+			case DAYS:
+				return end.toEpochDay() - toEpochDay();
+			case MONTHS:// TODO month: LMONTHS, LMONTH_BUNDLES 어느 쪽에 대응할까가 늘 고민
+				throw new RuntimeException( "TODO" );
+			case YEARS:
+				return untilYear( end );
+			case DECADES:
+				return untilYear( end ) / 10;
+			case CENTURIES:
+				return untilYear( end ) / 100;
+			case MILLENNIA:
+				return untilYear( end ) / 1000;// 사실 지원범위가 1000년이 안 됨.
+			case ERAS:
+				return 0;
+			default:
+				throw new UnsupportedTemporalTypeException( "Unsupported unit: " + unit );
+			}
+		}
+		return unit.between( this, end );
 	}
 
 	@Override
 	public ChronoPeriod until ( ChronoLocalDate endDateExclusive ) {
 		return null;// TODO
+	}
+
+	public int untilYear ( KLunarDate end ) {
+		int diff = getYear() - end.getYear();
+
+		if( getMonth() > end.getMonth() ){
+			return diff;
+		}
+		if( getMonth() < end.getMonth() ){
+			return diff - 1;
+		}
+
+		if( isLeapMonth() && !isLeapMonth() ){
+			return diff;
+		}
+		if( !isLeapMonth() && isLeapMonth() ){
+			return diff - 1;
+		}
+
+		if( getDay() > end.getDay() ){
+			return diff;
+		}
+		if( getDay() < end.getDay() ){
+			return diff - 1;
+		}
+
+		return diff;
 	}
 
 	//// ================================ 변환
