@@ -23,20 +23,19 @@ public final class KLunarPeriod implements java.time.chrono.ChronoPeriod
 
 	private static final List<TemporalUnit> SUPPORTED_UNITS = List.of( YEARS, MONTHS, DAYS );
 
-	public KLunarPeriod( int years , int months , int days ) {
-		super();
-		this.years = years;
-		this.months = months;
-		this.monthLeapingMode = false;
-		this.days = days;
-	}
-
-	public KLunarPeriod( int years , int months , boolean monthLeapingMode , int days ) {
-		super();
+	private KLunarPeriod( int years , int months , boolean monthLeapingMode , int days ) {
 		this.years = years;
 		this.months = months;
 		this.monthLeapingMode = monthLeapingMode;
 		this.days = days;
+	}
+
+	public static KLunarPeriod of ( int years , int months , int days ) {
+		return new KLunarPeriod( years , months , false , days );
+	}
+
+	public static KLunarPeriod of ( int years , int months , boolean monthLeapingMode , int days ) {
+		return new KLunarPeriod( years , months , monthLeapingMode , days );
 	}
 
 	@Override

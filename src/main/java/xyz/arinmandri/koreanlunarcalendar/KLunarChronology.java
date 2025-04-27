@@ -81,7 +81,7 @@ public class KLunarChronology extends AbstractChronology implements java.io.Seri
 
 	@Override
 	public KLunarPeriod period ( int years , int months , int days ) {
-		return new KLunarPeriod( years , months , days );
+		return KLunarPeriod.of( years, months, days );
 	}
     //// ================================ TODO serialize
 }

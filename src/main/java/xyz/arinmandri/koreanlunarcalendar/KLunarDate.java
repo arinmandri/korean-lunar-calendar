@@ -7,7 +7,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.chrono.ChronoLocalDate;
 import java.time.chrono.ChronoLocalDateTime;
-import java.time.chrono.ChronoPeriod;
 import java.time.chrono.Chronology;
 import java.time.chrono.Era;
 import java.time.chrono.IsoEra;
@@ -988,7 +987,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	 * @return 시간 간격(년,월,일)
 	 */
 	@Override
-	public ChronoPeriod until ( ChronoLocalDate endDateExclusive ) {
+	public KLunarPeriod until ( ChronoLocalDate endDateExclusive ) {
 		KLunarDate end = KLunarDate.from( endDateExclusive );
 		KLunarDate start = this;
 
