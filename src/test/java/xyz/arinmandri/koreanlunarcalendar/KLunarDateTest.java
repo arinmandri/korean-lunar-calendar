@@ -15,6 +15,7 @@ import xyz.arinmandri.kasiapi.Item;
 public class KLunarDateTest
 {
 	protected final int testSize = 1000;
+	protected final int testCheckSize = 200;
 	protected final int shortTestSize = 100;
 
 	ApiService api = ApiService.getInstance();
@@ -87,6 +88,9 @@ public class KLunarDateTest
 				i -= 1;
 				continue;
 			}
+			if( ( i + 1 ) % testCheckSize == 0 ){
+				System.out.println( "repeat-" + ( i + 1 ) );
+			}
 		}
 
 		System.out.println( "GOOD" );
@@ -142,6 +146,10 @@ public class KLunarDateTest
 		long n = ChronoUnit.DAYS.between( d1, d2 );// 시작일~종료일 일수
 		long randomDays = random.nextLong( n + 1 );// 랜덤 숫자 뽑기
 		return d1.plusDays( randomDays );
+	}
+
+	KLunarDate getRaondomKd () {
+		return KLunarDate.ofEpochDay( getRandomEpochDay() );
 	}
 
 	int getRandomEpochDay () {
