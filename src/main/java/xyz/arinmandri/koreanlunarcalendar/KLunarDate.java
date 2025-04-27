@@ -813,7 +813,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		return resolveClosestDayOfMonth( ofEpochDay( e ), day );// XXX 지원범위 끝에서 끝까지 가도 한 달의 평균길이의 실제와 LunarMonthUnit.LMONTHS의 차이가 일정 범위를 안 벗어나는가?
 	}
 
-//	TODO public KLunarDate plusOrdinaryMonths(int n) {}
+//	TODO public KLunarDate plusNamedMonths(int n) {}
 
 	/**
 	 * n월 앞.
@@ -829,7 +829,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		return resolveClosestDayOfMonth( ofEpochDay( e ), day );
 	}
 
-//	TODO public KLunarDate minusOrdinaryMonths(int n) {}
+//	TODO public KLunarDate minusNamedMonths(int n) {}
 
 	private KLunarDate resolveClosestDayOfMonth ( KLunarDate kd , int day ) {
 		int kdd = kd.getDay();
@@ -935,9 +935,9 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	public long until ( Temporal endExclusive , TemporalUnit unit ) {
 		KLunarDate end = KLunarDate.from( endExclusive );
 		if( unit instanceof ChronoUnit ){
-			if( end.isBefore( this ) )
-			    return end.until0( this, (ChronoUnit) unit );
-			return until0( end, (ChronoUnit) unit );
+			return this.isBefore( end )
+			        ? until0( end, (ChronoUnit) unit )
+			        : end.until0( this, (ChronoUnit) unit );
 		}
 		return unit.between( this, end );
 	}
@@ -968,27 +968,27 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		return null;// TODO
 	}
 
-	public int untilYear ( KLunarDate end ) {
-		int diff = getYear() - end.getYear();
+	private int untilYear ( KLunarDate end ) {
+		int diff = end.getYear() - getYear();
 
-		if( getMonth() > end.getMonth() ){
-			return diff;
-		}
 		if( getMonth() < end.getMonth() ){
+			return diff;
+		}
+		if( getMonth() > end.getMonth() ){
 			return diff - 1;
 		}
 
-		if( isLeapMonth() && !isLeapMonth() ){
+		if( !isLeapMonth() && end.isLeapMonth() ){
 			return diff;
 		}
-		if( !isLeapMonth() && isLeapMonth() ){
+		if( isLeapMonth() && !end.isLeapMonth() ){
 			return diff - 1;
 		}
 
-		if( getDay() > end.getDay() ){
-			return diff;
-		}
 		if( getDay() < end.getDay() ){
+			return diff;
+		}
+		if( getDay() > end.getDay() ){
 			return diff - 1;
 		}
 
