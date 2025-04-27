@@ -50,13 +50,13 @@ public class KLunarDateTest_from
 		testOne( MIN, true );
 		testOne( MIN.plusDays( 1 ), true );
 
-		testOne( MAX0.minusDays( 1 ), true );
-		testOne( MAX0, true );
-		testOne( MAX0.plusDays( 1 ), false );
-		testOneWithoutKASI( MAX0.plusDays( 1 ), true );
-		testOneWithoutKASI( MAX1.minusDays( 1 ), true );
-		testOneWithoutKASI( MAX1, true );
-		testOneWithoutKASI( MAX1.plusDays( 1 ), false );
+		testOne( MAX.minusDays( 1 ), true );
+		testOne( MAX, true );
+		testOne( MAX.plusDays( 1 ), false );
+		testOneWithoutKASI( MAX.plusDays( 1 ), true );
+		testOneWithoutKASI( MAX_KASI.minusDays( 1 ), true );
+		testOneWithoutKASI( MAX_KASI, true );
+		testOneWithoutKASI( MAX_KASI.plusDays( 1 ), false );
 
 		System.out.println( "지원범위 양끝 통과" );
 

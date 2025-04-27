@@ -22,6 +22,7 @@ public class KLunarDateTest
 	Random random = new Random( System.currentTimeMillis() );
 	ZoneId zoneId = ZoneId.of("Asia/Seoul");
 
+	// -------------------------
 	/*
 	 * KLunarDate private 값들 땜쳐옴
 	 */
@@ -71,9 +72,13 @@ public class KLunarDateTest
 	final int EPOCH_DAY_MIN = epochDays[0];
 	final int EPOCH_DAY_MAX = epochDays[epochDays.length - 1] - 1;
 
+	// -------------------------
+
+	final int EPOCH_DAY_MAX_KASI = 2470172 - EPOCH_0_JDAY;
+
 	final LocalDate MIN = LocalDate.ofEpochDay( EPOCH_DAY_MIN );
-	final LocalDate MAX0 = LocalDate.of( 2050, 12, 31 );// 정답의 기준이 한국천문연구원 API인데 의 지원범위보다 KLunarDate.MAX가 살짝 더 미래이기 때문에 한국천문연구원 API의 지원범위를 직접 입력함.
-	final LocalDate MAX1 = LocalDate.ofEpochDay( EPOCH_DAY_MAX );// 한국천문연구원 API를 안 쓰는 경우 여기까지 시험
+	final LocalDate MAX = LocalDate.of( 2050, 12, 31 );// 정답의 기준이 한국천문연구원 API인데 의 지원범위보다 KLunarDate.MAX가 살짝 더 미래이기 때문에 한국천문연구원 API의 지원범위를 직접 입력함.
+	final LocalDate MAX_KASI = LocalDate.ofEpochDay( EPOCH_DAY_MAX );// 한국천문연구원 API를 안 쓰는 경우 여기까지 시험
 
 	//// ================================ repeat test
 
@@ -138,7 +143,7 @@ public class KLunarDateTest
 	}
 
 	LocalDate getRandomLd () {// 지원범위0 내에서
-		return getRandomLd( MIN, MAX0 );
+		return getRandomLd( MIN, MAX );
 	}
 
 	LocalDate getRandomLd ( LocalDate d1 , LocalDate d2 ) {// 이상, 이하
@@ -154,6 +159,10 @@ public class KLunarDateTest
 
 	int getRandomEpochDay () {
 		return getRandomInt( EPOCH_DAY_MIN, EPOCH_DAY_MAX );
+	}
+
+	int getRandomEpochDay_kasi () {
+		return getRandomInt( EPOCH_DAY_MIN, EPOCH_DAY_MAX_KASI );
 	}
 
 	int getRandomInt ( int a , int b ) {// 이상, 이하

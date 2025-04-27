@@ -24,7 +24,7 @@ public class KLunarDateTest_of
 	}
 
 	private void testYmdl_one () {
-		final int y = getRandomInt( MIN.getYear(), MAX0.getYear() );
+		final int y = getRandomInt( MIN.getYear(), MAX.getYear() );
 		final int m = getRandomInt( 1, 12 );
 		final int d = getRandomInt( 1, 30 );
 
@@ -57,7 +57,7 @@ public class KLunarDateTest_of
 		}
 
 		LocalDate ld1 = kd1.toLocalDate();
-		if( ld1.isAfter( MAX0 ) ){// KASI 지원범위 넘는 날짜 나오면 테스트하지 말자
+		if( ld1.isAfter( MAX ) ){// KASI 지원범위 넘는 날짜 나오면 테스트하지 말자
 			throw new NoNeedToTest();
 		}
 

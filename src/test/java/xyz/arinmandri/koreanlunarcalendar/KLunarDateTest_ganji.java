@@ -18,7 +18,7 @@ public class KLunarDateTest_ganji extends KLunarDateTest
 
 	private void testOne () {
 
-		final int epochDay = getRandomEpochDay();
+		final int epochDay = getRandomEpochDay_kasi();
 		final int jDay = EPOCH_0_JDAY + epochDay;
 
 		KLunarDate kd = KLunarDate.ofEpochDay( epochDay );
