@@ -97,8 +97,8 @@ public final class KLunarPeriod implements java.time.chrono.ChronoPeriod
 	public ChronoPeriod normalized () {
 
 		if( monthLeapingMode ){
-			int y = years + months / KLunarDate.NORMAL_MONTH_NUMBER_IN_YEAR;
-			int m = months % KLunarDate.NORMAL_MONTH_NUMBER_IN_YEAR;
+			int y = years + months / KLunarDate.NAMED_MONTHS_NUMBER_IN_1Y;
+			int m = months % KLunarDate.NAMED_MONTHS_NUMBER_IN_1Y;
 			return of( y, m, true, days );
 		}
 		else{

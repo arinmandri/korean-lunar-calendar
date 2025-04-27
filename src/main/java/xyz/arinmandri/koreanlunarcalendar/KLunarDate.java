@@ -48,7 +48,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 
 	public static final int BIG_MONTH_SIZE = 30;// 대월의 일수
 	public static final int LIL_MONTH_SIZE = 29;// 소월의 일수
-	public static final int NORMAL_MONTH_NUMBER_IN_YEAR = 12;// 윤달을 빼면 1년의 달 수
+	public static final int NAMED_MONTHS_NUMBER_IN_1Y = 12;// 윤달을 빼면 1년의 달 수
 
 	/*
 	 * int 하나에 32비트로 한 해의 정보 저장
@@ -1075,7 +1075,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		int diff = end.getMonthOrdinal() - this.getMonthOrdinal();
 		diff -= ( getDay() > end.getDay() ? 1 : 0 );
 		diff += ( diff < 0 )
-		        ? NORMAL_MONTH_NUMBER_IN_YEAR
+		        ? NAMED_MONTHS_NUMBER_IN_1Y
 		                + ( this.isLeapYear() ? 1 : 0 )
 		        : 0;
 		return diff;
