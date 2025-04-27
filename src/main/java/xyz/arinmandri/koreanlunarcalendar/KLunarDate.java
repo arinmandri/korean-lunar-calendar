@@ -816,7 +816,18 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		return resolveClosestDayOfMonth( ofEpochDay( e ), day );// XXX 지원범위 끝에서 끝까지 가도 한 달의 평균길이의 실제와 LunarMonthUnit.LMONTHS의 차이가 일정 범위를 안 벗어나는가?
 	}
 
-//	TODO public KLunarDate plusNamedMonths(int n) {}
+	public KLunarDate plusNamedMonths ( int n ) {
+		if( n < 0 )
+		    return minusNamedMonths( -n );
+		if( n == 0 )
+		    return this;
+
+		int y = year;
+		int m0 = month - 1 + n;
+		y += m0 / NAMED_MONTHS_NUMBER_IN_1Y;
+		m0 %= NAMED_MONTHS_NUMBER_IN_1Y;
+		return resolvePreviousValid_LD( y, m0 + 1, isLeapMonth, day );
+	}
 
 	/**
 	 * n월 앞.
@@ -834,7 +845,21 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		return resolveClosestDayOfMonth( ofEpochDay( e ), day );
 	}
 
-//	TODO public KLunarDate minusNamedMonths(int n) {}
+	public KLunarDate minusNamedMonths ( int n ) {
+		if( n < 0 )
+		    return plusNamedMonths( -n );
+		if( n == 0 )
+		    return this;
+
+		int y = year;
+		int m = month - n;
+		if( m > 0 ){
+			return resolvePreviousValid_LD( y, m, isLeapMonth, day );
+		}
+		y += m / NAMED_MONTHS_NUMBER_IN_1Y - 1;
+		m = m % NAMED_MONTHS_NUMBER_IN_1Y + NAMED_MONTHS_NUMBER_IN_1Y;
+		return resolvePreviousValid_LD( y, m, isLeapMonth, day );
+	}
 
 	private KLunarDate resolveClosestDayOfMonth ( KLunarDate kd , int day ) {
 		int kdd = kd.getDay();
