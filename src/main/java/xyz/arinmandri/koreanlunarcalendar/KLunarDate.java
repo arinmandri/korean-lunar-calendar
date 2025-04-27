@@ -515,7 +515,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	 * @return iljin
 	 */
 	public Ganji getIljin () {
-		return Ganji.values()[( ( (int) toEpochDay() + 17 ) % CYCLE_SIZE + CYCLE_SIZE ) % CYCLE_SIZE];// 0 epoch day 는 신사(辛巳)일 = O18 // epoch day가 음수일 수도 있어서 a%c 대신 (a%c+c)%c
+		return Ganji.values()[( ( toEpochDayInt() + 17 ) % CYCLE_SIZE + CYCLE_SIZE ) % CYCLE_SIZE];// 0 epoch day 는 신사(辛巳)일 = O18 // epoch day가 음수일 수도 있어서 a%c 대신 (a%c+c)%c
 	}
 
 	@Override
