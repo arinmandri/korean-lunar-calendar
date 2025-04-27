@@ -79,5 +79,9 @@ public class KLunarChronology extends AbstractChronology implements java.io.Seri
         throw new UnsupportedOperationException("Unimplemented method 'range'");
     }
 
+	@Override
+	public KLunarPeriod period ( int years , int months , int days ) {
+		return new KLunarPeriod( years , months , days );
+	}
     //// ================================ TODO serialize
 }
