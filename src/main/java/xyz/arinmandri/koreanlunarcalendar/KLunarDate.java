@@ -7,7 +7,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.chrono.ChronoLocalDate;
 import java.time.chrono.ChronoLocalDateTime;
-import java.time.chrono.ChronoPeriod;
 import java.time.chrono.Chronology;
 import java.time.chrono.Era;
 import java.time.chrono.IsoEra;
@@ -49,6 +48,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 
 	public static final int BIG_MONTH_SIZE = 30;// 대월의 일수
 	public static final int LIL_MONTH_SIZE = 29;// 소월의 일수
+	public static final int NORMAL_MONTH_NUMBER_IN_YEAR = 12;// 윤달을 빼면 1년의 달 수
 
 	/*
 	 * int 하나에 32비트로 한 해의 정보 저장
@@ -715,6 +715,10 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 				return plusYears( Math.multiplyExact( amountToAddInt, 100 ) );
 			case MILLENNIA:
 				return plusYears( Math.multiplyExact( amountToAddInt, 1000 ) );
+			case ERAS:
+				if( amountToAdd != 0L )
+				    throw new OutOfRangeException();
+				return this;
 			default:
 				throw new UnsupportedTemporalTypeException( "Unsupported unit: " + unit );
 			}
@@ -756,6 +760,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	 * @return n년 뒤의 날짜
 	 */
 	public KLunarDate plusYears ( int n ) {
+		if( n == 0 ) return this;
 		return resolvePreviousValid_LD( year + n, month, isLeapMonth, day );
 	}
 
@@ -792,6 +797,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	 * @return n년 앞의 날짜
 	 */
 	public KLunarDate minusYears ( int n ) {
+		if( n == 0 ) return this;
 		return resolvePreviousValid_LD( year - n, month, isLeapMonth, day );
 	}
 
@@ -803,11 +809,15 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	 * @return n년 뒤의 날짜
 	 */
 	public KLunarDate plusMonths ( int n ) {
+		if( n == 0 ) return this;
+
 		int mAvgLength = LunarMonthUnit.LMONTHS.getDurationInDays();
 
 		long e = toEpochDay() + (long) n * mAvgLength;// XXX range
 		return resolveClosestDayOfMonth( ofEpochDay( e ), day );// XXX 지원범위 끝에서 끝까지 가도 한 달의 평균길이의 실제와 LunarMonthUnit.LMONTHS의 차이가 일정 범위를 안 벗어나는가?
 	}
+
+//	TODO public KLunarDate plusNamedMonths(int n) {}
 
 	/**
 	 * n월 앞.
@@ -817,11 +827,15 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	 * @return n년 앞의 날짜
 	 */
 	public KLunarDate minusMonths ( int n ) {
+		if( n == 0 ) return this;
+
 		int mAvgLength = LunarMonthUnit.LMONTHS.getDurationInDays();
 
 		long e = toEpochDay() - (long) n * mAvgLength;// XXX range
 		return resolveClosestDayOfMonth( ofEpochDay( e ), day );
 	}
+
+//	TODO public KLunarDate minusNamedMonths(int n) {}
 
 	private KLunarDate resolveClosestDayOfMonth ( KLunarDate kd , int day ) {
 		int kdd = kd.getDay();
@@ -925,12 +939,146 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 
 	@Override
 	public long until ( Temporal endExclusive , TemporalUnit unit ) {
-		return 0;// TODO
+		KLunarDate end = KLunarDate.from( endExclusive );
+		if( unit instanceof ChronoUnit ){
+			return this.isBefore( end )
+			        ? until0( end, (ChronoUnit) unit )
+			        : end.until0( this, (ChronoUnit) unit );
+		}
+		return unit.between( this, end );
 	}
 
+	private long until0 ( KLunarDate end , ChronoUnit chronoUnit ) {// this>=end
+		switch( chronoUnit ){
+		case DAYS:
+			return end.toEpochDay() - toEpochDay();
+		case MONTHS:
+			return LunarMonthUnit.LMONTHS.between( this, end );
+		case YEARS:
+			return untilYear( end );
+		case DECADES:
+			return untilYear( end ) / 10;
+		case CENTURIES:
+			return untilYear( end ) / 100;
+		case MILLENNIA:
+			return untilYear( end ) / 1000;// 사실 지원범위가 1000년이 안 됨.
+		case ERAS:
+			return 0;
+		default:
+			throw new UnsupportedTemporalTypeException( "Unsupported unit: " + chronoUnit );
+		}
+	}
+
+	/**
+	 * 이 날짜에서 그 날짜까지의 시간 간격
+	 * 이 날짜보다 그 날짜가 미래인 경우 결과 ChronoPeriod의 각 필드 값은 0 이상이다.
+	 * 이 날짜보다 그 날짜가 과거인 경우 결과 ChronoPeriod의 각 필드 값은 0 이하이다.
+	 * 
+	 * 참고:
+	 * 2004년에는 윤2월이 있다.
+	 * 2004년 평2월 - 2005년 평2월 간격은 1년임이 분명하다. 그럼
+	 * 2004년 윤2월 - 2005년 평2월 간격은 1년인가? 12개월인가?
+	 * 애매하지만 더 큰 단위를 우선하기로 했다.
+	 * 왜냐하면; 평달 윤달을 떠나서 큰 단위에서 간격을 먼저 구하고,
+	 * 남은 기간 중에서 더 작은 단위에 대해 간격을 구하고... 이런 순서대로 계산되니까
+	 * 2004년 윤2월에서 1년 더해서 2005년 평2월 된다면 일단 1년 간격이 있다고 보는 게 맞을 듯.
+	 * 
+	 * @param endDateExclusive 그 날짜
+	 * @return 시간 간격(년,월,일)
+	 */
 	@Override
-	public ChronoPeriod until ( ChronoLocalDate endDateExclusive ) {
-		return null;// TODO
+	public KLunarPeriod until ( ChronoLocalDate endDateExclusive ) {
+		KLunarDate end = KLunarDate.from( endDateExclusive );
+		KLunarDate start = this;
+
+
+		int years = start.untilYear( end );
+		start = start.plusYears( years );
+
+		int months = start.untilMonthIn1Y( end );
+		start = start.plusMonths( months );
+
+		try{// resolvePreviousValid 때문에 바뀐 일자 원복 시도
+			start = start.withDay( getDay() );
+		}
+		catch( NonexistentDateException e ){}
+
+		int days = end.toEpochDayInt() - start.toEpochDayInt();
+
+		return KLunarChronology.INSTANCE.period( years, months, days );
+	}
+
+	private int untilYear ( KLunarDate end ) {
+		int diff = end.getYear() - getYear();
+
+		if( diff == 0 )
+		    return 0;
+
+		if( diff > 0 ){
+			if( getMonth() < end.getMonth() ){
+				return diff;
+			}
+			if( getMonth() > end.getMonth() ){
+				return diff - 1;
+			}
+
+			if( !isLeapMonth() && end.isLeapMonth() ){
+				return diff;
+			}
+
+			if( getDay() < end.getDay() ){
+				return diff;
+			}
+			if( getDay() > end.getDay() ){
+				return diff - 1;
+			}
+
+			return diff;
+		}
+		else{
+			if( end.getMonth() < getMonth() ){
+				return diff;
+			}
+			if( end.getMonth() > getMonth() ){
+				return diff + 1;
+			}
+
+			if( !end.isLeapMonth() && isLeapMonth() ){
+				return diff;
+			}
+			if( end.isLeapMonth() && !isLeapMonth() ){
+				return diff + 1;
+			}
+
+			if( end.getDay() < getDay() ){
+				return diff;
+			}
+			if( end.getDay() > getDay() ){
+				return diff + 1;
+			}
+
+			return diff;
+		}
+	}
+
+	private int untilMonthIn1Y ( KLunarDate end ) {// this와 end는 1년 미만 차이
+		if( this.isAfter( end ) ){
+			return -end.untilMonthIn1Y_main( this );
+		}
+		else{
+			return untilMonthIn1Y_main( end );
+		}
+	}
+
+	private int untilMonthIn1Y_main ( KLunarDate end ) {// this <= end (1년 미만 차이)
+
+		int diff = end.getMonthOrdinal() - this.getMonthOrdinal();
+		diff -= ( getDay() > end.getDay() ? 1 : 0 );
+		diff += ( diff < 0 )
+		        ? NORMAL_MONTH_NUMBER_IN_YEAR
+		                + ( this.isLeapYear() ? 1 : 0 )
+		        : 0;
+		return diff;
 	}
 
 	//// ================================ 변환
