@@ -1095,7 +1095,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	public static KLunarDate from ( final TemporalAccessor temporal ) {
 		Objects.requireNonNull( temporal, "temporal" );
 
-		long epochDay = temporal.get( ChronoField.EPOCH_DAY );
+		long epochDay = temporal.getLong( ChronoField.EPOCH_DAY );
 
 		return ofEpochDay( epochDay );
 	}
