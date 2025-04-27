@@ -292,20 +292,19 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		int c0 = ydss.length;
 		for( ; c0 >= 0 ; c0 -= 1 ){// 미래에서부터 선형탐색 (XXX 일단 주기 개수 적어서 걍 선형탐색... 주기 수 많아지면 1주기의 대략의 크기로 점프 가능할 듯
 			if( epochDay >= epochDays[c0] ){
-				int jDay = (int) ( epochDay - epochDays[c0] );
+				final int cd = (int) ( epochDay - epochDays[c0] );
 
 				//// 년도 찾기
 				int[] yds = ydss[c0];
-				int y0 = 1;
 				int cycleSize = ydss[c0].length;
-				for( ; y0 < cycleSize ; y0 += 1 ){// XXX 일단 대충 선형탐색. 1년의 크기로 계산하여 점프 가능할 듯
-					if( jDay < ( yds[y0] >>> 17 ) ){
+				int y0 = cd / 385;// 385: 1년의 크기 최대 (윤달있음+대월8개)
+				for( ; y0 < cycleSize ; y0 += 1 ){
+					if( cd < ( yds[y0] >>> 17 ) ){
 						break;
 					}
 				}
 				y0 -= 1;
-				jDay -= ( yds[y0] >>> 17 );
-				return ofYearDay( YEAR_MIN + c0 * CYCLE_SIZE + y0, jDay + 1 );
+				return ofYearDay( YEAR_MIN + c0 * CYCLE_SIZE + y0, cd - ( yds[y0] >>> 17 ) + 1 );
 			}
 		}
 
