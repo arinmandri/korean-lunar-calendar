@@ -14,19 +14,28 @@ import java.time.temporal.UnsupportedTemporalTypeException;
 import java.util.List;
 
 
-// TODO 다른 달력끼리 ChronoPeriodImpl 클래스를 공유해도 덧셈은 안 되는군. 마찬가지로 이건 KLunarChronology 전용이어야 하는 듯.
-final class KLunarPeriod implements java.time.chrono.ChronoPeriod
+public final class KLunarPeriod implements java.time.chrono.ChronoPeriod
 {
 	final int years;
 	final int months;
+	final boolean monthLeapingMode;// true: 달을 헬 때 윤달을 무시한다. false: 윤달을 동등한 한 달로 취급한다.
 	final int days;
 
-	private static final List<TemporalUnit> SUPPORTED_UNITS = List.of( YEARS, MONTHS, DAYS );// TODO LunarMonthUnit 넣어? 말어?
+	private static final List<TemporalUnit> SUPPORTED_UNITS = List.of( YEARS, MONTHS, DAYS );
 
 	public KLunarPeriod( int years , int months , int days ) {
 		super();
 		this.years = years;
 		this.months = months;
+		this.monthLeapingMode = false;
+		this.days = days;
+	}
+
+	public KLunarPeriod( int years , int months , boolean monthLeapingMode , int days ) {
+		super();
+		this.years = years;
+		this.months = months;
+		this.monthLeapingMode = monthLeapingMode;
 		this.days = days;
 	}
 
@@ -35,15 +44,25 @@ final class KLunarPeriod implements java.time.chrono.ChronoPeriod
 		if( unit == ChronoUnit.YEARS ){
 			return years;
 		}
-		else if( unit == ChronoUnit.MONTHS ){
+		if( unit == ChronoUnit.MONTHS ){
 			return months;
 		}
-		else if( unit == ChronoUnit.DAYS ){
-			return days;
+		if( unit == LunarMonthUnit.LMONTH_BUNDLES ){
+			if( monthLeapingMode )
+			    return months;
+			else
+			    throw new UnsupportedTemporalTypeException( "this period instance is not in month-leaping mode. use LunarMonthUnit.LMONTHS instead." );
 		}
-		else{
-			throw new UnsupportedTemporalTypeException( "Unsupported unit: " + unit );
+		if( unit == LunarMonthUnit.LMONTHS ){
+			if( !monthLeapingMode )
+			    return months;
+			else
+			    throw new UnsupportedTemporalTypeException( "this period instance is in month-leaping mode. use LunarMonthUnit.LMONTH_BUNDLES instead." );
 		}
+		if( unit == ChronoUnit.MONTHS ){
+			return months;
+		}
+		throw new UnsupportedTemporalTypeException( "Unsupported unit: " + unit );
 	}
 
 	@Override
