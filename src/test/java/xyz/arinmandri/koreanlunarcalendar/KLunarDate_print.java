@@ -42,13 +42,13 @@ public class KLunarDate_print extends KLunarDateTest
 	public void printCycleLengths () {
 		printTitle( "1갑자 길이" );
 
-		KLunarDate kd = KLunarDate.of( YEAR_MIN, 1, 1 );
-		int epochDay0 = kd.toEpochDayInt();
-		for( int y = YEAR_MIN + CYCLE_SIZE ; y <= YEAR_MAX ; y += CYCLE_SIZE ){
-			kd = KLunarDate.of( y, 1, 1 );
-			int epochDay1 = kd.toEpochDayInt();
+		for( int y = YEAR_MIN ; y <= YEAR_MAX - CYCLE_SIZE ; y += 1 ){
+			KLunarDate kd0 = KLunarDate.of( y, 1, 1 );
+			KLunarDate kd1 = KLunarDate.of( y + CYCLE_SIZE, 1, 1 );
+			int epochDay0 = kd0.toEpochDayInt();
+			int epochDay1 = kd1.toEpochDayInt();
 			int yl = epochDay1 - epochDay0;
-			System.out.println( ( y - CYCLE_SIZE ) + " - " + yl );
+			System.out.println( y + " - " + yl );
 			epochDay0 = epochDay1;
 		}
 	}
