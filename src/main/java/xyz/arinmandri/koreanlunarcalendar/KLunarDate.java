@@ -835,7 +835,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		if( 15 < diff ){
 			return kd.prevMonth().withDay( day );
 		}
-		return kd.withDay( day );
+		return resolvePreviousValid_D( year, month, isLeapMonth, day );
 	}
 
 	public KLunarDate nextMonth () {
