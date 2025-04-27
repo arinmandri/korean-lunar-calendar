@@ -14,6 +14,7 @@ import java.time.temporal.UnsupportedTemporalTypeException;
 import java.util.List;
 
 
+// TODO test
 public final class KLunarPeriod implements java.time.chrono.ChronoPeriod
 {
 	final int years;
@@ -94,8 +95,18 @@ public final class KLunarPeriod implements java.time.chrono.ChronoPeriod
 
 	@Override
 	public ChronoPeriod normalized () {
-		// TODO 1년의 달 개수가 일정치는 않지만 19년마다 윤달 7개라는데 이건 진짜 일정한지 확인 해야지
-		return null;
+
+		if( monthLeapingMode ){
+			int y = years + months / KLunarDate.NORMAL_MONTH_NUMBER_IN_YEAR;
+			int m = months % KLunarDate.NORMAL_MONTH_NUMBER_IN_YEAR;
+			return of( y, m, true, days );
+		}
+		else{
+			final int M_IN_19Y = 12 * 19 + 7;// 19년의 달의 수 TODO 1년의 달 개수가 일정치는 않지만 19년마다 윤달 7개라는데 이건 진짜 일정한지 확인 해야지
+			int y = years + months / M_IN_19Y;
+			int m = months % M_IN_19Y;
+			return of( y, m, true, days );
+		}
 	}
 
 	@Override
