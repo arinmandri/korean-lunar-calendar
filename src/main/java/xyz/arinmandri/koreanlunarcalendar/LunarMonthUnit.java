@@ -19,7 +19,7 @@ public enum LunarMonthUnit implements TemporalUnit
 	 * 대부분 달은 (1달 == 1달묶음)이다.
 	 * 1년은 12달 혹은 13달이다.
 	 */
-	LMONTHS (Duration.ofSeconds( 31556952L * 19 / ( 19 * 12 + 7 ) ), true),// 19년에 윤달 7개라 치고
+	LMONTHS (Duration.ofSeconds( 24 * 60 * 60 * 68304L / 2313 ), true),// TODO extend_range: 현재의 지원범위 첫날부터 끝날까지 총 월수=68304, 총 일수=2313;
 	;
 
 	private final Duration duration;

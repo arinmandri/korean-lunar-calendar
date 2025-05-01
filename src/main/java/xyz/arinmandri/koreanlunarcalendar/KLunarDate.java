@@ -812,8 +812,8 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 
 		double mAvgLength = LunarMonthUnit.LMONTHS.getDurationInDays();
 
-		long epochDay = toEpochDay() + (long) ( n * mAvgLength );// XXX range
-		return resolveClosestDayOfMonth( ofEpochDay( epochDay ), day );// XXX 지원범위 끝에서 끝까지 가도 한 달의 평균길이의 실제와 LunarMonthUnit.LMONTHS의 차이가 일정 범위를 안 벗어나는가?
+		long epochDay = toEpochDay() + (long) ( n * mAvgLength );
+		return resolveClosestDayOfMonth( ofEpochDay( epochDay ), day );
 	}
 
 	public KLunarDate plusNamedMonths ( int n ) {
@@ -841,7 +841,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 
 		double mAvgLength = LunarMonthUnit.LMONTHS.getDurationInDays();
 
-		long epochDay = toEpochDay() - (long) ( n * mAvgLength );// XXX range
+		long epochDay = toEpochDay() - (long) ( n * mAvgLength );
 		return resolveClosestDayOfMonth( ofEpochDay( epochDay ), day );
 	}
 
