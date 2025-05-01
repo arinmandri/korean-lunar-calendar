@@ -26,9 +26,7 @@ import java.util.Objects;
  * 한국 음력으로 특정 날짜를 가리킨다. 불변(immutable)이다.
  * represents a date in Korean lunar calendar system
  * 
- * 음력 날짜는 다음 네 가지 값으로 특정된다: 년도, 월, 일, 윤달여부
- * 
- * java.time.LocalDate랑 최대한 비슷한 형식 + 간지 등 추가정보 제공(하고싶다. TODO )
+ * 음력 날짜는 다음 네 가지 값으로 특정된다: 년, 월, 윤달여부, 일
  */
 public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 {
