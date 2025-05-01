@@ -932,10 +932,6 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 
 	//// ================================ 셈 - 비교
 
-	public Temporal adjustInto ( Temporal temporal ) {
-		return null;// TODO
-	}
-
 	@Override
 	public long until ( Temporal endExclusive , TemporalUnit unit ) {
 		KLunarDate end = KLunarDate.from( endExclusive );
