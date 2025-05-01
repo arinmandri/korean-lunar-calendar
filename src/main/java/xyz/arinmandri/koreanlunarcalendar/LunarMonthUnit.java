@@ -35,8 +35,8 @@ public enum LunarMonthUnit implements TemporalUnit
 		return duration;
 	}
 
-	public int getDurationInDays () {
-		return ( (int) duration.getSeconds() ) / ( 24 * 60 * 60 );
+	public double getDurationInDays () {
+		return ( (double) duration.getSeconds() ) / ( 24 * 60 * 60 );
 	}
 
 	@Override

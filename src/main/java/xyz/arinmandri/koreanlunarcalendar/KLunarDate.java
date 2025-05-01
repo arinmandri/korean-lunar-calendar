@@ -810,10 +810,10 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	public KLunarDate plusMonths ( int n ) {
 		if( n == 0 ) return this;
 
-		int mAvgLength = LunarMonthUnit.LMONTHS.getDurationInDays();
+		double mAvgLength = LunarMonthUnit.LMONTHS.getDurationInDays();
 
-		long e = toEpochDay() + (long) n * mAvgLength;// XXX range
-		return resolveClosestDayOfMonth( ofEpochDay( e ), day );// XXX 지원범위 끝에서 끝까지 가도 한 달의 평균길이의 실제와 LunarMonthUnit.LMONTHS의 차이가 일정 범위를 안 벗어나는가?
+		long epochDay = toEpochDay() + (long) ( n * mAvgLength );// XXX range
+		return resolveClosestDayOfMonth( ofEpochDay( epochDay ), day );// XXX 지원범위 끝에서 끝까지 가도 한 달의 평균길이의 실제와 LunarMonthUnit.LMONTHS의 차이가 일정 범위를 안 벗어나는가?
 	}
 
 	public KLunarDate plusNamedMonths ( int n ) {
@@ -839,10 +839,10 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	public KLunarDate minusMonths ( int n ) {
 		if( n == 0 ) return this;
 
-		int mAvgLength = LunarMonthUnit.LMONTHS.getDurationInDays();
+		double mAvgLength = LunarMonthUnit.LMONTHS.getDurationInDays();
 
-		long e = toEpochDay() - (long) n * mAvgLength;// XXX range
-		return resolveClosestDayOfMonth( ofEpochDay( e ), day );
+		long epochDay = toEpochDay() - (long) ( n * mAvgLength );// XXX range
+		return resolveClosestDayOfMonth( ofEpochDay( epochDay ), day );
 	}
 
 	public KLunarDate minusNamedMonths ( int n ) {
@@ -866,7 +866,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		if( kdd == day )
 		    return kd;
 
-		int diff = kdd - kdd;
+		int diff = day - kdd;
 		if( diff < -15 ){
 			return kd.nextMonth().withDay( day );
 		}
