@@ -112,8 +112,27 @@ public enum LunarMonthUnit implements TemporalUnit
 
 	@Override
 	public long between ( Temporal temporal1Inclusive , Temporal temporal2Exclusive ) {
-		// TODO Auto-generated method stub
-		return 0;
+		if( temporal1Inclusive.getClass() != temporal2Exclusive.getClass() ){
+			return temporal1Inclusive.until( temporal2Exclusive, this );
+		}
+
+		if( temporal1Inclusive instanceof KLunarDate ){
+			KLunarDate kd1 = (KLunarDate) temporal1Inclusive;
+			KLunarDate kd2 = (KLunarDate) temporal2Exclusive;
+			switch( this ){
+			case LMONTHS:
+				// TODO
+				break;
+			case LMONTH_BUNDLES:
+				//// end의(년*12+월) - start의(년*12+월) - day앞뒤고려
+				return ( kd2.getYear() - kd1.getYear() ) * KLunarDate.NAMED_MONTHS_NUMBER_IN_1Y
+				        + kd2.getMonth() - kd1.getMonth()
+				        - ( kd2.getDay() < kd1.getDay() ? 1 : 0 );
+			}
+		}
+
+		//// 그외: temporal이 알아서
+		return temporal1Inclusive.until( temporal2Exclusive, this );
 	}
 
 }
