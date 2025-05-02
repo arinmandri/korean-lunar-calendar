@@ -92,7 +92,7 @@ public enum LunarMonthField implements TemporalField
 			case MONTH_LEAP:{
 				if( kd.isLeapMonth() )
 				    return range;
-				if( kd.getLeapMonth() == kd.getMonth() )// TODO ??? 이거 맞음?
+				if( kd.getLeapMonth() == kd.getMonth() )
 				    return range;
 				return ValueRange.of( 0, 0 );
 			}
@@ -100,7 +100,7 @@ public enum LunarMonthField implements TemporalField
 				break;
 			}
 		}
-		throw new java.time.temporal.UnsupportedTemporalTypeException( "not supported temporal type" );
+		throw new UnsupportedTemporalTypeException( "not supported temporal type" );
 	}
 
 	@Override
