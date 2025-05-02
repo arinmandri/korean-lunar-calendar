@@ -60,13 +60,13 @@ public enum LunarMonthUnit implements TemporalUnit
 	@Override
 	public boolean isSupportedBy ( Temporal temporal ) {
 		//// KLunarChronology: 가능
-		if( temporal instanceof ChronoLocalDate ){
-			if( ( (ChronoLocalDate) temporal ).getChronology() == KLunarChronology.INSTANCE )
-			    return true;
+		if( temporal instanceof ChronoLocalDate
+		        && ( (ChronoLocalDate) temporal ).getChronology() == KLunarChronology.INSTANCE ){
+			return true;
 		}
-		else if( temporal instanceof ChronoLocalDateTime<?> ){
-			if( ( (ChronoLocalDateTime<?>) temporal ).getChronology() == KLunarChronology.INSTANCE )
-			    return true;
+		else if( temporal instanceof ChronoLocalDateTime<?>
+		        && ( (ChronoLocalDateTime<?>) temporal ).getChronology() == KLunarChronology.INSTANCE ){
+			return true;
 		}
 
 		//// 그외: temporal이 알아서
