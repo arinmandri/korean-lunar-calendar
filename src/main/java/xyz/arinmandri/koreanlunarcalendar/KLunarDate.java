@@ -1013,7 +1013,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		if( unit instanceof ChronoUnit ){
 			return this.isBefore( end )
 			        ? until0( end, (ChronoUnit) unit )
-			        : end.until0( this, (ChronoUnit) unit );
+			        : -end.until0( this, (ChronoUnit) unit );
 		}
 		return unit.between( this, end );
 	}
