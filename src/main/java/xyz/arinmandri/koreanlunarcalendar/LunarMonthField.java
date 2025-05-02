@@ -100,7 +100,7 @@ public enum LunarMonthField implements TemporalField
 				break;
 			}
 		}
-		return null;
+		throw new java.time.temporal.UnsupportedTemporalTypeException( "not supported temporal type" );
 	}
 
 	@Override
@@ -121,7 +121,7 @@ public enum LunarMonthField implements TemporalField
 				break;
 			}
 		}
-		throw new UnsupportedTemporalTypeException( "Unsupported field: " + this );
+		throw new UnsupportedTemporalTypeException( "not supported temporal type" );
 	}
 
 	@Override
