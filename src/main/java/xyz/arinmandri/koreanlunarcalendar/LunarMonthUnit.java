@@ -1,8 +1,11 @@
 package xyz.arinmandri.koreanlunarcalendar;
 
 import java.time.Duration;
+import java.time.chrono.ChronoLocalDate;
+import java.time.chrono.ChronoLocalDateTime;
 import java.time.temporal.Temporal;
 import java.time.temporal.TemporalUnit;
+import java.time.temporal.UnsupportedTemporalTypeException;
 
 
 public enum LunarMonthUnit implements TemporalUnit
@@ -56,7 +59,33 @@ public enum LunarMonthUnit implements TemporalUnit
 
 	@Override
 	public boolean isSupportedBy ( Temporal temporal ) {
-		return temporal.getClass() == KLunarDate.class;
+		//// KLunarChronology: 가능
+		if( temporal instanceof ChronoLocalDate ){
+			if( ( (ChronoLocalDate) temporal ).getChronology() == KLunarChronology.INSTANCE )
+			    return true;
+		}
+		else if( temporal instanceof ChronoLocalDateTime<?> ){
+			if( ( (ChronoLocalDateTime<?>) temporal ).getChronology() == KLunarChronology.INSTANCE )
+			    return true;
+		}
+
+		//// 그외: temporal이 알아서
+		try{
+			temporal.plus( 1, this );
+			return true;
+		}
+		catch( UnsupportedTemporalTypeException ex ){
+			return false;
+		}
+		catch( RuntimeException ex ){
+			try{
+				temporal.plus( -1, this );
+				return true;
+			}
+			catch( RuntimeException ex2 ){
+				return false;
+			}
+		}
 	}
 
 	@Override

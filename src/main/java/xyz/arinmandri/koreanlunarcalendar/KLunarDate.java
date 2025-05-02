@@ -953,7 +953,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		return ofEpochDay( toEpochDayInt() - n );
 	}
 
-	//// ================================ 셈 - 비교
+	//// ================================ 셈 - until
 
 	@Override
 	public long until ( Temporal endExclusive , TemporalUnit unit ) {
