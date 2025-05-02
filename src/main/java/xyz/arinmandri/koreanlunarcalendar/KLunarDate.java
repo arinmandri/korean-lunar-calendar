@@ -309,6 +309,58 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		throw new OutOfRangeException();// 지원범위보다 과거
 	}
 
+	//// ================================ 변환
+
+	/**
+	 * 다른(날짜/시각)값-->음력
+	 *
+	 * @param temporal TemporalAccessor
+	 * 
+	 * @return 음력 날짜
+	 * 
+	 * @throws OutOfRangeException 지원 범위 밖
+	 */
+	public static KLunarDate from ( final TemporalAccessor temporal ) {
+		Objects.requireNonNull( temporal, "temporal" );
+
+		long epochDay = temporal.getLong( ChronoField.EPOCH_DAY );
+
+		return ofEpochDay( epochDay );
+	}
+
+	/**
+	 * 음력-->양력
+	 *
+	 * @return 양력 날짜
+	 */
+	public LocalDate toLocalDate () {
+
+		return LocalDate.ofEpochDay( toEpochDay() );
+	}
+
+	@Override
+	public String format ( DateTimeFormatter formatter ) {
+		return null;// TODO 이걸 어케함???
+	}
+
+	public static KLunarDate parse ( CharSequence text ) {
+		return null;// TODO
+	}
+
+	@Override
+	public ChronoLocalDateTime<?> atTime ( LocalTime localTime ) {
+		return null;// TODO
+	}
+
+	@Override
+	public long toEpochDay () {
+		return toEpochDayInt();
+	}
+
+	public int toEpochDayInt () {
+		return epochDays[c0] + ( ydss[c0][y0] >>> 17 ) + d0;
+	}
+
 	//// ================================ GETTER
 
 	@Override
@@ -1090,6 +1142,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 
 	private int untilMonthIn1Y_main ( KLunarDate end ) {// this <= end (1년 미만 차이)
 
+		// TODO 이거 먼가 안 될 거 같은데. 같은 달 vs 약 1년 차이 나중에 테스트 작성하면서
 		int diff = end.getMonthOrdinal() - this.getMonthOrdinal();
 		diff -= ( getDay() > end.getDay() ? 1 : 0 );
 		diff += ( diff < 0 )
@@ -1097,58 +1150,6 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		                + ( this.isLeapYear() ? 1 : 0 )
 		        : 0;
 		return diff;
-	}
-
-	//// ================================ 변환
-
-	/**
-	 * 다른(날짜/시각)값-->음력
-	 *
-	 * @param temporal TemporalAccessor
-	 * 
-	 * @return 음력 날짜
-	 * 
-	 * @throws OutOfRangeException 지원 범위 밖
-	 */
-	public static KLunarDate from ( final TemporalAccessor temporal ) {
-		Objects.requireNonNull( temporal, "temporal" );
-
-		long epochDay = temporal.getLong( ChronoField.EPOCH_DAY );
-
-		return ofEpochDay( epochDay );
-	}
-
-	/**
-	 * 음력-->양력
-	 *
-	 * @return 양력 날짜
-	 */
-	public LocalDate toLocalDate () {
-
-		return LocalDate.ofEpochDay( toEpochDay() );
-	}
-
-	@Override
-	public String format ( DateTimeFormatter formatter ) {
-		return null;// TODO 이걸 어케함???
-	}
-
-	public static KLunarDate parse ( CharSequence text ) {
-		return null;// TODO
-	}
-
-	@Override
-	public ChronoLocalDateTime<?> atTime ( LocalTime localTime ) {
-		return null;// TODO
-	}
-
-	@Override
-	public long toEpochDay () {
-		return toEpochDayInt();
-	}
-
-	public int toEpochDayInt () {
-		return epochDays[c0] + ( ydss[c0][y0] >>> 17 ) + d0;
 	}
 
 	//// ================================ Object
