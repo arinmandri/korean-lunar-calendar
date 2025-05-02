@@ -62,6 +62,9 @@ public final class KLunarPeriod implements java.time.chrono.ChronoPeriod
 		if( unit == ChronoUnit.MONTHS ){
 			return months;
 		}
+		if( unit == ChronoUnit.DAYS ){
+			return days;
+		}
 		throw new UnsupportedTemporalTypeException( "Unsupported unit: " + unit );
 	}
 
@@ -96,13 +99,13 @@ public final class KLunarPeriod implements java.time.chrono.ChronoPeriod
 	@Override
 	public ChronoPeriod normalized () {
 
-		if( monthLeapingMode ){
+		if( monthLeapingMode ){// 윤달 무시: 1년에 12달
 			int y = years + months / KLunarDate.NAMED_MONTHS_NUMBER_IN_1Y;
 			int m = months % KLunarDate.NAMED_MONTHS_NUMBER_IN_1Y;
 			return of( y, m, true, days );
 		}
-		else{
-			final int M_IN_19Y = 12 * 19 + 7;// 19년의 달의 수 TODO 1년의 달 개수가 일정치는 않지만 19년마다 윤달 7개라는데 이건 진짜 일정한지 확인 해야지
+		else{// 윤달 있는 경우 TODO 1년의 달 개수가 일정치는 않지만 19년마다 윤달 7개라는데 이건 진짜 일정한지 확인 해야지
+			final int M_IN_19Y = 12 * 19 + 7;// 19년의 달의 수
 			int y = years + months / M_IN_19Y;
 			int m = months % M_IN_19Y;
 			return of( y, m, true, days );
