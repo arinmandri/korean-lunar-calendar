@@ -12,18 +12,18 @@ import java.time.temporal.UnsupportedTemporalTypeException;
 public enum LunarMonthUnit implements TemporalUnit
 {
 	/**
-	 * 평달과 윤달의 묶음.
-	 * 예: 2004년은 (1월), (2월, 윤2월), (3월), ...
-	 * 1년은 12달묶음이다.
-	 */
-	LMONTH_BUNDLES (Duration.ofSeconds( 31556952L / 12 ), true),// 1개월이나 2개월이지만 평균으로는 양력 1달과 같다. ChoronoUnit.MONTHS 싹 베껴옴.
-
-	/**
 	 * 달.
 	 * 대부분 달은 뒤에 윤달이 없으므로 (1달 == 1달묶음)이다.
 	 * 1년은 12달 혹은 13달이다.
 	 */
 	LMONTHS (Duration.ofSeconds( 24 * 60 * 60 * 68304L / 2313 ), true),// TODO extend_range: 현재의 지원범위 첫날부터 끝날까지 총 월수=68304, 총 일수=2313;
+
+	/**
+	 * 평달과 윤달의 묶음.
+	 * 예: 2004년은 (1월), (2월, 윤2월), (3월), ...
+	 * 1년은 12달묶음이다.
+	 */
+	LMONTH_BUNDLES (Duration.ofSeconds( 31556952L / 12 ), true),// 1개월이나 2개월이지만 평균으로는 양력 1달과 같다. ChoronoUnit.MONTHS 싹 베껴옴.
 	;
 
 	private final Duration duration;
