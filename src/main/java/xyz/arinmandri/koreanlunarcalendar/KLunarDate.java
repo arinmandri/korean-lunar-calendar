@@ -380,7 +380,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 				return false;
 			}
 		}
-		return field != null && field.isSupportedBy( this );
+		return field.isSupportedBy( this );
 	}
 
 	/**
