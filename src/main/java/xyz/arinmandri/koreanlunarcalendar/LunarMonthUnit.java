@@ -8,6 +8,7 @@ import java.time.temporal.TemporalUnit;
 import java.time.temporal.UnsupportedTemporalTypeException;
 
 
+// TODO test
 public enum LunarMonthUnit implements TemporalUnit
 {
 	/**
@@ -19,7 +20,7 @@ public enum LunarMonthUnit implements TemporalUnit
 
 	/**
 	 * 달.
-	 * 대부분 달은 (1달 == 1달묶음)이다.
+	 * 대부분 달은 뒤에 윤달이 없으므로 (1달 == 1달묶음)이다.
 	 * 1년은 12달 혹은 13달이다.
 	 */
 	LMONTHS (Duration.ofSeconds( 24 * 60 * 60 * 68304L / 2313 ), true),// TODO extend_range: 현재의 지원범위 첫날부터 끝날까지 총 월수=68304, 총 일수=2313;
@@ -59,7 +60,7 @@ public enum LunarMonthUnit implements TemporalUnit
 
 	@Override
 	public boolean isSupportedBy ( Temporal temporal ) {
-		//// KLunarChronology: 가능
+		//// My: 가능
 		if( temporal instanceof ChronoLocalDate
 		        && ( (ChronoLocalDate) temporal ).getChronology() == KLunarChronology.INSTANCE ){
 			return true;
@@ -89,9 +90,24 @@ public enum LunarMonthUnit implements TemporalUnit
 	}
 
 	@Override
+	@SuppressWarnings( "unchecked" )
 	public < R extends Temporal > R addTo ( R temporal , long amount ) {
-		// TODO Auto-generated method stub
-		return null;
+
+		//// My: 여기서
+		if( temporal instanceof KLunarDate ){
+			if( amount > Integer.MAX_VALUE
+			        || amount < Integer.MIN_VALUE )
+			    throw new OutOfRangeException();
+			switch( this ){
+			case LMONTHS:
+				return (R) ( (KLunarDate) temporal ).plusMonths( (int) amount );
+			case LMONTH_BUNDLES:
+				return (R) ( (KLunarDate) temporal ).plusNamedMonths( (int) amount );
+			}
+		}
+
+		//// 그외: temporal이 알아서
+		return (R) temporal.plus( amount, this );
 	}
 
 	@Override
