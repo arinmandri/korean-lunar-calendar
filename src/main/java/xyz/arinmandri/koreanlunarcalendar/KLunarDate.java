@@ -63,7 +63,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	 *
 	 * 마지막 요소 빼고는 다 크기 60에 맞춰야 함.
 	 */
-	private static final int[][] ydss = {// int yd = ydss[c0][y0]
+	static final int[][] ydss = {// int yd = ydss[c0][y0]
 	        /*
 	         * TODO extend_range:
 	         * 추가로 과거 날짜를 긁어오려고 보니 문제가 발견됨.
@@ -122,7 +122,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	/*
 	 * 각 주기 첫날의 epoch day
 	 */
-	private static final int[] epochDays = {
+	static final int[] epochDays = {
 	        2401910 - EPOCH_0_JDAY,// 1864
 	        2423821 - EPOCH_0_JDAY,// 1924
 	        2445733 - EPOCH_0_JDAY,// 1984
