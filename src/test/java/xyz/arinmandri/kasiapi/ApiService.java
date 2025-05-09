@@ -3,6 +3,7 @@ package xyz.arinmandri.kasiapi;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -142,14 +143,45 @@ public class ApiService
 	/**
 	 * 여러 해에 걽여 음력 날짜(월, 일)들 모두 조회
 	 *
-	 * @param fromSolYear 조회할 범위 (시작년도)
-	 * @param toSolYear   조회할 범위 (끝년도)
-	 * @param lunMonth    조회할 음력 날짜의 달
-	 * @param lunDay      조회할 음력 날짜의 일
-	 * @param leapMonth   윤달여부. null이면 평달윤달 모두 조회.
+	 * @param fromYear  조회할 범위 (시작년도)
+	 * @param toYear    조회할 범위 (끝년도)
+	 * @param lunMonth  조회할 음력 날짜의 달
+	 * @param lunDay    조회할 음력 날짜의 일
+	 * @param leapMonth 윤달여부. null이면 평달윤달 모두 조회.
 	 * @return
 	 */
-	public List<Item> getSpcifyLunCalInfo ( int fromSolYear , int toSolYear , int lunMonth , int lunDay , Boolean leapMonth ) {
+	public List<Item> getSpcifyLunCalInfo ( int fromYear , int toYear , int lunMonth , int lunDay , Boolean leapMonth ) {
+		/*
+		 * 얘만 오류가 있다. lunNDay 값이 제대로 안 나오고 lunDay 값과 같은 값이 나온다.
+		 * 문의 했는데 안 바꿔주고 있다.
+		 * 그러니까 일자를 30으로 해서 존재하는 날짜를 확인해서 대월소월을 구별하여 lunNDay를 직접 구한다.
+		 */
+		//// KASI API로 얻은 item들
+		List<Item> items = getSpcifyLunCalInfo0( fromYear, toYear, lunMonth, lunDay, leapMonth );
+		if( items.size() == 0 ) return items;
+
+		//// 같은 달의 30일 존재 확인용 데이터
+		Map<String, Boolean> checkBigMap = new HashMap<>();
+		List<Item> checkBigList = getSpcifyLunCalInfo0( fromYear, toYear, lunMonth, 30, leapMonth );
+		for( Item item : checkBigList ){
+			checkBigMap.put( checkBigMapKey( item ), true );
+		}
+
+		//// 30일이 있으면 lunNDay=30 아니면 29 덮어쓰기
+		for( Item item : items ){
+			item.lunNday = checkBigMap.containsKey( checkBigMapKey( item ) ) ? 30 : 29;
+		}
+
+		return items;
+	}
+
+	private String checkBigMapKey ( Item item ) {
+		return "" + item.lunYear
+		        + i( item.lunMonth )
+		        + ( item.lunLeapmonth.equals( "윤" ) ? "L" : "C" );
+	}
+
+	private List<Item> getSpcifyLunCalInfo0 ( int fromYear , int toYear , int lunMonth , int lunDay , Boolean leapMonth ) {
 		/*
 		 * 다른 오퍼레이션들과 달리 얘는 여러 날짜를 동시에 조회하는 기능이며 결과가 매우 많고 여러 페이지에 걸쳐있을 수도 있다.
 		 * 끝페이지까지 모두 조회하여 합친 결과를 반환한다.
@@ -164,18 +196,18 @@ public class ApiService
 			        serviceKey,
 			        pageSize,
 			        page,
-			        i( fromSolYear ),
-			        i( toSolYear ),
+			        i( fromYear ),
+			        i( toYear ),
 			        i( lunMonth ),
 			        i( lunDay ),
 			        leapMonth == null ? null : leapMonth ? "윤" : "평" );
 
 			List<Item> itemsThisPage = request( call );
 
-			if( itemsThisPage.size() == 0 )
-			    break;
-
 			items.addAll( itemsThisPage );
+
+			if( itemsThisPage.size() < pageSize )
+			    break;
 		}
 
 		items = refineItems( items );
