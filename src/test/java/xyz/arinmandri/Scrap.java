@@ -163,6 +163,7 @@ public class Scrap
 	 * KLunarDate.ydss 소스코드에 붙여넣을 형식으로 출력한다.
 	 */
 //	@Test
+	@Deprecated
 	public void scrap () {
 
 		final int YEAR_BASE = 2049;// KLunarDate.YEAR_BASE
