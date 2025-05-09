@@ -851,11 +851,11 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	}
 
 	/**
-	 * n월 뒤.
+	 * n달 뒤.
 	 * 대월 30일에서 소월로 가면 29일로 조정.
 	 * 
 	 * @param n
-	 * @return n년 뒤의 날짜
+	 * @return n개월 뒤의 날짜
 	 */
 	public KLunarDate plusMonths ( int n ) {
 		if( n == 0 ) return this;
@@ -866,6 +866,13 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		return resolveClosestDayOfMonth( ofEpochDay( epochDay ), day );
 	}
 
+	/**
+	 * n달 뒤. 단, 윤달은 안 세고 건너뜀.
+	 * 대월 30일에서 소월로 가면 29일로 조정.
+	 * 
+	 * @param n 넘어갈 개월 수
+	 * @return 윤달을 무시한 n개월 뒤의 날짜
+	 */
 	public KLunarDate plusNamedMonths ( int n ) {
 		if( n < 0 )
 		    return minusNamedMonths( -n );
@@ -880,7 +887,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	}
 
 	/**
-	 * n월 앞.
+	 * n달 앞.
 	 * 대월 30일에서 소월로 가면 29일로 조정.
 	 * 
 	 * @param n
@@ -895,6 +902,13 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		return resolveClosestDayOfMonth( ofEpochDay( epochDay ), day );
 	}
 
+	/**
+	 * n달 앞. 단, 윤달은 안 세고 건너뜀.
+	 * 대월 30일에서 소월로 가면 29일로 조정.
+	 * 
+	 * @param n 넘어갈 개월 수
+	 * @return 윤달을 무시한 n개월 앞의 날짜
+	 */
 	public KLunarDate minusNamedMonths ( int n ) {
 		if( n < 0 )
 		    return plusNamedMonths( -n );
@@ -926,6 +940,12 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		return resolvePreviousValid_D( kd.year, kd.month, kd.isLeapMonth, day );
 	}
 
+	/**
+	 * 다음달.
+	 * 이 달이 30일인데 다음달이 소월이면 29일로 조정.
+	 * 
+	 * @return 다음달
+	 */
 	public KLunarDate nextMonth () {
 		int yd = ydss[c0][y0];
 		int leapMonth = ( yd >>> 13 ) & 0xF;
@@ -956,6 +976,12 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		}
 	}
 
+	/**
+	 * 저번달.
+	 * 이 달이 30일인데 저번달이 소월이면 29일로 조정.
+	 * 
+	 * @return 다음달
+	 */
 	public KLunarDate prevMonth () {
 		if( isLeapMonth ){
 			return resolvePreviousValid_D( year, month, false, day );
