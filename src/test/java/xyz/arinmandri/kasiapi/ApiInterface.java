@@ -30,14 +30,19 @@ public interface ApiInterface
 	        @Query( "lunMonth" ) String lunMonth ,
 	        @Query( "lunDay" ) String lunDay );
 
+	/*
+	 * 파라미터명은 fromSolYear, toSolYear인데 실제로는 음력을 기준으로 하는 거 같다.
+	 */
 	@GET( "/B090041/openapi/service/LrsrCldInfoService/getSpcifyLunCalInfo" )
 	Call<ResponseData> getSpcifyLunCalInfo (
 	        @Query( value = "serviceKey" , encoded = true ) String serviceKey ,
+	        @Query( "numOfRows" ) Integer numOfRows ,
+	        @Query( "pageNo" ) Integer pageNo ,
 	        @Query( "fromSolYear" ) String fromSolYear ,
 	        @Query( "toSolYear" ) String toSolYear ,
 	        @Query( "lunMonth" ) String lunMonth ,
 	        @Query( "lunDay" ) String lunDay ,
-	        @Query( "lunDleapMonthay" ) String leapMonth );
+	        @Query( "leapMonth" ) String leapMonth );
 
 	@GET( "/B090041/openapi/service/LrsrCldInfoService/getJulDayInfo" )
 	Call<ResponseData> getJulDayInfo (

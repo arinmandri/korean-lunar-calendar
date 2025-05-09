@@ -2,7 +2,8 @@ package xyz.arinmandri.kasiapi;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -139,25 +140,44 @@ public class ApiService
 	}
 
 	/**
-	 * 여러 해(양력)에 걽여 음력 날짜(월, 일)들 모두 조회
+	 * 여러 해에 걽여 음력 날짜(월, 일)들 모두 조회
 	 *
-	 * @param fromSolYear
-	 * @param toSolYear
-	 * @param lunMonth
-	 * @param lunDay
-	 * @param leapMonth
+	 * @param fromSolYear 조회할 범위 (시작년도)
+	 * @param toSolYear   조회할 범위 (끝년도)
+	 * @param lunMonth    조회할 음력 날짜의 달
+	 * @param lunDay      조회할 음력 날짜의 일
+	 * @param leapMonth   윤달여부. null이면 평달윤달 모두 조회.
 	 * @return
 	 */
-	public List<Item> getSpcifyLunCalInfo ( int fromSolYear , int toSolYear , int lunMonth , int lunDay , boolean leapMonth ) {
-		Call<ResponseData> call = api.getSpcifyLunCalInfo(
-		        serviceKey,
-		        i( fromSolYear ),
-		        i( toSolYear ),
-		        i( lunMonth ),
-		        i( lunDay ),
-		        leapMonth ? "평" : "윤" );
+	public List<Item> getSpcifyLunCalInfo ( int fromSolYear , int toSolYear , int lunMonth , int lunDay , Boolean leapMonth ) {
+		/*
+		 * 다른 오퍼레이션들과 달리 얘는 여러 날짜를 동시에 조회하는 기능이며 결과가 매우 많고 여러 페이지에 걸쳐있을 수도 있다.
+		 * 끝페이지까지 모두 조회하여 합친 결과를 반환한다.
+		 */
+		final int pageSize = 500;
+		List<Item> items = new ArrayList<>();
 
-		List<Item> items = request( call );
+		int limit = 200;
+		int page = 0;
+		while( page++ < limit ){
+			Call<ResponseData> call = api.getSpcifyLunCalInfo(
+			        serviceKey,
+			        pageSize,
+			        page,
+			        i( fromSolYear ),
+			        i( toSolYear ),
+			        i( lunMonth ),
+			        i( lunDay ),
+			        leapMonth == null ? null : leapMonth ? "윤" : "평" );
+
+			List<Item> itemsThisPage = request( call );
+
+			if( itemsThisPage.size() == 0 )
+			    break;
+
+			items.addAll( itemsThisPage );
+		}
+
 		items = refineItems( items );
 
 		return items;
@@ -192,7 +212,7 @@ public class ApiService
 		 * 한 날짜에 여러 값이 있을 리 없는 율리우스적일을 키로 삼아 중복을 없앤다.
 		 * 율리우스적일 -> epoch day -> LocalDate(ISO)
 		 */
-		Map<Integer, Item> removeDuplicate = new HashMap<>();
+		Map<Integer, Item> removeDuplicate = new LinkedHashMap<>();
 		for( Item item : itemsSrc ){
 			int jDay = item.solJd;
 
