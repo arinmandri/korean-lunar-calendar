@@ -4,9 +4,7 @@ import static xyz.arinmandri.koreanlunarcalendar.Ganji.CYCLE_SIZE;
 
 import java.time.DateTimeException;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.chrono.ChronoLocalDate;
-import java.time.chrono.ChronoLocalDateTime;
 import java.time.chrono.Chronology;
 import java.time.chrono.Era;
 import java.time.chrono.IsoEra;
@@ -347,10 +345,12 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		return null;// TODO
 	}
 
-	@Override
-	public ChronoLocalDateTime<?> atTime ( LocalTime localTime ) {
-		return null;// TODO
-	}
+// import java.time.LocalTime;
+// import java.time.chrono.ChronoLocalDateTime;
+//	@Override
+//	public ChronoLocalDateTime<?> atTime ( LocalTime localTime ) {
+//		return null;// XXX time:
+//	}
 
 	@Override
 	public long toEpochDay () {
