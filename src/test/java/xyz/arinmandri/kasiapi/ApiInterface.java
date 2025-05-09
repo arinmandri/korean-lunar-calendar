@@ -8,6 +8,10 @@ import retrofit2.http.Query;
 public interface ApiInterface
 {
 
+	/*
+	 * 1582-10-04까지는 율리우스력 취급인 거 같다.
+	 * 1582-10-05부터는 그레고리력 취급인 거 같다.
+	 */
 	@GET( "/B090041/openapi/service/LrsrCldInfoService/getLunCalInfo" )
 	Call<ResponseData> getLunCalInfo (
 	        @Query( value = "serviceKey" , encoded = true ) String serviceKey ,
@@ -15,6 +19,10 @@ public interface ApiInterface
 	        @Query( "solMonth" ) String solMonth ,
 	        @Query( "solDay" ) String solDay );
 
+	/*
+	 * 1582-09-08까지는 양력 부분이 율리우스력 날짜가 조회되는 거 같다.
+	 * 1582-09-09부터 1582-09-18까지는 날짜가 두 개 나오는데 음력 날짜는 같고 양력이 그레고리력, 율리우스력 두 가지가 다 나오는 거 같다.
+	 */
 	@GET( "/B090041/openapi/service/LrsrCldInfoService/getSolCalInfo" )
 	Call<ResponseData> getSolCalInfo (
 	        @Query( value = "serviceKey" , encoded = true ) String serviceKey ,

@@ -113,7 +113,7 @@ public class KLunarDateTest_from
 
 	private void one_verify ( LocalDate ld0 , KLunarDate kd , boolean inRange ) {
 
-		Item item = api.getFromSolDate(
+		Item item = api.getFromIsoDate(
 		        ld0.getYear(),
 		        ld0.getMonthValue(),
 		        ld0.getDayOfMonth() );

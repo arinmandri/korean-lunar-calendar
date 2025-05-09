@@ -14,6 +14,8 @@ import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
 
 public class ApiService
 {
+	private static final int EPOCH_J_DAY = 2440588;// 0 epoch day의 율리우스적일
+
 	static private ApiService instance = new ApiService();
 
 	private ApiInterface api;
@@ -37,6 +39,29 @@ public class ApiService
 		        .build();
 
 		api = retrofit.create( ApiInterface.class );
+	}
+
+	/**
+	 * ISO 날짜로 조회
+	 *
+	 * @param solYear
+	 * @param solMonth
+	 * @param solDay
+	 * @return
+	 */
+	public Item getFromIsoDate ( int year , int month , int day ) {
+		LocalDate ld = LocalDate.of( year, month, day );
+
+		Call<ResponseData> call = api.getJulDayInfo(
+		        serviceKey,
+		        i( ld.toEpochDay() + EPOCH_J_DAY ) );
+
+		List<Item> items = request( call );
+		items = refineItems( items );
+
+		if( items.size() == 0 ) return null;
+		if( items.size() == 1 ) return items.get( 0 );
+		throw new RuntimeException( "결과가 여러개!?" );
 	}
 
 	/**
@@ -171,7 +196,7 @@ public class ApiService
 		for( Item item : itemsSrc ){
 			int jDay = item.solJd;
 
-			int epochDay = jDay - 2440588;
+			int epochDay = jDay - EPOCH_J_DAY;
 			LocalDate ld = LocalDate.ofEpochDay( epochDay );
 			item.solYear = ld.getYear();
 			item.solMonth = ld.getMonthValue();
@@ -210,6 +235,11 @@ public class ApiService
 	}
 
 	private String i ( int i ) {
+		if( i < 10 ) return "0" + i;
+		return i + "";
+	}
+
+	private String i ( long i ) {
 		if( i < 10 ) return "0" + i;
 		return i + "";
 	}
