@@ -11,6 +11,7 @@ import java.time.temporal.UnsupportedTemporalTypeException;
 import java.time.temporal.ValueRange;
 
 
+// TODO test
 public enum LunarMonthField implements TemporalField
 {
 	/**
@@ -96,8 +97,6 @@ public enum LunarMonthField implements TemporalField
 				    return range;
 				return ValueRange.of( 0, 0 );
 			}
-			default:
-				break;
 			}
 		}
 		throw new UnsupportedTemporalTypeException( "not supported temporal type" );
@@ -117,16 +116,31 @@ public enum LunarMonthField implements TemporalField
 				else
 				    return 0;
 			}
-			default:
-				break;
 			}
 		}
 		throw new UnsupportedTemporalTypeException( "not supported temporal type" );
 	}
 
 	@Override
+	@SuppressWarnings( "unchecked" )
 	public < R extends Temporal > R adjustInto ( R temporal , long newValue ) {
-		// TODO Auto-generated method stub
-		return null;
+		if( temporal instanceof KLunarDate ){
+			KLunarDate kd = (KLunarDate) temporal;
+			switch( this ){
+			case MONTH_N:{
+				if( newValue > Integer.MAX_VALUE || newValue < Integer.MIN_VALUE )
+				    throw new NonexistentDateException();
+				return (R) kd.withMonth( (int) newValue );
+			}
+			case MONTH_LEAP:{
+				if( newValue == 0 )
+				    return (R) kd.withMonthLeap( false );
+				if( newValue == 1 )
+				    return (R) kd.withMonthLeap( true );
+				throw new NonexistentDateException( "only 0 or 1 is valid for this field" );
+			}
+			}
+		}
+		throw new UnsupportedTemporalTypeException( "not supported temporal type" );
 	}
 }
