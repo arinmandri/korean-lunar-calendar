@@ -65,7 +65,7 @@ public class KLunarDateTest_from
 			testOne( LocalDate.ofEpochDay( epochDays[i] - 1 ) );
 			testOne( LocalDate.ofEpochDay( epochDays[i] ) );
 			testOne( LocalDate.ofEpochDay( epochDays[i] + 1 ) );
-			System.out.println( "각 주기 끝: " + MIN.plusDays( epochDays[i] ) + " 앞뒤 1일씩 통과" );
+			System.out.println( "각 주기 끝: " + KLunarDate.ofEpochDay( epochDays[i] ) + " 앞뒤 1일씩 통과" );
 		}
 	}
 

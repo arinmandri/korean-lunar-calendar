@@ -19,14 +19,32 @@ public class KLunarDateTest_ganji extends KLunarDateTest
 	private void testOne () {
 
 		final int epochDay = getRandomEpochDay_kasi();
-		final int jDay = EPOCH_0_JDAY + epochDay;
+		final int jDay = 2440588 + epochDay;
 
 		KLunarDate kd = KLunarDate.ofEpochDay( epochDay );
 		Item item = api.getFromJDay( jDay );
 
-		checkGanji( kd.getSecha(), item.getSecha() );
-		checkGanji( kd.getWolgeon(), item.getWolgeon() );
-		checkGanji( kd.getIljin(), item.getIljin() );
+		try{
+			checkGanji( kd.getSecha(), item.getSecha() );
+		}
+		catch( Exception e ){
+			System.out.println( "y err date: " + kd );
+			throw e;
+		}
+		try{
+			checkGanji( kd.getWolgeon(), item.getWolgeon() );
+		}
+		catch( Exception e ){
+			System.out.println( "m err date: " + kd );
+			throw e;
+		}
+		try{
+			checkGanji( kd.getIljin(), item.getIljin() );
+		}
+		catch( Exception e ){
+			System.out.println( "d err date: " + kd );
+			throw e;
+		}
 	}
 
 	private void checkGanji ( Ganji ganji , String GanjiStr ) {
