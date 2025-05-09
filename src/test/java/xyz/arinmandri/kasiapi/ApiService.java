@@ -1,7 +1,10 @@
 package xyz.arinmandri.kasiapi;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -52,6 +55,8 @@ public class ApiService
 		        i( solDay ) );
 
 		List<Item> items = request( call );
+		items = refineItems( items );
+
 		if( items.size() == 0 ) return null;
 		if( items.size() == 1 ) return items.get( 0 );
 		throw new RuntimeException( "결과가 여러개!?" );
@@ -74,6 +79,7 @@ public class ApiService
 		        i( lunDay ) );
 
 		List<Item> items = request( call );
+		items = refineItems( items );
 
 		return items;
 	}
@@ -81,7 +87,7 @@ public class ApiService
 	/*
 	 * 출력 서식 확인만 하게
 	 */
-	public List<Item> getFromLunDateTest(int lunYear, int lunMonth, int lunDay) {
+	public List<Item> getFromLunDateTest ( int lunYear , int lunMonth , int lunDay ) {
 
 		{// 범위 초과
 			if( lunYear > 2050 ){
@@ -104,7 +110,7 @@ public class ApiService
 		item.lunLeapmonth = "평";
 		item.solJd = testCount++;
 
-		return List.of(item);
+		return List.of( item );
 	}
 
 	/**
@@ -126,11 +132,14 @@ public class ApiService
 		        i( lunDay ),
 		        leapMonth ? "평" : "윤" );
 
-		return request( call );
+		List<Item> items = request( call );
+		items = refineItems( items );
+
+		return items;
 	}
 
 	/**
-	 * 여러 해(양력)에 걽여 음력 날짜(월, 일)들 모두 조회
+	 * 특정 율리우스적일 조회
 	 *
 	 * @param jDay 율리우스적일
 	 * @return
@@ -141,9 +150,38 @@ public class ApiService
 		        String.valueOf( jDay ) );
 
 		List<Item> items = request( call );
+		items = refineItems( items );
 		if( items.size() == 0 ) return null;
 		if( items.size() == 1 ) return items.get( 0 );
 		throw new RuntimeException( "결과가 여러개!?" );
+	}
+
+	/*
+	 * 음 1582-09-09부터 음 1582-09-18까지는 양력날짜가 두 개인데 그레고리력, 율리우스력인 거 같다.
+	 * 음 1582-09-09 전까지는 그레고리력 날짜가 안 나오고 율리우스력 날짜가 나오는 거 같다.
+	 * 
+	 * 그레고리력이든 율리우스력이든 그냥 다 집어치우고 율리우스적일만 사용해서 ISO 날짜로 바꿔 쓰자.
+	 */
+	private List<Item> refineItems ( List<Item> itemsSrc ) {
+		/*
+		 * 한 날짜에 여러 값이 있을 리 없는 율리우스적일을 키로 삼아 중복을 없앤다.
+		 * 율리우스적일 -> epoch day -> LocalDate(ISO)
+		 */
+		Map<Integer, Item> removeDuplicate = new HashMap<>();
+		for( Item item : itemsSrc ){
+			int jDay = item.solJd;
+
+			int epochDay = jDay - 2440588;
+			LocalDate ld = LocalDate.ofEpochDay( epochDay );
+			item.solYear = ld.getYear();
+			item.solMonth = ld.getMonthValue();
+			item.solDay = ld.getDayOfMonth();
+			item.solLeapyear = ld.isLeapYear() ? "윤" : "평";
+
+			removeDuplicate.put( jDay, item );
+		}
+
+		return List.copyOf( removeDuplicate.values() );
 	}
 
 	private List<Item> request ( Call<ResponseData> call ) {
