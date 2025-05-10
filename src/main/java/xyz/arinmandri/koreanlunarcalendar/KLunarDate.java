@@ -172,6 +172,8 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 
 	public static final int YEAR_MIN = 1391;// 최소 년도
 	public static final int YEAR_MAX = YEAR_MIN + ( ydss.length - 1 ) * CYCLE_SIZE + ydss[ydss.length - 1].length - 1;// 최대년도
+	public static final int EPOCHDAY_MIN = epochDays[0];
+	public static final int EPOCHDAY_MAX = epochDays[epochDays.length - 1];
 
 	private KLunarDate( int year , int month , int day , boolean isLeapMonth , int c0 , int y0 , int m0 , int d0 ) {
 		super();
@@ -937,9 +939,18 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	public KLunarDate plusMonths ( int n ) {
 		if( n == 0 ) return this;
 
+		/*
+		 * 달을 정확히 하나씩 세는 게 아니라 달의 평균 크기를 이용하여 점프한 다음 일자를 재조정한다.
+		 * 지원범위 경계값으로 가는 경우에는 일자를 재조정하기 전의 중간결과가 범위를 벗어나는 경우가 있어서
+		 * 범위를 조금만 벗어나는 경우에는 범위 내로 맞춤.
+		 */
 		double mAvgLength = LunarMonthUnit.LMONTHS.getDurationInDays();
 
 		long epochDay = toEpochDay() + (long) ( n * mAvgLength );
+		if( epochDay < EPOCHDAY_MIN && epochDay > EPOCHDAY_MIN - ( LIL_MONTH_SIZE >> 1 ) )
+		    epochDay = EPOCHDAY_MIN;
+		if( epochDay > EPOCHDAY_MAX && epochDay < EPOCHDAY_MAX + ( LIL_MONTH_SIZE >> 1 ) )
+		    epochDay = EPOCHDAY_MAX;
 		return resolveClosestDayOfMonth( ofEpochDay( epochDay ), day );
 	}
 
@@ -973,9 +984,16 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	public KLunarDate minusMonths ( int n ) {
 		if( n == 0 ) return this;
 
+		/*
+		 * plusMonths 참고.
+		 */
 		double mAvgLength = LunarMonthUnit.LMONTHS.getDurationInDays();
 
 		long epochDay = toEpochDay() - (long) ( n * mAvgLength );
+		if( epochDay < EPOCHDAY_MIN && epochDay > EPOCHDAY_MIN - ( LIL_MONTH_SIZE >> 1 ) )
+		    epochDay = EPOCHDAY_MIN;
+		if( epochDay > EPOCHDAY_MAX && epochDay < EPOCHDAY_MAX + ( LIL_MONTH_SIZE >> 1 ) )
+		    epochDay = EPOCHDAY_MAX;
 		return resolveClosestDayOfMonth( ofEpochDay( epochDay ), day );
 	}
 
@@ -1046,10 +1064,14 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 			return resolvePreviousValid_D( year + 1, 1, false, day );
 		}
 		else{
-			if( leapMonth == month )
-			    return resolvePreviousValid_D( year, month, true, day );
-			else
+			if( isLeapMonth )
 			    return resolvePreviousValid_D( year, month + 1, false, day );
+			else{
+				if( leapMonth == month )
+				    return resolvePreviousValid_D( year, month, true, day );
+				else
+				    return resolvePreviousValid_D( year, month + 1, false, day );
+			}
 		}
 	}
 
@@ -1171,7 +1193,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		int months = start.untilMonthIn1Y( end );
 		start = start.plusMonths( months );
 
-		try{// resolvePreviousValid 때문에 바뀐 일자 원복 시도
+		try{// resolvePr eviousValid 때문에 바뀐 일자 원복 시도
 			start = start.withDay( getDay() );
 		}
 		catch( NonexistentDateException e ){}
