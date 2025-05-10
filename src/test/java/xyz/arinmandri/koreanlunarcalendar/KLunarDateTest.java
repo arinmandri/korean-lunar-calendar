@@ -14,8 +14,8 @@ import xyz.arinmandri.kasiapi.Item;
 
 public class KLunarDateTest
 {
-	protected final int testSize = 1000;
-	protected final int testCheckSize = 200;
+	protected final int testSize      = 100_0000;
+	protected final int testCheckSize =  20_0000;
 	protected final int shortTestSize = 100;
 	protected final int shortTestCheckSize = 10;
 
@@ -174,6 +174,8 @@ public class KLunarDateTest
 	void repeat ( Runnable test , String title , int size , int testCheckSize ) {
 		printTitle( title );
 
+		long t0 = System.currentTimeMillis();
+
 		for( int i = 0 ; i < size ; i += 1 ){
 			try{
 				test.run();
@@ -187,7 +189,12 @@ public class KLunarDateTest
 			}
 		}
 
-		System.out.println( "GOOD" );
+		long t1 = System.currentTimeMillis();
+		long d = t1 - t0;
+		long a = d / 1000;
+		long b = d % 1000;
+
+		System.out.println( "GOOD " + String.format( "%3d.%03d", a, b ) );
 	}
 
 	void printTitle ( String title ) {
