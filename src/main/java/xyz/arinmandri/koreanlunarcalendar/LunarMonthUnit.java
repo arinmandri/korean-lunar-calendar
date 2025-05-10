@@ -106,8 +106,7 @@ public enum LunarMonthUnit implements TemporalUnit
 			}
 		}
 
-		//// 그외: temporal이 알아서
-		return (R) temporal.plus( amount, this );
+		throw new UnsupportedTemporalTypeException( "Unsupported unit: " + this );
 	}
 
 	@Override
@@ -132,8 +131,7 @@ public enum LunarMonthUnit implements TemporalUnit
 			}
 		}
 
-		//// 그외: temporal이 알아서
-		return temporal1Inclusive.until( temporal2Exclusive, this );
+		throw new UnsupportedTemporalTypeException( "Unsupported unit: " + this );
 	}
 
 	private int betweenKd ( KLunarDate kd1 , KLunarDate kd2 ) {// kd1<=kd2
