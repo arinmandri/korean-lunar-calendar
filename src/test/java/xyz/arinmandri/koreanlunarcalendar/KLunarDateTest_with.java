@@ -1,5 +1,7 @@
 package xyz.arinmandri.koreanlunarcalendar;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.junit.jupiter.api.Test;
 
 
@@ -56,4 +58,22 @@ public class KLunarDateTest_with extends KLunarDateTest
 			checkValue( kd1, 2020, 12, false, d );
 		}
 	}// TODO 안 되는 경우
+
+	@Test
+	public void testWithSecha () {
+		KLunarDate kd;
+
+		// TODO 이거 걍 단순한
+		kd = KLunarDate.of( 2004, 12, false, 1 );
+		kd = kd.withSecha( Ganji.O11 );
+		assertEquals( Ganji.O11, kd.getSecha() );
+		kd = kd.withSecha( Ganji.O7 );
+		assertEquals( Ganji.O7, kd.getSecha() );
+		kd = kd.withSecha( Ganji.O1 );
+		assertEquals( Ganji.O1, kd.getSecha() );
+		kd = kd.withSecha( Ganji.O60 );
+		assertEquals( Ganji.O60, kd.getSecha() );
+	}
+
+	// TODO with ganji
 }

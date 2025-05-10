@@ -783,7 +783,26 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		return ofYearDay( year, dayOfYear );
 	}
 
-	// TODO with 간지
+	public KLunarDate withSecha ( Ganji ganji ) {
+		if( ganji == this.getSecha() )
+		    return this;
+		int diff = ganji.ordinal() - this.getSecha().ordinal();
+		return plusYears( diff );
+	}
+
+	public KLunarDate withWolgeon ( Ganji ganji ) {
+		if( ganji == this.getWolgeon() )
+		    return this;
+		int diff = ganji.ordinal() - this.getWolgeon().ordinal();
+		return plusNamedMonths( diff );
+	}
+
+	public KLunarDate withIljin ( Ganji ganji ) {
+		if( ganji == this.getIljin() )
+		    return this;
+		int diff = ganji.ordinal() - this.getIljin().ordinal();
+		return plusDays( diff );
+	}
 
 	//// ================================ 셈 - plus, minus
 
