@@ -3,7 +3,7 @@
 
 Java 한국 음력. 아직 개발중.
 
-TODO 음력 양력 변환, 날짜 계산, 간지 조회 등. java.time의 인터페이스 구현. 네트워크 불필요.
+음력 양력 변환, 날짜 계산, 간지 조회 등. java.time의 인터페이스 구현.
 
 Korean Lunar Calendar in Java
 
@@ -44,7 +44,7 @@ System.out.println( kd );
 ```
 
 ```
-2000-12-07
+KoreanLunar 2000-12-07
 ```
 
 ```java
@@ -69,7 +69,7 @@ System.out.println( kd );
 ```
 
 ```
-2000-12-07
+KoreanLunar 2000-12-07
 ```
 
 ```java
@@ -136,10 +136,59 @@ System.out.println( kd.getIljin().toChineseString() + "일" );
 
 ### 날짜 계산
 
-TODO 덧뺄셈, 특정 필드 값 변경, 비교
-
 ※ `KLunarDate`는 `java.time.LocalDate`와 마찬가지로 불변의 데이터클래스이며 셈 메서드들은 개체의 값이 바뀌는 기능이 아니고 새 값의 새 개체를 반환한다.
 
+#### 필드 변경
+
+```java
+KLunarDate kd = KLunarDate.of( 2000, 1, 1 );
+kd = kd.withYear( 2004 );// 년 변경
+kd = kd.withMonth( 2 );// 월 변경
+kd = kd.withMonthLeap( true );// 윤달 여부 변경
+kd = kd.withDay( 10 );// 일 변경
+```
+
+- 일자가 30일인 날짜에서 30일이 없는 달로 변경하면 자동으로 29일로 조정된다.
+- 윤달에서 윤달이 없는 날짜로 변경하면 자동으로 평달로 조정된다.
+
+#### 덧셈 뺄셈
+
+```java
+KLunarDate kd = KLunarDate.of( 2000, 1, 1 );
+kd = kd.plusYears( 4 );// 년 단위 덧셈
+kd = kd.minusMonths( 2 );// 월 단위 뺄셈
+kd = kd.plusNamedMonths( 4 );// 월 단위 덧셈 (윤달 무시)
+kd = kd.minusDays( 2 );// 일 단위 뺄셈
+```
+
+#### 시간 간격
+
+```java
+KLunarDate kd1 = KLunarDate.of( 2001, 7, 8 );
+KLunarDate kd2 = KLunarDate.of( 2003, 2, 2 );
+
+System.out.println( kd1.until( kd2, ChronoUnit.YEARS ) );// 두 날짜의 해 차이
+System.out.println( kd1.until( kd2, ChronoUnit.MONTHS ) );// 두 날짜의 월 차이
+System.out.println( kd1.until( kd2, ChronoUnit.DAYS ) );// 두 날짜의 일 차이
+```
+
+```
+1
+18
+555
+```
+
+```java
+KLunarDate kd1 = KLunarDate.of( 2001, 7, 8 );
+KLunarDate kd2 = KLunarDate.of( 2003, 2, 2 );
+
+ChronoPeriod p = kd1.until( kd2 );// 두 날짜의 차이(몇개년+몇개월+몇개일)
+System.out.println( p );
+```
+
+```
+KoreanLunar P1Y6M24D
+```
 
 
 
@@ -155,3 +204,10 @@ TODO 덧뺄셈, 특정 필드 값 변경, 비교
   - 음력 2050-12-29  
     한국천문연구원에서는 공식적으로 음력 2050-11-18까지만 알려주는데 11월이 대월이라고는 하니까 여기까지는 알 수 있음.
 
+
+
+
+
+## …
+
+- [블로그 메모](https://peekabook.tistory.com/entry/java-time-date)

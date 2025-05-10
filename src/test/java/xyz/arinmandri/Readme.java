@@ -6,6 +6,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Method;
 import java.time.LocalDate;
+import java.time.chrono.ChronoPeriod;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 
 import xyz.arinmandri.koreanlunarcalendar.KLunarDate;
@@ -43,7 +45,7 @@ public class Readme
 		}
 	}
 
-	// ### 날짜 개체 생성
+	/// ### 날짜 개체 생성
 	@Order( 1_00_00 )
 	public void 날짜개체생성 () {
 		// 오늘 (시간대 지정 불가. 한국 시간대(UTC+9)로만 동작.)
@@ -58,7 +60,7 @@ public class Readme
 		kd = KLunarDate.ofYearDay( 2004, 30 );
 	}
 
-	// ### 다른 타입으로/에서 변환
+	/// ### 다른 타입으로/에서 변환
 
 	// #### 양력과의 상호 변환
 	@Order( 2_01_01 )
@@ -96,7 +98,7 @@ public class Readme
 
 	// #### 문자열과의 상호 변환
 
-	// ### 간지(干支) 조회
+	/// ### 간지(干支) 조회
 
 	@Order( 3_00_01 )
 	public void 간지조회1 () {
@@ -122,7 +124,44 @@ public class Readme
 		System.out.println( kd.getIljin().toChineseString() + "일" );
 	}
 
-	// ### 날짜 계산
+	/// ### 날짜 계산
+
+	@Order( 4_01_01 )
+	public void 필드변경 () {
+		KLunarDate kd = KLunarDate.of( 2000, 1, 1 );
+		kd = kd.withYear( 2004 );// 년 변경
+		kd = kd.withMonth( 2 );// 월 변경
+		kd = kd.withMonthLeap( true );// 윤달 여부 변경
+		kd = kd.withDay( 10 );// 일 변경
+	}
+
+	@Order( 4_02_01 )
+	public void 덧셈뺄셈 () {
+		KLunarDate kd = KLunarDate.of( 2000, 1, 1 );
+		kd = kd.plusYears( 4 );// 년 단위 덧셈
+		kd = kd.minusMonths( 2 );// 월 단위 뺄셈
+		kd = kd.plusNamedMonths( 4 );// 월 단위 덧셈 (윤달 무시)
+		kd = kd.minusDays( 2 );// 일 단위 뺄셈
+	}
+
+	@Order( 4_03_01 )
+	public void 시간간격1 () {
+		KLunarDate kd1 = KLunarDate.of( 2001, 7, 8 );
+		KLunarDate kd2 = KLunarDate.of( 2003, 2, 2 );
+
+		System.out.println( kd1.until( kd2, ChronoUnit.YEARS ) );// 두 날짜의 해 차이
+		System.out.println( kd1.until( kd2, ChronoUnit.MONTHS ) );// 두 날짜의 월 차이
+		System.out.println( kd1.until( kd2, ChronoUnit.DAYS ) );// 두 날짜의 일 차이
+	}
+
+	@Order( 4_03_02 )
+	public void 시간간격2 () {
+		KLunarDate kd1 = KLunarDate.of( 2001, 7, 8 );
+		KLunarDate kd2 = KLunarDate.of( 2003, 2, 2 );
+
+		ChronoPeriod p = kd1.until( kd2 );// 두 날짜의 차이(몇개년+몇개월+몇개일)
+		System.out.println( p );
+	}
 
 	@Retention( RetentionPolicy.RUNTIME )
 	@Target( ElementType.METHOD )
