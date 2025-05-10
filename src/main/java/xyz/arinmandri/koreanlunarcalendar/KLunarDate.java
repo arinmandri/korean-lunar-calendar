@@ -315,8 +315,11 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	 * 
 	 * @param epochDay 1970년 1월 1일을 0으로 하는 누적일수
 	 * @return 음력 날짜
+	 * @throws OutOfRangeException
 	 */
 	public static KLunarDate ofEpochDay ( final long epochDay ) {
+		if( epochDay < epochDays[0] ) throw new OutOfRangeException();
+		if( epochDay > epochDays[epochDays.length - 1] ) throw new OutOfRangeException();
 		/*
 		 * 주기별 epoch day 정보로 해당하는 주기를 찾는다.
 		 * 그 주기 내 년도별 적일 정보로 해당하는 음력년도를 찾는다.
@@ -328,7 +331,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 
 		//// 주기 찾기
 		int c0 = ydss.length;
-		for( ; c0 >= 0 ; c0 -= 1 ){// 미래에서부터 선형탐색 (XXX 일단 주기 개수 적어서 걍 선형탐색... 주기 수 많아지면 1주기의 대략의 크기로 점프 가능할 듯
+		for( ; c0 >= 0 ; c0 -= 1 ){// 미래에서부터 선형탐색
 			if( epochDay >= epochDays[c0] ){
 				final int cd = (int) ( epochDay - epochDays[c0] );
 
