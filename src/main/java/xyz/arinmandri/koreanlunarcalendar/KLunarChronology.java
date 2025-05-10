@@ -143,7 +143,7 @@ public class KLunarChronology extends AbstractChronology implements java.io.Seri
 			if( era == IsoEra.CE )
 			    return yearOfEra;
 		}
-		throw new ClassCastException( "Era must be IsoEra" );
+		throw new ClassCastException( "Era must be IsoEra.CE" );
 	}
 
 	/**
