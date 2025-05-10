@@ -104,11 +104,10 @@ public final class KLunarPeriod implements java.time.chrono.ChronoPeriod
 			int m = months % KLunarDate.NAMED_MONTHS_NUMBER_IN_1Y;
 			return of( y, m, true, days );
 		}
-		else{// 윤달 있는 경우 TODO 1년의 달 개수가 일정치는 않지만 19년마다 윤달 7개라는데 이건 진짜 일정한지 확인 해야지
-			final int M_IN_19Y = 12 * 19 + 7;// 19년의 달의 수
-			int y = years + months / M_IN_19Y;
-			int m = months % M_IN_19Y;
-			return of( y, m, true, days );
+		else{// 윤달 취급: 19년마다 윤달 7개, 총 235달.(19년이 어디에 걸치느냐에 따라 7개가 아닐 수는 있지만)
+			int y = years + months / 235;
+			int m = months % 235;
+			return of( y, m, false, days );
 		}
 	}
 
