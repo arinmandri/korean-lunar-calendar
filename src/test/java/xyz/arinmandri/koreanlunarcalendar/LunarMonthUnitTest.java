@@ -5,12 +5,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
 
-public class LunarMonthUnitTest_between extends KLunarDateTest
+public class LunarMonthUnitTest extends KLunarDateTest
 {
 
 	@Test
 	public void between_LMONTH () {
-		printTitle( "LMONTHS.bewteen" );
+		printTitle( "LunarMonthUnit.LMONTHS.bewteen" );
 		LunarMonthUnit u = LunarMonthUnit.LMONTHS;
 		KLunarDate kd1, kd2;
 
@@ -64,4 +64,50 @@ public class LunarMonthUnitTest_between extends KLunarDateTest
 		assertEquals( +( ( 2033 - 1406 ) * 12 + 33 * 7 - 13 ), u.between( kd1, kd2 ) );
 		assertEquals( -( ( 2033 - 1406 ) * 12 + 33 * 7 - 13 ), u.between( kd2, kd1 ) );
 	}
+
+	@Test
+	public void addTo_LMONTHS () {
+		repeat( ()-> {
+			KLunarDate kd1 = getRaondomKd().withDay( 1 );
+			KLunarDate kd2 = getRaondomKd().withDay( 1 );
+			long diff = 0;
+
+			try{
+				diff = LunarMonthUnit.LMONTHS.between( kd1, kd2 );
+				assertEquals( kd2, LunarMonthUnit.LMONTHS.addTo( kd1, diff ) );
+			}
+			catch( Throwable e ){
+				System.out.println( "=DOOM=" );
+				System.out.println( "diff: " + diff );
+				System.out.println( "kd1:  " + kd1 );
+				System.out.println( "kd2:  " + kd2 );
+				System.out.println( "kd1+: " + LunarMonthUnit.LMONTHS.addTo( kd1, diff ) );
+				throw e;
+			}
+		}, "LunarMonthUnit.LMONTHS.addTo" );
+	}
+
+	@Test
+	public void addTo_LMONTH_BUNDLES () {
+		repeat( ()-> {
+			KLunarDate kd1 = getRaondomKd().withDay( 1 );
+			KLunarDate kd2 = getRaondomKd().withDay( 1 );
+			long diff = 0;
+
+			try{
+				diff = LunarMonthUnit.LMONTH_BUNDLES.between( kd1, kd2 );
+				assertEquals( kd2, LunarMonthUnit.LMONTH_BUNDLES.addTo( kd1, diff ).withMonthLeap( kd2.isLeapMonth() ) );
+			}
+			catch( Throwable e ){
+				System.out.println( "=DOOM=" );
+				System.out.println( "diff: " + diff );
+				System.out.println( "kd1:  " + kd1 );
+				System.out.println( "kd2:  " + kd2 );
+				System.out.println( "kd1+: " + LunarMonthUnit.LMONTH_BUNDLES.addTo( kd1, diff ).withMonthLeap( kd2.isLeapMonth() ) );
+				throw e;
+			}
+		}, "LunarMonthUnit.LMONTH_BUNDLES.addTo" );
+	}
+
+	// TODO 안 되는 경우
 }

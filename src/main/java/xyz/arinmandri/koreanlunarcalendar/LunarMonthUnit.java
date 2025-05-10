@@ -8,7 +8,6 @@ import java.time.temporal.TemporalUnit;
 import java.time.temporal.UnsupportedTemporalTypeException;
 
 
-// TODO test
 public enum LunarMonthUnit implements TemporalUnit
 {
 	/**
