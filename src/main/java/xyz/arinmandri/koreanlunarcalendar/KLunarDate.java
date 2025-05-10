@@ -612,6 +612,9 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		return Ganji.values()[( ( toEpochDayInt() + 17 ) % CYCLE_SIZE + CYCLE_SIZE ) % CYCLE_SIZE];// 0 epoch day 는 신사(辛巳)일 = O18 // epoch day가 음수일 수도 있어서 a%c 대신 (a%c+c)%c
 	}
 
+	/**
+	 * 한 달의 길이 (일 단위)
+	 */
 	@Override
 	public int lengthOfMonth () {
 		int yd = ydss[c0][y0];
@@ -621,6 +624,9 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		    return LIL_MONTH_SIZE;
 	}
 
+	/**
+	 * 1년의 길이 (일 단위)
+	 */
 	@Override
 	public int lengthOfYear () {
 		int yd = ydss[c0][y0];
@@ -634,6 +640,13 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 			    count += LIL_MONTH_SIZE;
 		}
 		return count;
+	}
+
+	/**
+	 * 1년의 길이 (월 단위)
+	 */
+	public int lengthOfYearInM () {
+		return isLeapYear() ? NAMED_MONTHS_NUMBER_IN_1Y + 1 : NAMED_MONTHS_NUMBER_IN_1Y;
 	}
 
 	//// ================================ 셈

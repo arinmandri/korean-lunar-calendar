@@ -121,8 +121,9 @@ public enum LunarMonthUnit implements TemporalUnit
 			KLunarDate kd2 = (KLunarDate) temporal2Exclusive;
 			switch( this ){
 			case LMONTHS:
-				// TODO
-				break;
+				return kd2.isBefore( kd1 )
+				        ? -betweenKd( kd2, kd1 )
+				        : betweenKd( kd1, kd2 );
 			case LMONTH_BUNDLES:
 				//// end의(년*12+월) - start의(년*12+월) - day앞뒤고려
 				return ( kd2.getYear() - kd1.getYear() ) * KLunarDate.NAMED_MONTHS_NUMBER_IN_1Y
@@ -135,4 +136,31 @@ public enum LunarMonthUnit implements TemporalUnit
 		return temporal1Inclusive.until( temporal2Exclusive, this );
 	}
 
+	private int betweenKd ( KLunarDate kd1 , KLunarDate kd2 ) {// kd1<=kd2
+		int count;
+
+		if( kd2.getYear() == kd1.getYear() ){
+			count = kd2.getMonthOrdinal() - kd1.getMonthOrdinal();
+		}
+
+		else{
+			//// kd1(inclusive)~그해끝 달 수
+			count = kd1.lengthOfYearInM() - kd1.getMonthOrdinal();
+
+			//// 그해첨~kd2(exclusive) 달 수
+			count += kd2.getMonthOrdinal();
+
+			//// kd1의 해와 kd2의 해들의 달 수 합
+			for( int y = kd1.getYear() + 1 ; y < kd2.getYear() ; y += 1 ){
+				count += KLunarChronology.INSTANCE.isLeapYear( y )
+				        ? KLunarDate.NAMED_MONTHS_NUMBER_IN_1Y + 1
+				        : KLunarDate.NAMED_MONTHS_NUMBER_IN_1Y;;
+			}
+		}
+
+		//// 달 빼고 일자만으로 kd1, kd2 선후 비교
+		count -= kd1.getDay() > kd2.getDay() ? 1 : 0;
+
+		return count;
+	}
 }
