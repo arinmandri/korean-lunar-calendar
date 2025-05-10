@@ -16,7 +16,7 @@ public enum LunarMonthUnit implements TemporalUnit
 	 * 대부분 달은 뒤에 윤달이 없으므로 (1달 == 1달묶음)이다.
 	 * 1년은 12달 혹은 13달이다.
 	 */
-	LMONTHS (Duration.ofSeconds( 24 * 60 * 60 * 68304L / 2313 ), true),// TODO extend_range: 현재의 지원범위 첫날부터 끝날까지 총 월수=68304, 총 일수=2313;
+	LMONTHS (Duration.ofSeconds( 24 * 60 * 60 * 241058L / 8163 ), true),// 현재의 지원범위 첫날부터 끝날까지 총 월수=8163, 총 일수=241058;
 
 	/**
 	 * 평달과 윤달의 묶음.
