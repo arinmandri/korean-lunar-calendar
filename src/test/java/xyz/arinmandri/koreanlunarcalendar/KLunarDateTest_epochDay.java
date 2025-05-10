@@ -1,6 +1,7 @@
 package xyz.arinmandri.koreanlunarcalendar;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 import java.time.LocalDate;
 
@@ -51,5 +52,27 @@ public class KLunarDateTest_epochDay extends KLunarDateTest
 		long e1 = k.toEpochDay();
 
 		assertEquals( e0, e1 );
+	}
+
+	@Test
+	public void testOne_boundary () {
+		printTitle( "epoch day - boundary" );
+		KLunarDate kd;
+
+		kd = KLunarDate.ofEpochDay( EPOCH_DAY_MIN );
+		kd = KLunarDate.ofEpochDay( EPOCH_DAY_MAX );
+
+		assertThrowsExactly( OutOfRangeException.class, ()-> {
+			KLunarDate kd1 = KLunarDate.ofEpochDay( EPOCH_DAY_MIN - 1 );
+		} );
+		assertThrowsExactly( OutOfRangeException.class, ()-> {
+			KLunarDate kd1 = KLunarDate.ofEpochDay( EPOCH_DAY_MIN - 2 );
+		} );
+		assertThrowsExactly( OutOfRangeException.class, ()-> {
+			KLunarDate kd1 = KLunarDate.ofEpochDay( EPOCH_DAY_MAX + 1 );
+		} );
+		assertThrowsExactly( OutOfRangeException.class, ()-> {
+			KLunarDate kd1 = KLunarDate.ofEpochDay( EPOCH_DAY_MAX + 2 );
+		} );
 	}
 }
