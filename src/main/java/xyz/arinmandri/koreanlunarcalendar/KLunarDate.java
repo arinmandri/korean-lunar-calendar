@@ -1315,9 +1315,6 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 //	@Override public KLunarDate with ( TemporalAdjuster adjuster )
 //	@Override public int compareTo ( ChronoLocalDate other )
 
-//	@Override public KLunarDate plus ( TemporalAmount amount )
-//	@Override public KLunarDate minus ( TemporalAmount amount )
-
 	//// ================================ TODO serialize
 
 }
