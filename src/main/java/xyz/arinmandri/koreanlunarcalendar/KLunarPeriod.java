@@ -135,19 +135,26 @@ public final class KLunarPeriod implements java.time.chrono.ChronoPeriod
 		return of( years * scalar, months * scalar, monthLeapingMode, days * scalar );
 	}
 
+	/**
+	 * normalize
+	 * 윤달 무시 상태인 경우: 12달을 1년으로 바꾼다.
+	 * 윤달 취급 상태인 경우: 235달을 19년으로 바꾼다.
+	 * 
+	 * @throws ArithmeticException if numeric overflow occurs
+	 */
 	@Override
 	public ChronoPeriod normalized () {
-
+		long y;
+		int m;
 		if( monthLeapingMode ){// 윤달 무시: 1년에 12달
-			int y = years + months / KLunarDate.NAMED_MONTHS_NUMBER_IN_1Y;
-			int m = months % KLunarDate.NAMED_MONTHS_NUMBER_IN_1Y;
-			return of( y, m, true, days );
+			y = years + months / KLunarDate.NAMED_MONTHS_NUMBER_IN_1Y;
+			m = months % KLunarDate.NAMED_MONTHS_NUMBER_IN_1Y;
 		}
 		else{// 윤달 취급: 19년마다 윤달 7개, 총 235달.(19년이 어디에 걸치느냐에 따라 7개가 아닐 수는 있지만)
-			int y = years + months / 235;
-			int m = months % 235;
-			return of( y, m, false, days );
+			y = years + months / 235;
+			m = months % 235;
 		}
+		return of( Math.toIntExact( y ), m, monthLeapingMode, days );
 	}
 
 	@Override
