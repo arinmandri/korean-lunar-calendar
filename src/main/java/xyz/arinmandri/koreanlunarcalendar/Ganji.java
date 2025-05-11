@@ -1,5 +1,8 @@
 package xyz.arinmandri.koreanlunarcalendar;
 
+/**
+ * 간지 60개: 천간과 지지의 조합
+ */
 public enum Ganji
 {
 	A1, B2, C3, D4, E5, F6, G7, H8, I9, J10, A11, B12,// 갑자 을축 병인 정묘 무진 기사 경오 신미 임신 계유 갑술 을해
@@ -38,6 +41,9 @@ public enum Ganji
 		return String.valueOf( gan.c ) + String.valueOf( ji.c );
 	}
 
+	/**
+	 * 천간 10개
+	 */
 	public enum Gan
 	{
 		A ('갑', '甲'),
@@ -65,6 +71,9 @@ public enum Ganji
 		}
 	}
 
+	/**
+	 * 지지 12개
+	 */
 	public enum Ji
 	{
 		_1 ('자', '子'),
