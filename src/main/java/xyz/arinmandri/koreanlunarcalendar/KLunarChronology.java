@@ -46,11 +46,22 @@ public class KLunarChronology extends AbstractChronology implements java.io.Seri
 	}
 
 	/**
-	 * CLDR에 정의된 식별자??? 가 있나?
+	 * CLDR에 정의된 식별자 없음.
+	 * 
+	 * @return null
 	 */
 	@Override
 	public String getCalendarType () {
-		return null;// TODO
+		/*
+		 * 이거 확인하는 거 맞는지 모르겠는데.
+		 * https://cldr.unicode.org/index/downloads
+		 * 여기서 latest-Data 눌러서
+		 * https://unicode.org/Public/cldr/47/?_gl=1*16ha7od*_ga*MjAyODM4MzI3MC4xNzQ2OTMwOTk3*_ga_BPN1D3SEJM*czE3NDY5MzA5OTYkbzEkZzEkdDE3NDY5MzE4MjMkajAkbDAkaDA.
+		 * 여기서 cldr-common-47 다운받아서 cldr-common-47/common/bcp47/calendar.xml
+		 * 여기에 없다.
+		 * 근데 웃긴 건 살면서 거의 들어본 적도 없는 단기력은 있음.
+		 */
+		return null;
 	}
 
 	/**
