@@ -65,14 +65,14 @@ public class KLunarDateTest_with extends KLunarDateTest
 
 		// TODO 이거 걍 단순한
 		kd = KLunarDate.of( 2004, 12, false, 1 );
-		kd = kd.withSecha( Ganji.O11 );
-		assertEquals( Ganji.O11, kd.getSecha() );
-		kd = kd.withSecha( Ganji.O7 );
-		assertEquals( Ganji.O7, kd.getSecha() );
-		kd = kd.withSecha( Ganji.O1 );
-		assertEquals( Ganji.O1, kd.getSecha() );
-		kd = kd.withSecha( Ganji.O60 );
-		assertEquals( Ganji.O60, kd.getSecha() );
+		kd = kd.withSecha( Ganji.A11 );
+		assertEquals( Ganji.A11, kd.getSecha() );
+		kd = kd.withSecha( Ganji.G7 );
+		assertEquals( Ganji.G7, kd.getSecha() );
+		kd = kd.withSecha( Ganji.A1 );
+		assertEquals( Ganji.A1, kd.getSecha() );
+		kd = kd.withSecha( Ganji.J12 );
+		assertEquals( Ganji.J12, kd.getSecha() );
 	}
 
 	// TODO with ganji
