@@ -1266,15 +1266,18 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	}
 
 	private int untilMonthIn1Y_main ( KLunarDate end ) {// this <= end (1년 미만 차이)
+		int count;
 
-		// TODO 이거 먼가 안 될 거 같은데. 같은 달 vs 약 1년 차이 나중에 테스트 작성하면서
-		int diff = end.getMonthOrdinal() - this.getMonthOrdinal();
-		diff -= ( getDay() > end.getDay() ? 1 : 0 );
-		diff += ( diff < 0 )
-		        ? NAMED_MONTHS_NUMBER_IN_1Y
-		                + ( this.isLeapYear() ? 1 : 0 )
-		        : 0;
-		return diff;
+		if( end.getYear() == getYear() ){
+			count = end.getMonthOrdinal() - getMonthOrdinal();
+		}
+		else{
+			count = lengthOfYearInM() + end.getMonthOrdinal() - getMonthOrdinal();
+		}
+
+		count -= getDay() > end.getDay() ? 1 : 0;// 달 빼고 일자만으로 kd1, end 선후 비교
+
+		return count;
 	}
 
 	//// ================================ Object
