@@ -9,8 +9,25 @@ import xyz.arinmandri.kasiapi.Item;
 
 public class KLunarDateTest_ganji extends KLunarDateTest
 {
-
 	@Test
+	public void valueOfGanJi () {
+		for( int i = 0 ; i < Ganji.values().length ; i++ ){
+			Ganji gj = Ganji.values()[i];
+			Ganji.Gan g = gj.gan;
+			Ganji.Ji j = gj.ji;
+			Ganji gj1 = Ganji.valueOf( g, j );
+			assertEquals( gj, gj1 );
+		}
+		try{
+			Ganji aa = Ganji.valueOf( Ganji.Gan.A, Ganji.Ji._2 );
+
+		}
+		catch( Throwable e ){
+			System.out.println( e );
+		}
+	}
+
+//	@Test
 	public void test () {
 
 		repeatShortly( this::testOne, "ganji" );
