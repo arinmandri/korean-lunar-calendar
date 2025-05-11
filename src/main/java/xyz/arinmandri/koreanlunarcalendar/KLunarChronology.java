@@ -184,16 +184,6 @@ public class KLunarChronology extends AbstractChronology implements java.io.Seri
 	/**
 	 * 필드의 유효한 범위.
 	 * 단순히 최대값 및 최소값만 나타내며; 그 범위 안이면 다 유효하단 뜻은 아니다.
-	 * Gets the range of valid values for the specified field.
-	 * <p>
-	 * All fields can be expressed as a {@code long} integer.
-	 * This method returns an object that describes the valid range for that value.
-	 * <p>
-	 * Note that the result only describes the minimum and maximum valid values
-	 * and it is important not to read too much into them. For example, there
-	 * could be values within the range that are invalid for the field.
-	 * <p>
-	 * 
 	 *
 	 * @param field the field to get the range for, not null
 	 * @return the range of valid values for the field, not null
