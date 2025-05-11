@@ -6,34 +6,26 @@ import java.time.temporal.Temporal;
 import java.time.temporal.TemporalUnit;
 
 
+/**
+ * 육십갑자 시간단위(60년, 60개월, 60일)
+ */
 public enum Gapja implements TemporalUnit {
-	DAY_GAPJAS (
-	        ChronoUnit.DAYS,
-	        Duration.ofSeconds( 60 * 60 * 60 * 24 ),// 60일
-	        false),
-	MONTH_GAPJAS (
-	        LunarMonthUnit.LMONTH_BUNDLES,
-	        Duration.ofSeconds( 31556952L * 5 ),// 60개월
-	        true),
-	YEAR_GAPJAS (
-	        ChronoUnit.YEARS,
-	        Duration.ofSeconds( 60 * 31_556_925L ),// 60년 // 1년 평균 Tropical Year 365.2421896698일 * 하루 86400초 = 1년 31,556,925.18747072초 https://en.wikipedia.org/wiki/Tropical_year
-	        true),
+	DAY_GAPJAS (ChronoUnit.DAYS, false),
+	MONTH_GAPJAS (LunarMonthUnit.LMONTH_BUNDLES, true),
+	YEAR_GAPJAS (ChronoUnit.YEARS, true),
 	;
 
 	private final TemporalUnit baseUnit;// 이거는 이거의 60배
-	private final Duration duration;
 	private final boolean isDurationEstimated;
 
-	private Gapja( TemporalUnit baseUnit , Duration duration , boolean isDurationEstimated ) {
+	private Gapja( TemporalUnit baseUnit , boolean isDurationEstimated ) {
 		this.baseUnit = baseUnit;
-		this.duration = duration;
 		this.isDurationEstimated = isDurationEstimated;
 	}
 
 	@Override
 	public Duration getDuration () {
-		return duration;
+		return baseUnit.getDuration().multipliedBy( Ganji.CYCLE_SIZE );
 	}
 
 	@Override
