@@ -22,6 +22,15 @@ public enum Ganji
 		this.ji = Ji.values()[ordinal() % Ji.values().length];
 	}
 
+	public static Ganji valueOf ( Gan gan , Ji ji ) {
+		int x = gan.ordinal();
+		int y = ji.ordinal();
+		int dy = ( x - y + Ji.CYCLE_SIZE ) % Ji.CYCLE_SIZE;
+		if( dy % 2 != 0 )
+		    throw new java.lang.IllegalArgumentException( "No Ganji " + gan.k + ji.k + '(' + gan.c + ji.c + ')' );
+		return values()[( dy / 2 ) * Gan.CYCLE_SIZE + x];
+	}
+
 	public String toString () {
 		return new StringBuilder()
 		        .append( gan.k )
@@ -58,6 +67,8 @@ public enum Ganji
 		J ('계', '癸'),
 		;
 
+		public static final int CYCLE_SIZE = values().length;
+
 		public final char k;
 		public final char c;
 
@@ -89,6 +100,8 @@ public enum Ganji
 		_11 ('술', '戌'),
 		_12 ('해', '亥'),
 		;
+
+		public static final int CYCLE_SIZE = values().length;
 
 		public final char k;
 		public final char c;
