@@ -9,6 +9,7 @@ import java.time.chrono.ChronoLocalDate;
 import java.time.chrono.ChronoLocalDateTime;
 import java.time.chrono.ChronoPeriod;
 import java.time.chrono.Chronology;
+import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAmount;
@@ -157,30 +158,53 @@ public final class KLunarPeriod implements java.time.chrono.ChronoPeriod
 		return of( Math.toIntExact( y ), m, monthLeapingMode, days );
 	}
 
+	/**
+	 * 이 시간량을 다른 날짜/시간에 더한다.
+	 * 
+	 * @param temporal 이 시간량이 더해질 피연산자
+	 * @return 더한 결과
+	 */
 	@Override
 	public Temporal addTo ( Temporal temporal ) {
 		if( ( temporal instanceof ChronoLocalDate
 		        && ( (ChronoLocalDate) temporal ).getChronology() == KLunarChronology.INSTANCE )
 		        || ( temporal instanceof ChronoLocalDateTime<?>
 		                && ( (ChronoLocalDateTime<?>) temporal ).getChronology() == KLunarChronology.INSTANCE ) ){
-			temporal.plus( years, YEARS );
-			temporal.plus( months, monthLeapingMode ? LunarMonthUnit.LMONTH_BUNDLES : LunarMonthUnit.LMONTHS );
-			temporal.plus( days, DAYS );
+			Temporal t = temporal
+			        .plus( years, YEARS )
+			        .plus( months, monthLeapingMode ? LunarMonthUnit.LMONTH_BUNDLES : LunarMonthUnit.LMONTHS );
+			try{// 년월 바꾸느라 일자 자동조정됐을 수 있는 거 원복 시도.
+				t = t.with( ChronoField.DAY_OF_MONTH, temporal.get( ChronoField.DAY_OF_MONTH ) );
+			}
+			catch( NonexistentDateException e ){}
+			return t.plus( days, DAYS );
 		}
 		throw new DateTimeException( "chronology of temporal must be " + KLunarChronology.INSTANCE.getId() );
 	}
 
+	/**
+	 * 이 시간량을 다른 날짜/시간에서 뺀다.
+	 * <p>
+	 * 윤달 때문에
+	 * {@code KLunarPeriod p = start.until( end );} 이렇게 구했어도
+	 * {@code end.minus( p )}는 {@code start}와 같지 않을 수도 있다.
+	 * 
+	 * @param temporal 이 시간량을 뺄 피연산자
+	 * @return 뺀 결과
+	 */
 	@Override
 	public Temporal subtractFrom ( Temporal temporal ) {
-		if( ( temporal instanceof ChronoLocalDate
-		        && ( (ChronoLocalDate) temporal ).getChronology() == KLunarChronology.INSTANCE )
-		        || ( temporal instanceof ChronoLocalDateTime<?>
-		                && ( (ChronoLocalDateTime<?>) temporal ).getChronology() == KLunarChronology.INSTANCE ) ){
-			temporal.minus( years, YEARS );
-			temporal.minus( months, monthLeapingMode ? LunarMonthUnit.LMONTH_BUNDLES : LunarMonthUnit.LMONTHS );
-			temporal.minus( days, DAYS );
+		/*
+		 * addTo 참고.
+		 */
+		Temporal t = temporal
+		        .minus( years, YEARS )
+		        .minus( months, monthLeapingMode ? LunarMonthUnit.LMONTH_BUNDLES : LunarMonthUnit.LMONTHS );
+		try{// 년월 바꾸느라 일자 자동조정됐을 수 있는 거 원복 시도.
+			t = t.with( ChronoField.DAY_OF_MONTH, temporal.get( ChronoField.DAY_OF_MONTH ) );
 		}
-		throw new DateTimeException( "chronology of temporal must be " + KLunarChronology.INSTANCE.getId() );
+		catch( NonexistentDateException e ){}
+		return t.minus( days, DAYS );
 	}
 
 	@Override

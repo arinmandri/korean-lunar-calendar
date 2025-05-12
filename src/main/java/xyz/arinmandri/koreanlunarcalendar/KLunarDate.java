@@ -755,7 +755,6 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		 * 일 조정
 		 * 지정된 달이 소월인데 30일이면 29일로 조정
 		 */
-
 		if( day > LIL_MONTH_SIZE ){
 			KLunarDate withDay29 = of( year, month, isLeapMonth, LIL_MONTH_SIZE );
 			if( withDay29.isBigMonth() ){
@@ -766,6 +765,13 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 			}
 		}
 		return of( year, month, isLeapMonth, day );
+	}
+
+	private KLunarDate withDayResolvedPreviousValid ( int day ) {
+		if( day == this.day )
+		    return this;
+
+		return resolvePreviousValid_D( year, month, isLeapMonth, day );
 	}
 
 	//// ================================ 셈 - with
@@ -1085,11 +1091,11 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		    return kd;
 
 		int diff = day - kdd;
-		if( diff < -15 ){
-			return kd.nextMonth().withDay( day );
+		if( diff < -LIL_MONTH_SIZE / 2 ){
+			return kd.nextMonth().withDayResolvedPreviousValid( day );
 		}
-		if( 15 < diff ){
-			return kd.prevMonth().withDay( day );
+		if( LIL_MONTH_SIZE / 2 < diff ){
+			return kd.prevMonth().withDayResolvedPreviousValid( day );
 		}
 		return resolvePreviousValid_D( kd.year, kd.month, kd.isLeapMonth, day );
 	}
@@ -1146,23 +1152,19 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		}
 
 		if( m0 == 0 ){// 이 달이 올해의 첫 달
-			int yd;
-			{
-				if( y0 > 0 ){
-					yd = ydss[c0][y0 - 1];
-				}
-				else{
-					if( c0 > 0 ){
-						yd = ydss[c0 - 1][ydss[c0 - 1].length - 1];
-					}
-					throw new OutOfRangeException();
-				}
+			int yd; {// 작년의 yd
+				if( y0 > 0 )
+				    yd = ydss[c0][y0 - 1];
+				else if( c0 > 0 )
+				    yd = ydss[c0 - 1][ydss[c0 - 1].length - 1];
+				else
+				    throw new OutOfRangeException();
 			}
 			int leapMonth = ( yd >>> 13 ) & 0xF;
 			if( leapMonth == 12 )
-			    return resolvePreviousValid_D( year, 12, true, day );
+			    return resolvePreviousValid_D( year - 1, 12, true, day );
 			else
-			    return resolvePreviousValid_D( year, 12, false, day );
+			    return resolvePreviousValid_D( year - 1, 12, false, day );
 		}
 		else{
 			return resolvePreviousValid_LD( year, month, true, day );
