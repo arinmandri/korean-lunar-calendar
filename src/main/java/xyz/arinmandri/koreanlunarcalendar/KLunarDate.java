@@ -1204,6 +1204,17 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 
 	//// ================================ 셈 - until
 
+	/**
+	 * 이 날짜에서 다른 날짜까지의, 특정 단위에서의 시간 간격
+	 * 시작점(이것)보다 끝점(파라미터)이 더 과거인 경우 값은 (0이 아니면) 음수이다.
+	 * 그 단위에서 완전히 하나를 이루는 간격이어야 1로 세어진다.
+	 * 예를 들어 2001년 1월 1일에서 2003년 1월 1일까지의 년단위 간격은 2이지만
+	 * 2001년 1월 2일에서 2003년 1월 1일까지라면 년도값은 2가 차이나더라도
+	 * 둘 사이 간격은 완전한 2년에서 하루가 모자라므로 결과는 1이다.
+	 * 
+	 * @param endExclusive 끝점, exclusive
+	 * @param unit         간격을 측정할 단위
+	 */
 	@Override
 	public long until ( Temporal endExclusive , TemporalUnit unit ) {
 		KLunarDate end = KLunarDate.from( endExclusive );
@@ -1237,7 +1248,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	}
 
 	/**
-	 * 이 날짜에서 그 날짜까지의 시간 간격
+	 * 이 날짜에서 다른 날짜까지의 시간 간격
 	 * 이 날짜보다 그 날짜가 미래인 경우 결과 ChronoPeriod의 각 필드 값은 0 이상이다.
 	 * 이 날짜보다 그 날짜가 과거인 경우 결과 ChronoPeriod의 각 필드 값은 0 이하이다.
 	 * <p>
