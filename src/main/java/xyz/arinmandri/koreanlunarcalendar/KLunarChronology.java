@@ -25,11 +25,16 @@ import java.util.List;
 /**
  * 한국 음력
  */
-public class KLunarChronology extends AbstractChronology implements java.io.Serializable
+public final class KLunarChronology extends AbstractChronology implements java.io.Serializable
 {
 	public static final KLunarChronology INSTANCE = new KLunarChronology();
-
-	private KLunarChronology() {}
+	/**
+	 * for Java SPI.
+	 * You do {@code Chronology.of("KoreanLunar")} instead.
+	 * 
+	 * @see java.time.chrono.Chronology#of(String)
+	 */
+	public KLunarChronology() {}
 
 	/**
 	 * 이 역법의 ID
@@ -47,8 +52,9 @@ public class KLunarChronology extends AbstractChronology implements java.io.Seri
 
 	/**
 	 * CLDR에 정의된 식별자 없음.
+	 * No identifier defined by the CLDR.
 	 * 
-	 * @return null
+	 * @return {@code null}
 	 */
 	@Override
 	public String getCalendarType () {
@@ -67,7 +73,7 @@ public class KLunarChronology extends AbstractChronology implements java.io.Seri
 	/**
 	 * 기년, 월, 일 값으로 음력 날짜를 얻는다.
 	 *
-	 * @param prolepticYear 기년(기원 기준 년도)
+	 * @param prolepticYear 기년(기원 기준 년도, 기원은 서력기원이다)
 	 * @param month         월
 	 * @param day           일
 	 * @return 이 chronology의 로컬 날짜, not null
@@ -81,7 +87,7 @@ public class KLunarChronology extends AbstractChronology implements java.io.Seri
 	/**
 	 * 기년, 연중일 값으로 음력 날짜를 얻는다.
 	 *
-	 * @param prolepticYear 기년(기원 기준 년도)
+	 * @param prolepticYear 기년(기원 기준 년도, 기원은 서력기원이다)
 	 * @param dayOfYear     연중일(이 해의 몇 번째 일인가)
 	 * @return 음력 날짜, not null
 	 * @throws DateTimeException 날짜 생성 불가시
@@ -94,7 +100,7 @@ public class KLunarChronology extends AbstractChronology implements java.io.Seri
 	/**
 	 * 에포크일 값으로 음력 날짜를 얻는다.
 	 *
-	 * @param epochDay 에포크일(서력 1970년 1월 1일로부터 경과일)
+	 * @param epochDay 에포크일(양력 1970년 1월 1일로부터 경과일)
 	 * @return 음력 날짜, not null
 	 * @throws DateTimeException 날짜 생성 불가시
 	 */
@@ -124,7 +130,7 @@ public class KLunarChronology extends AbstractChronology implements java.io.Seri
 	 * 한국 음력에는 윤달 개념이 있다. 윤달을 포함한 해를 윤년이라 한다.
 	 * 유효한 년도 범위를 벗어난 경우에도 예외를 던지지 않으며 false를 반환한다.
 	 *
-	 * @param prolepticYear 기년(기원 기준 년도), 유효범위를 확인 안 함.
+	 * @param prolepticYear 기년(기원 기준 년도, 기원은 서력기원이다), 유효범위를 확인 안 함.
 	 * @return 윤년인 경우 true
 	 */
 	@Override
@@ -140,7 +146,7 @@ public class KLunarChronology extends AbstractChronology implements java.io.Seri
 
     /**
 	 * 주어진 시대와 그 시대에서의 연도 값으로 기년을 계산해 내놓는다.
-	 * (그러나 이 역법은 년도는 서력의 것을 그대로 쓰고 기원후 외의 다른 시대를 지원하지 않는다.)
+	 * (그러나 이 역법은 년도는 서력의 것을 그대로 쓰고 서력기원후 외의 다른 시대를 지원하지 않는다.)
 	 * 
 	 * @param era       {@link IsoEra#CE} 만 허용한다. not null
 	 * @param yearOfEra the chronology year-of-era
@@ -247,5 +253,6 @@ public class KLunarChronology extends AbstractChronology implements java.io.Seri
 	public KLunarPeriod period ( int years , int months , int days ) {
 		return KLunarPeriod.of( years, months, days );
 	}
+
 	//// ================================ TODO serialize
 }
