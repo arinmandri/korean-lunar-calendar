@@ -328,9 +328,6 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		 * 그 년도의 첫 날에 남은 적일 더해서 날짜 결정
 		 */
 
-		if( epochDay >= epochDays[epochDays.length - 1] )// 지원범위보다 미래
-		    throw new OutOfRangeException();
-
 		//// 주기 찾기
 		int c0 = ydss.length;
 		for( ; c0 >= 0 ; c0 -= 1 ){// 미래에서부터 선형탐색
