@@ -1255,7 +1255,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		int months = start.untilMonthIn1Y( end );
 		start = start.plusMonths( months );
 
-		try{// resolvePr eviousValid 때문에 바뀐 일자 원복 시도
+		try{// resolvePreviousValid 때문에 바뀐 일자 원복 시도
 			start = start.withDay( getDay() );
 		}
 		catch( NonexistentDateException e ){}
