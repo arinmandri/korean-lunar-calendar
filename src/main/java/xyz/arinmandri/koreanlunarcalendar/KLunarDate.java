@@ -1246,15 +1246,16 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	 * 이 날짜에서 그 날짜까지의 시간 간격
 	 * 이 날짜보다 그 날짜가 미래인 경우 결과 ChronoPeriod의 각 필드 값은 0 이상이다.
 	 * 이 날짜보다 그 날짜가 과거인 경우 결과 ChronoPeriod의 각 필드 값은 0 이하이다.
-	 * 
-	 * 참고:
-	 * 2004년에는 윤2월이 있다.
-	 * 2004년 평2월 - 2005년 평2월 간격은 1년임이 분명하다. 그럼
-	 * 2004년 윤2월 - 2005년 평2월 간격은 1년인가? 12개월인가?
-	 * 애매하지만 더 큰 단위를 우선하기로 했다.
-	 * 왜냐하면; 평달 윤달을 떠나서 큰 단위에서 간격을 먼저 구하고,
-	 * 남은 기간 중에서 더 작은 단위에 대해 간격을 구하고... 이런 순서대로 계산되니까
-	 * 2004년 윤2월에서 1년 더해서 2005년 평2월 된다면 일단 1년 간격이 있다고 보는 게 맞을 듯.
+	 * <p>
+	 * 윤달이 또 문제:
+	 * 2004년 평2월 1일과 2005년 평2월 1일의 시간간격은 1년임이 자명하다.
+	 * 그런데 2004년에는 윤2월이 있다.
+	 * 2004년 윤2월 1일에서 1년을 더하면 2005년 평2월 1일이 된다.
+	 * 그렇다면 2004년 윤2월 1일과 2005년 평2월 1일 사이 간격은 1년이라고 봐야 하나?
+	 * 아무래도 그건 아닌 거 같다.
+	 * 소월에서 30일이 29일로 조정되는 것과 마찬가지로 그건 윤달여부 필드가 자동조정된 것일 뿐,
+	 * 출발점이 윤달이면 끝점이 윤달이어야만 완전한 1년이라고 볼 수 있겠다.
+	 * 그래서 이 경우에는 시간간격을 1년이 아니라 12개월이라고 본다.
 	 * 
 	 * @param endDateExclusive 그 날짜
 	 * @return 시간 간격(년,월,일)
@@ -1263,7 +1264,6 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	public KLunarPeriod until ( ChronoLocalDate endDateExclusive ) {
 		KLunarDate end = KLunarDate.from( endDateExclusive );
 		KLunarDate start = this;
-
 
 		int years = start.untilYear( end );
 		start = start.plusYears( years );
@@ -1278,57 +1278,44 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 
 		int days = end.toEpochDayInt() - start.toEpochDayInt();
 
-		return KLunarChronology.INSTANCE.period( years, months, days );
+		return KLunarPeriod.of( years, months, days );
 	}
 
 	private int untilYear ( KLunarDate end ) {
 		int diff = end.getYear() - getYear();
 
-		if( diff == 0 )
+		if( diff == 0 )// 같은 해
 		    return 0;
 
-		if( diff > 0 ){
-			if( getMonth() < end.getMonth() ){
-				return diff;
-			}
-			if( getMonth() > end.getMonth() ){
-				return diff - 1;
-			}
+		if( diff > 0 ){// this < end
+			if( getMonth() < end.getMonth() )
+			    return diff;
+			if( getMonth() > end.getMonth() )
+			    return diff - 1;
 
-			if( !isLeapMonth() && end.isLeapMonth() ){
-				return diff;
-			}
+			if( !isLeapMonth() && end.isLeapMonth() )
+			    return diff;
+			if( isLeapMonth() && !end.isLeapMonth() )
+			    return diff - 1;
 
-			if( getDay() < end.getDay() ){
-				return diff;
-			}
-			if( getDay() > end.getDay() ){
-				return diff - 1;
-			}
+			if( getDay() > end.getDay() )
+			    return diff - 1;
 
 			return diff;
 		}
-		else{
-			if( end.getMonth() < getMonth() ){
-				return diff;
-			}
-			if( end.getMonth() > getMonth() ){
-				return diff + 1;
-			}
+		else{// end < this
+			if( end.getMonth() < getMonth() )
+			    return diff;
+			if( end.getMonth() > getMonth() )
+			    return diff + 1;
 
-			if( !end.isLeapMonth() && isLeapMonth() ){
-				return diff;
-			}
-			if( end.isLeapMonth() && !isLeapMonth() ){
-				return diff + 1;
-			}
+			if( !end.isLeapMonth() && isLeapMonth() )
+			    return diff;
+			if( end.isLeapMonth() && !isLeapMonth() )
+			    return diff + 1;
 
-			if( end.getDay() < getDay() ){
-				return diff;
-			}
-			if( end.getDay() > getDay() ){
-				return diff + 1;
-			}
+			if( end.getDay() > getDay() )
+			    return diff + 1;
 
 			return diff;
 		}
