@@ -1133,12 +1133,10 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 				thisIsLastMonthOfYear = false;
 			}
 			else{// 12월임
-				if( leapMonth == 12 && !isLeapMonth ){// 올해 윤12월 있고 이 날짜는 평달임
-					thisIsLastMonthOfYear = false;
-				}
-				else{
-					thisIsLastMonthOfYear = true;
-				}
+				if( leapMonth == 12 && !isLeapMonth )// 올해 윤12월 있고 이 날짜는 평달임
+				    thisIsLastMonthOfYear = false;
+				else
+				    thisIsLastMonthOfYear = true;
 			}
 		}
 
@@ -1146,14 +1144,10 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 			return resolvePreviousValid_D( year + 1, 1, false, day );
 		}
 		else{
-			if( isLeapMonth )
+			if( isLeapMonth || leapMonth != month )
 			    return resolvePreviousValid_D( year, month + 1, false, day );
-			else{
-				if( leapMonth == month )
-				    return resolvePreviousValid_D( year, month, true, day );
-				else
-				    return resolvePreviousValid_D( year, month + 1, false, day );
-			}
+			else
+			    return resolvePreviousValid_D( year, month, true, day );
 		}
 	}
 
