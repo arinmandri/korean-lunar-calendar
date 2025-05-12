@@ -50,4 +50,44 @@ public class KLunarDateTest_prolepticMonth extends KLunarDateTest
 			throw e;
 		}
 	}
+
+	@Test
+	public void nextMonth () {
+		printTitle( "nextMonth till end" );
+
+		int n = PROLEPTIC_MONTH_MAX - PROLEPTIC_MONTH_MIN;
+		KLunarDate kd1 = KLunarDate.of( YEAR_MIN, 1, 1 );
+		KLunarDate kd2;{
+			try{
+				kd2 = KLunarDate.of( YEAR_MAX, 12, true, 1 );
+			}
+			catch( NonexistentDateException e ){
+				kd2 = KLunarDate.of( YEAR_MAX, 12, false, 1 );
+			}
+		}
+		for( int i = 0 ; i < n ; i++ ){
+			kd1 = kd1.nextMonth();
+		}
+		assertEquals( kd2, kd1 );
+	}
+
+	@Test
+	public void prevMonth () {
+		printTitle( "prevMonth till end" );
+
+		int n = PROLEPTIC_MONTH_MAX - PROLEPTIC_MONTH_MIN;
+		KLunarDate kd1 = KLunarDate.of( YEAR_MIN, 1, 1 );
+		KLunarDate kd2;{
+			try{
+				kd2 = KLunarDate.of( YEAR_MAX, 12, true, 1 );
+			}
+			catch( NonexistentDateException e ){
+				kd2 = KLunarDate.of( YEAR_MAX, 12, false, 1 );
+			}
+		}
+		for( int i = 0 ; i < n ; i++ ){
+			kd2 = kd2.prevMonth();
+		}
+		assertEquals( kd1, kd2 );
+	}
 }
