@@ -173,7 +173,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	public static final int YEAR_MIN = 1391;// 최소 년도
 	public static final int YEAR_MAX = YEAR_MIN + ( ydss.length - 1 ) * CYCLE_SIZE + ydss[ydss.length - 1].length - 1;// 최대년도
 	public static final int EPOCHDAY_MIN = epochDays[0];
-	public static final int EPOCHDAY_MAX = epochDays[epochDays.length - 1];
+	public static final int EPOCHDAY_MAX = epochDays[epochDays.length - 1] - 1;
 
 	private KLunarDate( int year , int month , int day , boolean isLeapMonth , int c0 , int y0 , int m0 , int d0 ) {
 		super();
@@ -320,8 +320,8 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	 * @throws OutOfRangeException
 	 */
 	public static KLunarDate ofEpochDay ( final long epochDay ) {
-		if( epochDay < epochDays[0] ) throw new OutOfRangeException();
-		if( epochDay > epochDays[epochDays.length - 1] ) throw new OutOfRangeException();
+		if( epochDay < EPOCHDAY_MIN ) throw new OutOfRangeException();
+		if( epochDay > EPOCHDAY_MAX ) throw new OutOfRangeException();
 		/*
 		 * 주기별 epoch day 정보로 해당하는 주기를 찾는다.
 		 * 그 주기 내 년도별 적일 정보로 해당하는 음력년도를 찾는다.
@@ -399,17 +399,40 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 //		return null;// XXX time:
 //	}
 
+	/**
+	 * 이 날짜를 epoch day로 환산한다.
+	 * Converts this date to the Epoch Day.
+	 * <p>
+	 * epoch day란 세계표준날짜 1970년 1월 1일으로부터의 경과일수이다.
+	 * 즉 양력 1970년 1월 1일은 0 epoch day이고 1970년 1월 2일은 1 epoch day이다.
+	 */
 	@Override
 	public long toEpochDay () {
 		return toEpochDayInt();
 	}
 
+	/**
+	 * 이 날짜를 epoch day로 환산한다.
+	 * Converts this date to the Epoch Day.
+	 * <p>
+	 * epoch day란 세계표준날짜 1970년 1월 1일으로부터의 경과일수이다.
+	 * 즉 양력 1970년 1월 1일은 0 epoch day이고 1970년 1월 2일은 1 epoch day이다.
+	 */
 	public int toEpochDayInt () {
 		return epochDays[c0] + ( ydss[c0][y0] >>> 17 ) + d0;
 	}
 
 	//// ================================ GETTER
 
+	/**
+	 * 지원되는 필드인지 확인한다.
+	 * 이 날짜/시간값의 그 필드를 대상으로 쿼리가 가능한지 확인한다.
+	 * 
+	 * @param field 확인할 필드
+	 *              null이면 false를 반환.
+	 * @return true if the field can be queried.
+	 *         false if not.
+	 */
 	@Override
 	public boolean isSupported ( TemporalField field ) {
 		if( field == null ) return false;
@@ -431,9 +454,18 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	}
 
 	/**
-	 * the range of valid values for the specified field.
+	 * 특정 필드가 가질 수 있는 유효한 값의 범위를 얻는다.
+	 * Gets the range of valid values for the specified field.
+	 * <p>
+	 * All fields can be expressed as a {@code long} integer.
+	 * This method returns an object that describes the valid range for that value.
+	 * The value of this temporal object is used to enhance the accuracy of the returned range.
+	 * If the date-time cannot return the range,
+	 * because the field is unsupported or for some other reason, an exception will be thrown.
 	 * 
-	 * @param field not null
+	 * @param field, not null
+	 * @throws DateTimeException                if the range for the field cannot be obtained
+	 * @throws UnsupportedTemporalTypeException if the field is not supported
 	 */
 	@Override
 	public ValueRange range ( TemporalField field ) {
@@ -445,7 +477,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 			case DAY_OF_YEAR:
 				return ValueRange.of( 1, lengthOfYear() );
 			case EPOCH_DAY:
-				return ValueRange.of( epochDays[0], epochDays[epochDays.length - 1] - 1 );
+				return ValueRange.of( EPOCHDAY_MIN, EPOCHDAY_MAX );
 			case MONTH_OF_YEAR:
 				return ValueRange.of( 1, 12 );
 			case YEAR:
@@ -459,6 +491,11 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		return field.rangeRefinedBy( this );
 	}
 
+	/**
+	 * 특정 필드의 값을 {@code int} 꼴로 얻는다.
+	 * 
+	 * @return 대상 필드
+	 */
 	@Override
 	public int get ( TemporalField field ) {
 		if( field == null ) throw new NullPointerException();
@@ -485,6 +522,11 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		return (int) field.getFrom( this );
 	}
 
+	/**
+	 * 특정 필드의 값을 {@code long} 꼴로 얻는다.
+	 * 
+	 * @return 대상 필드
+	 */
 	@Override
 	public long getLong ( TemporalField field ) {
 		/*
@@ -497,6 +539,11 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		return get( field );
 	}
 
+	/**
+	 * 이 날짜가 속한 역법을 확인
+	 * 
+	 * @return {@link KLunarChronology#INSTANCE}
+	 */
 	@Override
 	public Chronology getChronology () {
 		return KLunarChronology.INSTANCE;
@@ -507,14 +554,29 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		return IsoEra.CE;
 	}
 
+	/**
+	 * 날짜의 년 부분을 확인
+	 * 
+	 * @return 날짜의 년 부분
+	 */
 	public int getYear () {
 		return year;
 	}
 
+	/**
+	 * 날짜의 월 부분을 확인
+	 * 
+	 * @return 날짜의 월 부분
+	 */
 	public int getMonth () {
 		return month;
 	}
 
+	/**
+	 * 날짜의 일 부분을 확인
+	 * 
+	 * @return 날짜의 일 부분
+	 */
 	public int getDay () {
 		return day;
 	}
@@ -947,9 +1009,9 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		double mAvgLength = LunarMonthUnit.LMONTHS.getDurationInDays();
 
 		long epochDay = toEpochDay() + (long) ( n * mAvgLength );
-		if( epochDay < EPOCHDAY_MIN && epochDay > EPOCHDAY_MIN - ( LIL_MONTH_SIZE >> 1 ) )
+		if( epochDay < EPOCHDAY_MIN && epochDay > EPOCHDAY_MIN - ( LIL_MONTH_SIZE / 2 ) )
 		    epochDay = EPOCHDAY_MIN;
-		if( epochDay > EPOCHDAY_MAX && epochDay < EPOCHDAY_MAX + ( LIL_MONTH_SIZE >> 1 ) )
+		if( epochDay > EPOCHDAY_MAX && epochDay < EPOCHDAY_MAX + ( LIL_MONTH_SIZE / 2 ) )
 		    epochDay = EPOCHDAY_MAX;
 		return resolveClosestDayOfMonth( ofEpochDay( epochDay ), day );
 	}
@@ -990,9 +1052,9 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		double mAvgLength = LunarMonthUnit.LMONTHS.getDurationInDays();
 
 		long epochDay = toEpochDay() - (long) ( n * mAvgLength );
-		if( epochDay < EPOCHDAY_MIN && epochDay > EPOCHDAY_MIN - ( LIL_MONTH_SIZE >> 1 ) )
+		if( epochDay < EPOCHDAY_MIN && epochDay > EPOCHDAY_MIN - ( LIL_MONTH_SIZE / 2 ) )
 		    epochDay = EPOCHDAY_MIN;
-		if( epochDay > EPOCHDAY_MAX && epochDay < EPOCHDAY_MAX + ( LIL_MONTH_SIZE >> 1 ) )
+		if( epochDay > EPOCHDAY_MAX && epochDay < EPOCHDAY_MAX + ( LIL_MONTH_SIZE / 2 ) )
 		    epochDay = EPOCHDAY_MAX;
 		return resolveClosestDayOfMonth( ofEpochDay( epochDay ), day );
 	}
