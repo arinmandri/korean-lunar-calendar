@@ -59,20 +59,20 @@ public class KLunarDateTest_epochDay extends KLunarDateTest
 		printTitle( "epoch day - boundary" );
 		KLunarDate kd;
 
-		kd = KLunarDate.ofEpochDay( EPOCH_DAY_MIN );
-		kd = KLunarDate.ofEpochDay( EPOCH_DAY_MAX );
+		kd = KLunarDate.ofEpochDay( EPOCHDAY_MIN );
+		kd = KLunarDate.ofEpochDay( EPOCHDAY_MAX );
 
 		assertThrowsExactly( OutOfRangeException.class, ()-> {
-			KLunarDate kd1 = KLunarDate.ofEpochDay( EPOCH_DAY_MIN - 1 );
+			KLunarDate kd1 = KLunarDate.ofEpochDay( EPOCHDAY_MIN - 1 );
 		} );
 		assertThrowsExactly( OutOfRangeException.class, ()-> {
-			KLunarDate kd1 = KLunarDate.ofEpochDay( EPOCH_DAY_MIN - 2 );
+			KLunarDate kd1 = KLunarDate.ofEpochDay( EPOCHDAY_MIN - 2 );
 		} );
 		assertThrowsExactly( OutOfRangeException.class, ()-> {
-			KLunarDate kd1 = KLunarDate.ofEpochDay( EPOCH_DAY_MAX + 1 );
+			KLunarDate kd1 = KLunarDate.ofEpochDay( EPOCHDAY_MAX + 1 );
 		} );
 		assertThrowsExactly( OutOfRangeException.class, ()-> {
-			KLunarDate kd1 = KLunarDate.ofEpochDay( EPOCH_DAY_MAX + 2 );
+			KLunarDate kd1 = KLunarDate.ofEpochDay( EPOCHDAY_MAX + 2 );
 		} );
 	}
 }
