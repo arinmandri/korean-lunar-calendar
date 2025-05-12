@@ -118,6 +118,9 @@ public final class KLunarPeriod implements java.time.chrono.ChronoPeriod
 		if( amountToSubtract.getClass() != KLunarPeriod.class )
 		    throw new DateTimeException( "not same type" );
 
+		/*
+		 * plus 참고
+		 */
 		KLunarPeriod a = (KLunarPeriod) amountToSubtract;
 		if( monthLeapingMode != a.monthLeapingMode )
 		    throw new DateTimeException( "not same mode" );
@@ -214,7 +217,7 @@ public final class KLunarPeriod implements java.time.chrono.ChronoPeriod
 				buf.append( years ).append( 'Y' );
 			}
 			if( months != 0 ){
-				buf.append( months ).append( 'M' );
+				buf.append( months ).append( monthLeapingMode ? "MB" : 'M' );
 			}
 			if( days != 0 ){
 				buf.append( days ).append( 'D' );
