@@ -1161,7 +1161,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	 * 저번달.
 	 * 이 달이 30일인데 저번달이 소월이면 29일로 조정.
 	 * 
-	 * @return 다음달
+	 * @return 저번달
 	 */
 	public KLunarDate prevMonth () {
 		if( isLeapMonth ){
@@ -1184,7 +1184,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 			    return resolvePreviousValid_D( year - 1, 12, false, day );
 		}
 		else{
-			return resolvePreviousValid_LD( year, month, true, day );
+			return resolvePreviousValid_LD( year, month - 1, true, day );
 		}
 	}
 
