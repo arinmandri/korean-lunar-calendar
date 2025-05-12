@@ -1,7 +1,5 @@
 package xyz.arinmandri.koreanlunarcalendar;
 
-import java.time.chrono.ChronoLocalDate;
-import java.time.chrono.ChronoLocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAccessor;
@@ -72,15 +70,10 @@ public enum GanjiField implements TemporalField
 	 */
 	@Override
 	public boolean isSupportedBy ( TemporalAccessor temporal ) {
-		//// KLunarChronology: 가능
-		if( temporal instanceof ChronoLocalDate
-		        && ( (ChronoLocalDate) temporal ).getChronology() == KLunarChronology.INSTANCE ){
+		//// My: 가능
+		if( temporal instanceof KLunarDate ){
 			return true;
 		}
-		else if( temporal instanceof ChronoLocalDateTime<?>
-		        && ( (ChronoLocalDateTime<?>) temporal ).getChronology() == KLunarChronology.INSTANCE ){
-			        return true;
-		        }
 
 		//// 그외: temporal이 알아서
 		try{
@@ -96,9 +89,8 @@ public enum GanjiField implements TemporalField
 	 * 이 날짜/시간에서 가질 수 있는 이 필드의 가능한 값의 범위.
 	 * 간지 값은 날짜/시간에 무관하게 일정히 1부터 60까지 가질 수 있다.
 	 * 즉 {@link #range()}와 같다.
-	 * {@link KLunarChronology}의 날짜/시간 값만 취급한다.
 	 * 
-	 * @throws UnsupportedTemporalTypeException {@code temporal}이 {@link KLunarChronology}가 아닌 경우
+	 * @throws UnsupportedTemporalTypeException
 	 */
 	@Override
 	public ValueRange rangeRefinedBy ( TemporalAccessor temporal ) {
@@ -110,9 +102,8 @@ public enum GanjiField implements TemporalField
 
 	/**
 	 * 이 날짜/시간의 간지값 조회.
-	 * {@link KLunarChronology}의 날짜/시간 값만 취급한다.
 	 * 
-	 * @throws UnsupportedTemporalTypeException {@code temporal}이 {@link KLunarChronology}가 아닌 경우
+	 * @throws UnsupportedTemporalTypeException
 	 */
 	@Override
 	public long getFrom ( TemporalAccessor temporal ) {

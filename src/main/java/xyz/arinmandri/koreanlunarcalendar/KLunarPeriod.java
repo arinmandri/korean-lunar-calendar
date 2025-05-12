@@ -5,8 +5,6 @@ import static java.time.temporal.ChronoUnit.MONTHS;
 import static java.time.temporal.ChronoUnit.YEARS;
 
 import java.time.DateTimeException;
-import java.time.chrono.ChronoLocalDate;
-import java.time.chrono.ChronoLocalDateTime;
 import java.time.chrono.ChronoPeriod;
 import java.time.chrono.Chronology;
 import java.time.temporal.ChronoField;
@@ -166,10 +164,7 @@ public final class KLunarPeriod implements java.time.chrono.ChronoPeriod
 	 */
 	@Override
 	public Temporal addTo ( Temporal temporal ) {
-		if( ( temporal instanceof ChronoLocalDate
-		        && ( (ChronoLocalDate) temporal ).getChronology() == KLunarChronology.INSTANCE )
-		        || ( temporal instanceof ChronoLocalDateTime<?>
-		                && ( (ChronoLocalDateTime<?>) temporal ).getChronology() == KLunarChronology.INSTANCE ) ){
+		if( temporal instanceof KLunarDate ){
 			Temporal t = temporal
 			        .plus( years, YEARS )
 			        .plus( months, monthLeapingMode ? LunarMonthUnit.LMONTH_BUNDLES : LunarMonthUnit.LMONTHS );

@@ -1,7 +1,5 @@
 package xyz.arinmandri.koreanlunarcalendar;
 
-import java.time.chrono.ChronoLocalDate;
-import java.time.chrono.ChronoLocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAccessor;
@@ -62,14 +60,9 @@ public enum LunarMonthField implements TemporalField
 
 	@Override
 	public boolean isSupportedBy ( TemporalAccessor temporal ) {
-		//// KLunarChronology: 가능
-		if( temporal instanceof ChronoLocalDate
-		        && ( (ChronoLocalDate) temporal ).getChronology() == KLunarChronology.INSTANCE ){
+		//// My: 가능
+		if( temporal instanceof KLunarDate ){
 			return true;
-		}
-		else if( temporal instanceof ChronoLocalDateTime<?>
-		        && ( (ChronoLocalDateTime<?>) temporal ).getChronology() == KLunarChronology.INSTANCE ){
-			        return true;
 		}
 
 		//// 그외: temporal이 알아서
