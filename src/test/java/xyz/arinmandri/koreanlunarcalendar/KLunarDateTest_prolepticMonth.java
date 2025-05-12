@@ -11,18 +11,10 @@ public class KLunarDateTest_prolepticMonth extends KLunarDateTest
 	@Test
 	public void range () {
 		printTitle( "proleptic month - range" );
-		int min = KLunarDate.of( YEAR_MIN, 1, false, 1 ).getProlepticMonth();
+		int min = MIN.getProlepticMonth();
 		assertEquals( min, KLunarDate.PROLEPTIC_MONTH_MIN );
 
-		int max;
-		{
-			try{
-				max = KLunarDate.of( YEAR_MAX, 12, true, 1 ).getProlepticMonth();
-			}
-			catch( NonexistentDateException e ){
-				max = KLunarDate.of( YEAR_MAX, 12, false, 1 ).getProlepticMonth();
-			}
-		}
+		int max = MAX.getProlepticMonth();
 		assertEquals( max, KLunarDate.PROLEPTIC_MONTH_MAX );
 	}
 
@@ -56,15 +48,8 @@ public class KLunarDateTest_prolepticMonth extends KLunarDateTest
 		printTitle( "nextMonth till end" );
 
 		int n = PROLEPTIC_MONTH_MAX - PROLEPTIC_MONTH_MIN;
-		KLunarDate kd1 = KLunarDate.of( YEAR_MIN, 1, 1 );
-		KLunarDate kd2;{
-			try{
-				kd2 = KLunarDate.of( YEAR_MAX, 12, true, 1 );
-			}
-			catch( NonexistentDateException e ){
-				kd2 = KLunarDate.of( YEAR_MAX, 12, false, 1 );
-			}
-		}
+		KLunarDate kd1 = MIN;
+		KLunarDate kd2 = MAX.withDay( 1 );
 		for( int i = 0 ; i < n ; i++ ){
 			kd1 = kd1.nextMonth();
 		}
@@ -76,15 +61,8 @@ public class KLunarDateTest_prolepticMonth extends KLunarDateTest
 		printTitle( "prevMonth till end" );
 
 		int n = PROLEPTIC_MONTH_MAX - PROLEPTIC_MONTH_MIN;
-		KLunarDate kd1 = KLunarDate.of( YEAR_MIN, 1, 1 );
-		KLunarDate kd2;{
-			try{
-				kd2 = KLunarDate.of( YEAR_MAX, 12, true, 1 );
-			}
-			catch( NonexistentDateException e ){
-				kd2 = KLunarDate.of( YEAR_MAX, 12, false, 1 );
-			}
-		}
+		KLunarDate kd1 = MIN;
+		KLunarDate kd2 = MAX.withDay( 1 );
 		for( int i = 0 ; i < n ; i++ ){
 			kd2 = kd2.prevMonth();
 		}
