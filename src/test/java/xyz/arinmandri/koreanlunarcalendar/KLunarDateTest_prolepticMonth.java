@@ -1,6 +1,7 @@
 package xyz.arinmandri.koreanlunarcalendar;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 import java.time.temporal.ChronoUnit;
 
@@ -67,5 +68,20 @@ public class KLunarDateTest_prolepticMonth extends KLunarDateTest
 			kd2 = kd2.prevMonth();
 		}
 		assertEquals( kd1, kd2 );
+	}
+
+	@Test
+	public void boundary () {
+		printTitle( "boundary months" );
+
+		KLunarDate kd1 = MIN;
+		KLunarDate kd2 = MAX.withDay( 1 );
+
+		assertThrowsExactly( OutOfRangeException.class, ()-> {
+			kd1.prevMonth();
+		} );
+		assertThrowsExactly( OutOfRangeException.class, ()-> {
+			kd2.nextMonth();
+		} );
 	}
 }
