@@ -202,7 +202,6 @@ public final class KLunarChronology extends AbstractChronology implements java.i
 		case ALIGNED_DAY_OF_WEEK_IN_YEAR:
 		case ALIGNED_WEEK_OF_MONTH:
 		case ALIGNED_WEEK_OF_YEAR:
-		case PROLEPTIC_MONTH:
 			throw new UnsupportedTemporalTypeException( "Unsupported field: " + field );
 		case DAY_OF_MONTH:
 			return ValueRange.of( 1, BIG_MONTH_SIZE );
@@ -212,6 +211,8 @@ public final class KLunarChronology extends AbstractChronology implements java.i
 			return ValueRange.of( epochDays[0], epochDays[epochDays.length - 1] - 1 );
 		case MONTH_OF_YEAR:
 			return ValueRange.of( 1, NAMED_MONTHS_NUMBER_IN_1Y );
+		case PROLEPTIC_MONTH:
+			return ValueRange.of( KLunarDate.PROLEPTIC_MONTH_MIN, KLunarDate.PROLEPTIC_MONTH_MAX );
 		case YEAR:
 		case YEAR_OF_ERA:
 			return ValueRange.of( YEAR_MIN, YEAR_MAX );

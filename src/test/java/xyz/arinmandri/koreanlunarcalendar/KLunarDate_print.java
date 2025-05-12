@@ -53,3 +53,47 @@ public class KLunarDate_print extends KLunarDateTest
 		}
 	}
 }
+
+/*
+윤년의 분포. 19년마다 7개라더니 적어도 지원범위 내에서는 진짜 딱 떨어짐.
+PROLEPTIC_MONTH도 이걸로 추정해버리련다.
+19년 윤달7개; 총 19*12+7=235개월
+0년부터 19*73-1=1386년까지 총 235*73=17155개월
+그 뒤 1387년 13, 1388년 12, 1388년 12, 1390년 13개월 있다 치면 1391년 전까지 총 17205개월
+    -O--O--O--O-O--// 1387(=19*73)
+O--O-O--O--O--O-O--
+O--O-O--O--O--O-O--
+O--O--O-O--O--O-O--
+O--O--O-O--O--O-O--
+O--O--O-O--O--O-O--
+O--O--O-O--O--O-O--
+O--O-O--O--O--O-O--
+O--O--O-O--O--O-O--
+O--O--O-O--O--O-O--
+O--O--O-O--O--O-O--
+O--O--O-O--O--O-O--
+O--O--O-O--O--O-O--
+O--O--O-O--O--O-O--
+O--O--O-O--O--O--O-
+O--O--O-O--O--O--O-
+O--O--O-O--O--O--O-
+O--O--O-O--O--O--O-
+O--O--O-O--O--O--O-
+O--O--O-O--O--O--O-
+O--O--O-O--O--O--O-
+O--O--O--O-O--O--O-
+O--O--O--O-O--O--O-
+O--O--O-O--O--O--O-
+O--O--O-O--O--O--O-
+O--O--O-O--O--O--O-
+O--O--O--O-O--O--O-
+O--O--O--O-O--O--O-
+O--O--O--O-O--O--O-
+O--O--O--O-O--O--O-
+O--O--O--O-O--O--O-
+O--O--O-O--O--O--O-
+O--O--O--O-O--O--O-
+O--O--O--O-O--O--O-
+O--O--O--O-O--O--O
+
+*/

@@ -170,10 +170,12 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	        29626,// 마지막 값은 지원범위 판별용// 음력 2050-12-29의 다음 날에 해당. 한국천문연구원 API에서 지원범위의 막날은 2050-11-18이지만 2050-11이 대월, 30일까지 있음은 알 수 있으므로 이 라이브러리의 지원범위는 2050-12-29까지는 늘려짐.(이 해에 윤달이 이미 나왔고 그 이전의 두 달이 대월이므로 2050-12-29의 다음 날은 아마 2051-01-01일 거 같지만)
 	};
 
-	public static final int YEAR_MIN = 1391;// 최소 년도
+	public static final int YEAR_MIN = 1391;// 최소년도
 	public static final int YEAR_MAX = YEAR_MIN + ( ydss.length - 1 ) * CYCLE_SIZE + ydss[ydss.length - 1].length - 1;// 최대년도
 	public static final int EPOCHDAY_MIN = epochDays[0];
 	public static final int EPOCHDAY_MAX = epochDays[epochDays.length - 1] - 1;
+	static final int PROLEPTIC_MONTH_MIN = 17205;// 최소년도(1391년) 첫 달의 PROLEPTIC_MONTH 값. 19년에 윤달 7개 규칙으로 추정함.
+	static final int PROLEPTIC_MONTH_MAX = 25367;
 
 	private KLunarDate( int year , int month , int day , boolean isLeapMonth , int c0 , int y0 , int m0 , int d0 ) {
 		super();
@@ -439,6 +441,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 			case DAY_OF_YEAR:
 			case EPOCH_DAY:
 			case MONTH_OF_YEAR:
+			case PROLEPTIC_MONTH:
 			case YEAR:
 			case YEAR_OF_ERA:
 			case ERA:
@@ -477,6 +480,8 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 				return ValueRange.of( EPOCHDAY_MIN, EPOCHDAY_MAX );
 			case MONTH_OF_YEAR:
 				return ValueRange.of( 1, 12 );
+			case PROLEPTIC_MONTH:
+				return ValueRange.of( PROLEPTIC_MONTH_MIN, PROLEPTIC_MONTH_MAX );
 			case YEAR:
 			case YEAR_OF_ERA:
 				return ValueRange.of( YEAR_MIN, YEAR_MAX );
@@ -506,6 +511,8 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 				return (int) toEpochDay();
 			case MONTH_OF_YEAR:
 				return getMonth();
+			case PROLEPTIC_MONTH:
+				return getProlepticMonth();
 			case YEAR:
 				return year;
 			case YEAR_OF_ERA:
@@ -567,6 +574,14 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	 */
 	public int getMonth () {
 		return month;
+	}
+
+	/**
+	 * 0년 1월부터의 경과월
+	 */
+	public int getProlepticMonth () {
+		KLunarDate min = of( YEAR_MIN, 1, false, 1 );
+		return (int) min.until( this, LunarMonthUnit.LMONTHS ) + PROLEPTIC_MONTH_MIN;
 	}
 
 	/**
@@ -792,7 +807,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 
 		if( field instanceof ChronoField ){
 			ChronoField chronoField = (ChronoField) field;
-			chronoField.checkValidValue( newValue );
+			chronoField.checkValidValue( newValue );// 뭐든지 int 범위를 안 벗어난다
 			switch( chronoField ){
 			case DAY_OF_MONTH:
 				return withDay( (int) newValue );
@@ -802,6 +817,8 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 				return KLunarDate.ofEpochDay( newValue );
 			case MONTH_OF_YEAR:
 				return withMonth( (int) newValue );
+			case PROLEPTIC_MONTH:
+				return plusMonths( (int) newValue - getProlepticMonth() );
 			case YEAR:
 			case YEAR_OF_ERA:
 				return withYear( (int) newValue );
