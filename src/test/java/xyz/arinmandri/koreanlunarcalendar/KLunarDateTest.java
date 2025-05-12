@@ -162,11 +162,15 @@ public class KLunarDateTest
 	static final int PROLEPTIC_MONTH_MIN = 17205;// 최소년도(1391년) 첫 달의 PROLEPTIC_MONTH 값. 19년에 윤달 7개 규칙으로 추정함.
 	static final int PROLEPTIC_MONTH_MAX = 25367;
 
+	// ------------------------------------
+
 	final int EPOCH_DAY_MAX_KASI = 2470172 - 2440588;
 
-	final LocalDate MIN = LocalDate.ofEpochDay( EPOCHDAY_MIN );
-	final LocalDate MAX = LocalDate.of( 2050, 12, 31 );// 한국천문연구원 API를 안 쓰는 경우 여기까지 시험
-	final LocalDate MAX_KASI = LocalDate.ofEpochDay( EPOCHDAY_MAX );// 정답의 기준이 한국천문연구원 API인데 의 지원범위보다 KLunarDate.MAX가 살짝 더 미래이기 때문에 한국천문연구원 API의 지원범위를 직접 입력함.
+	final KLunarDate MIN = KLunarDate.ofEpochDay( EPOCHDAY_MIN );
+	final KLunarDate MAX = KLunarDate.ofEpochDay( EPOCHDAY_MAX );
+	final LocalDate LD_MIN = LocalDate.ofEpochDay( EPOCHDAY_MIN );
+	final LocalDate LD_MAX = LocalDate.ofEpochDay( EPOCHDAY_MAX );// 한국천문연구원 API를 안 쓰는 경우 여기까지 시험
+	final LocalDate LD_MAX_KASI = LocalDate.ofEpochDay( EPOCHDAY_MAX );// 정답의 기준이 한국천문연구원 API인데 의 지원범위보다 KLunarDate.MAX가 살짝 더 미래이기 때문에 한국천문연구원 API의 지원범위를 직접 입력함.
 
 	//// ================================ repeat test
 
@@ -238,7 +242,7 @@ public class KLunarDateTest
 	}
 
 	LocalDate getRandomLd () {// 지원범위0 내에서
-		return getRandomLd( MIN, MAX );
+		return getRandomLd( LD_MIN, LD_MAX );
 	}
 
 	LocalDate getRandomLd ( LocalDate d1 , LocalDate d2 ) {// 이상, 이하

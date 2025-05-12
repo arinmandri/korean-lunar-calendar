@@ -45,18 +45,18 @@ public class KLunarDateTest_from
 	public void boundaryTest () {
 
 		//// 지원범위 양끝
-		testOne( MIN.minusDays( 2 ), false );
-		testOne( MIN.minusDays( 1 ), false );
-		testOne( MIN, true );
-		testOne( MIN.plusDays( 1 ), true );
+		testOne( LD_MIN.minusDays( 2 ), false );
+		testOne( LD_MIN.minusDays( 1 ), false );
+		testOne( LD_MIN, true );
+		testOne( LD_MIN.plusDays( 1 ), true );
 
-		testOne( MAX.minusDays( 1 ), true );
-		testOne( MAX, true );
-		testOne( MAX.plusDays( 1 ), false );
-		testOneWithoutKASI( MAX.plusDays( 1 ), true );
-		testOneWithoutKASI( MAX_KASI.minusDays( 1 ), true );
-		testOneWithoutKASI( MAX_KASI, true );
-		testOneWithoutKASI( MAX_KASI.plusDays( 1 ), false );
+		testOne( LD_MAX.minusDays( 1 ), true );
+		testOne( LD_MAX, true );
+		testOne( LD_MAX.plusDays( 1 ), false );
+		testOneWithoutKASI( LD_MAX.plusDays( 1 ), true );
+		testOneWithoutKASI( LD_MAX_KASI.minusDays( 1 ), true );
+		testOneWithoutKASI( LD_MAX_KASI, true );
+		testOneWithoutKASI( LD_MAX_KASI.plusDays( 1 ), false );
 
 		System.out.println( "지원범위 양끝 통과" );
 
