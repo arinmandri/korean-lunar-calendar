@@ -144,7 +144,7 @@ public enum LunarMonthUnit implements TemporalUnit
 			for( int y = kd1.getYear() + 1 ; y < kd2.getYear() ; y += 1 ){
 				count += KLunarChronology.INSTANCE.isLeapYear( y )
 				        ? KLunarDate.NAMED_MONTHS_NUMBER_IN_1Y + 1
-				        : KLunarDate.NAMED_MONTHS_NUMBER_IN_1Y;;
+				        : KLunarDate.NAMED_MONTHS_NUMBER_IN_1Y;
 			}
 		}
 
