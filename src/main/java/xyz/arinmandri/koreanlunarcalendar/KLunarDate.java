@@ -1364,7 +1364,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 
 	@Override
 	public int hashCode () {
-		return ( y0 << 11 ) + ( m0 << 6 ) + ( d0 );
+		return toEpochDayInt();
 	}
 
 	@Override
