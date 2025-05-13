@@ -16,7 +16,6 @@ public class KLunarDateTest_from
 	@Test
 	public void test () {
 		repeatShortly( this::randomTest, "from" );
-		boundaryTest();
 	}
 
 //	@Test
@@ -25,13 +24,7 @@ public class KLunarDateTest_from
 		 * 특정 날짜 잡아서 디버깅할라고
 		 */
 
-		// LocalDate ld = LocalDate.of( 2000, 1, 1 );
-		// LocalDate ld = LocalDate.of( 1924, 2, 5 );// MIN_DATE
-		// LocalDate ld = LocalDate.of( 1924, 2, 5 );// 1924-1-1
-		LocalDate ld = LocalDate.of( 1984, 2, 3 );// 1984-1-1
-		// LocalDate ld = LocalDate.of( 1984, 2, 1 );// 1983-막날
-		// LocalDate ld = LocalDate.of( 1983, 2, 13 );// 1983-1-1
-		testOne( ld );
+		testOne( LD_MAX.minusDays( 1 ), true );
 	}
 
 	public void randomTest () {
@@ -42,6 +35,7 @@ public class KLunarDateTest_from
 		testOne( ld );
 	}
 
+	@Test
 	public void boundaryTest () {
 
 		//// 지원범위 양끝
@@ -50,13 +44,13 @@ public class KLunarDateTest_from
 		testOne( LD_MIN, true );
 		testOne( LD_MIN.plusDays( 1 ), true );
 
-		testOne( LD_MAX.minusDays( 1 ), true );
-		testOne( LD_MAX, true );
-		testOne( LD_MAX.plusDays( 1 ), false );
-		testOneWithoutKASI( LD_MAX.plusDays( 1 ), true );
-		testOneWithoutKASI( LD_MAX_KASI.minusDays( 1 ), true );
-		testOneWithoutKASI( LD_MAX_KASI, true );
-		testOneWithoutKASI( LD_MAX_KASI.plusDays( 1 ), false );
+		testOne( LD_MAX_KASI.minusDays( 1 ), true );
+		testOne( LD_MAX_KASI, true );
+		testOne( LD_MAX_KASI.plusDays( 1 ), false );
+		testOneWithoutKASI( LD_MAX_KASI.plusDays( 1 ), true );
+		testOneWithoutKASI( LD_MAX.minusDays( 1 ), true );
+		testOneWithoutKASI( LD_MAX, true );
+		testOneWithoutKASI( LD_MAX.plusDays( 1 ), false );
 
 		System.out.println( "지원범위 양끝 통과" );
 

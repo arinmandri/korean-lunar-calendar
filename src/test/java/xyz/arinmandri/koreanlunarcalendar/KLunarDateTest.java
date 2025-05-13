@@ -169,8 +169,8 @@ public class KLunarDateTest
 	final KLunarDate MIN = KLunarDate.ofEpochDay( EPOCHDAY_MIN );
 	final KLunarDate MAX = KLunarDate.ofEpochDay( EPOCHDAY_MAX );
 	final LocalDate LD_MIN = LocalDate.ofEpochDay( EPOCHDAY_MIN );
-	final LocalDate LD_MAX = LocalDate.ofEpochDay( EPOCHDAY_MAX );// 한국천문연구원 API를 안 쓰는 경우 여기까지 시험
-	final LocalDate LD_MAX_KASI = LocalDate.ofEpochDay( EPOCHDAY_MAX );// 정답의 기준이 한국천문연구원 API인데 의 지원범위보다 KLunarDate.MAX가 살짝 더 미래이기 때문에 한국천문연구원 API의 지원범위를 직접 입력함.
+	final LocalDate LD_MAX = LocalDate.ofEpochDay( EPOCHDAY_MAX );
+	final LocalDate LD_MAX_KASI = LocalDate.of( 2050, 12, 31 );// KASI API를 안 쓰는 경우 여기까지만 시험 가능. 정답의 기준이 한국천문연구원 API인데 의 지원범위보다 KLunarDate 지원범위 최대가 살짝 더 미래이기 때문에 한국천문연구원 API의 지원범위를 직접 입력함.
 
 	//// ================================ repeat test
 
