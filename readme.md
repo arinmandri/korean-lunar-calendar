@@ -3,7 +3,9 @@
 
 Java 한국 음력. 아직 개발중.
 
-음력 양력 변환, 날짜 계산, 간지 조회 등. java.time의 인터페이스 구현.
+음력 양력 변환, 날짜 계산, 간지 조회, 직렬화 등 가능.
+
+java.time의 것들과 비슷한 형식 맞춤.
 
 Korean Lunar Calendar in Java
 

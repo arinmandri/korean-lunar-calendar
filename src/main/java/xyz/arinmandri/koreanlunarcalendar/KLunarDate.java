@@ -2,6 +2,8 @@ package xyz.arinmandri.koreanlunarcalendar;
 
 import static xyz.arinmandri.koreanlunarcalendar.Ganji.CYCLE_SIZE;
 
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.chrono.ChronoLocalDate;
@@ -28,17 +30,17 @@ import java.util.Objects;
  */
 public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 {
-	private static final long serialVersionUID = 0L;
+	private static final long serialVersionUID = 1L;
 
 	final int year;
 	final int month;
 	final int day;
 	final boolean isLeapMonth;// 윤달 여부
 
-	private transient final int c0;// 해들을 주기 단위로 묶는다. 여기 정의된 묶음들 중 몇 번째 묶음에 속하는가 (0부터 셈)// 주기: 육십갑자에 대응되는 60년. 그냥 갑자라고 하면 60년을 가리키나? 아니면 60갑자는 단순히 순서있는 60가지이고 그걸 년도에 붙일 뿐인가? 모르겠으니까 애매하니까 그냥 별개의 용어 지어 쓴다.
-	private transient final int y0;// 이 주기의 몇 번째 년인가 (0부터 셈)
-	private transient final int m0;// 이 년도의 몇 번째 월인가 (0부터 셈)
-	private transient final int d0;// 이 년도의 몇 번째 일인가 (0부터 셈)
+	private final int c0;// (transient) 해들을 주기 단위로 묶는다. 여기 정의된 묶음들 중 몇 번째 묶음에 속하는가 (0부터 셈)// 주기: 육십갑자에 대응되는 60년. 그냥 갑자라고 하면 60년을 가리키나? 아니면 60갑자는 단순히 순서있는 60가지이고 그걸 년도에 붙일 뿐인가? 모르겠으니까 애매하니까 그냥 별개의 용어 지어 쓴다.
+	private final int y0;// (transient) 이 주기의 몇 번째 년인가 (0부터 셈)
+	private final int m0;// (transient) 이 년도의 몇 번째 월인가 (0부터 셈)
+	private final int d0;// (transient) 이 년도의 몇 번째 일인가 (0부터 셈)
 
 	public static final int TIME_ZONE_OFFSET = 9 * 60 * 60;// UTC 기준 한국 시간대의 초단위 offset
 
@@ -1357,7 +1359,11 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		if( o == null ) return false;
 
 		if( o instanceof KLunarDate ){
-			return ( (KLunarDate) o ).year == year && ( (KLunarDate) o ).month == month && ( (KLunarDate) o ).isLeapMonth == isLeapMonth && ( (KLunarDate) o ).day == day;
+			KLunarDate kd = (KLunarDate) o;
+			return kd.year == year
+			        && kd.month == month
+			        && kd.isLeapMonth == isLeapMonth
+			        && kd.day == day;
 		}
 		return false;
 	}
@@ -1388,6 +1394,15 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 //	@Override public KLunarDate with ( TemporalAdjuster adjuster )
 //	@Override public int compareTo ( ChronoLocalDate other )
 
-	//// ================================ TODO serialize
+	//// -------------------------------- serialize
 
+	@java.io.Serial
+	private Object writeReplace () {
+		return new Ser( Ser.DATE_TYPE , this );
+	}
+
+	@java.io.Serial
+	private void readObject ( ObjectInputStream in ) throws InvalidObjectException {
+		throw new InvalidObjectException( "Deserialization via serialization delegate" );
+	}
 }

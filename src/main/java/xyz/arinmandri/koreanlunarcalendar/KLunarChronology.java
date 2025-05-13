@@ -9,6 +9,8 @@ import static xyz.arinmandri.koreanlunarcalendar.KLunarDate.YEAR_MIN;
 import static xyz.arinmandri.koreanlunarcalendar.KLunarDate.epochDays;
 import static xyz.arinmandri.koreanlunarcalendar.KLunarDate.ydss;
 
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
 import java.time.DateTimeException;
 import java.time.chrono.AbstractChronology;
 import java.time.chrono.ChronoLocalDate;
@@ -263,5 +265,19 @@ public final class KLunarChronology extends AbstractChronology implements java.i
 		return KLunarPeriod.of( years, months, days );
 	}
 
-	//// ================================ TODO serialize
+	//// -------------------------------- object
+
+	// equals, hashCode, toString: AbstractChronology에 잘돼있음
+
+	//// -------------------------------- serialize
+
+	@java.io.Serial
+	private Object writeReplace () {
+		return new Ser( Ser.CHRONOLOGY_TYPE , this );
+	}
+
+	@java.io.Serial
+	private void readObject ( ObjectInputStream in ) throws InvalidObjectException {
+		throw new InvalidObjectException( "Deserialization via serialization delegate" );
+	}
 }

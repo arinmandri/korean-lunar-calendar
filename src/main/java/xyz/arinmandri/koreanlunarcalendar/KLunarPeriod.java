@@ -4,6 +4,8 @@ import static java.time.temporal.ChronoUnit.DAYS;
 import static java.time.temporal.ChronoUnit.MONTHS;
 import static java.time.temporal.ChronoUnit.YEARS;
 
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
 import java.time.DateTimeException;
 import java.time.chrono.ChronoPeriod;
 import java.time.chrono.Chronology;
@@ -20,8 +22,10 @@ import java.util.List;
 /**
  * 한국음력에서 시간량 혹은 시간간격
  */
-public final class KLunarPeriod implements java.time.chrono.ChronoPeriod
+public final class KLunarPeriod implements java.time.chrono.ChronoPeriod , java.io.Serializable
 {
+	private static final long serialVersionUID = 1L;
+
 	final int years;
 	final int months;
 	final boolean monthLeapingMode;// true: 달을 헬 때 윤달을 무시한다. false: 윤달을 동등한 한 달로 취급한다.
@@ -71,6 +75,22 @@ public final class KLunarPeriod implements java.time.chrono.ChronoPeriod
 			return days;
 		}
 		throw new UnsupportedTemporalTypeException( "Unsupported unit: " + unit );
+	}
+
+	public int getYears () {
+		return years;
+	}
+
+	public int getMonths () {
+		return months;
+	}
+
+	public boolean isMonthLeapingMode () {
+		return monthLeapingMode;
+	}
+
+	public int getDays () {
+		return days;
 	}
 
 	@Override
@@ -205,6 +225,31 @@ public final class KLunarPeriod implements java.time.chrono.ChronoPeriod
 		return t.minus( days, DAYS );
 	}
 
+	//// -------------------------------- object
+
+	public boolean equals ( Object o ) {
+		if( o == null ) return false;
+
+		if( o instanceof KLunarPeriod ){
+			KLunarPeriod kp = (KLunarPeriod) o;
+			return kp.years == years
+			        && kp.months == months
+			        && kp.monthLeapingMode == monthLeapingMode
+			        && kp.days == days;
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode () {
+		int i = years
+		        + Integer.rotateLeft( months, 8 )
+		        + Integer.rotateLeft( days, 16 );
+		if( monthLeapingMode )
+		    i = i ^ -1;
+		return i;
+	}
+
 	@Override
 	public String toString () {
 		if( isZero() ){
@@ -224,5 +269,18 @@ public final class KLunarPeriod implements java.time.chrono.ChronoPeriod
 			}
 			return buf.toString();
 		}
+	}
+
+
+	//// -------------------------------- serialize
+
+	@java.io.Serial
+	private Object writeReplace () {
+		return new Ser( Ser.PERIOD_TYPE , this );
+	}
+
+	@java.io.Serial
+	private void readObject ( ObjectInputStream in ) throws InvalidObjectException {
+		throw new InvalidObjectException( "Deserialization via serialization delegate" );
 	}
 }
