@@ -81,7 +81,7 @@ public enum LunarMonthField implements TemporalField
 			KLunarDate kd = (KLunarDate) temporal;
 			switch( this ){
 			case MONTH_N:{
-				return ValueRange.of( 0, 12 );
+				return ValueRange.of( 1, 12 );
 			}
 			case MONTH_LEAP:{
 				if( kd.isLeapMonth() )

@@ -17,7 +17,7 @@ public class KLunarDateTest
 	protected final int testSize      = 100_0000;
 	protected final int testCheckSize =  20_0000;
 	protected final int shortTestSize = 100;
-	protected final int shortTestCheckSize = 10;
+	protected final int shortTestCheckSize = 20;
 
 	ApiService api = ApiService.getInstance();
 	Random random = new Random( System.currentTimeMillis() );
@@ -201,15 +201,24 @@ public class KLunarDateTest
 	}
 
 	void printTitle ( String title ) {
-		System.out.println( "\n=== " + title + " ===" );
+		if( title != null )
+		    System.out.println( "\n=== " + title + " ===" );
 	}
 
 	void repeat ( Runnable test , String title ) {
 		repeat( test, title, testSize, testCheckSize );
 	}
 
+	void repeat ( Runnable test ) {
+		repeat( test, null, testSize, testCheckSize );
+	}
+
 	void repeatShortly ( Runnable test , String title ) {
 		repeat( test, title, shortTestSize, shortTestCheckSize );
+	}
+
+	void repeatShortly ( Runnable test ) {
+		repeat( test, null, shortTestSize, shortTestCheckSize );
 	}
 
 	//// ================================ util, private, etc
@@ -231,14 +240,7 @@ public class KLunarDateTest
 		KLunarDate kd = KLunarDate.of( y, m, isLeapMonth, d );
 		LocalDate ld = kd.toLocalDate();
 		kd = KLunarDate.from( ld );
-		checkValue( kd, y, m, isLeapMonth, d );
-	}
-
-	void checkValue ( KLunarDate kd , int y , int m , boolean isLeapMonth , int d ) {
-		assertEquals( y, kd.getYear() );
-		assertEquals( m, kd.getMonth() );
-		assertEquals( isLeapMonth, kd.isLeapMonth() );
-		assertEquals( d, kd.getDay() );
+		assertEquals( kd, KLunarDate.of( y, m, isLeapMonth, d ) );
 	}
 
 	LocalDate getRandomLd () {// 지원범위0 내에서

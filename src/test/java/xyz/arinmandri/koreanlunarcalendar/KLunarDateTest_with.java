@@ -2,6 +2,9 @@ package xyz.arinmandri.koreanlunarcalendar;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.time.temporal.ChronoField;
+import java.time.temporal.ValueRange;
+
 import org.junit.jupiter.api.Test;
 
 
@@ -9,61 +12,161 @@ public class KLunarDateTest_with extends KLunarDateTest
 {
 	@Test
 	public void testWithYear () {
+		printTitle( "with year" );
 		KLunarDate kd0, kd1;
 
 		kd0 = KLunarDate.of( YEAR_MIN, 1, false, 1 );
 		kd1 = kd0.withYear( YEAR_MAX );
-		checkValue( kd1, YEAR_MAX, 1, false, 1 );
+		assertEquals( kd1, KLunarDate.of( YEAR_MAX, 1, false, 1 ) );
 
 		kd0 = KLunarDate.of( 2004, 2, true, 1 );
 		kd1 = kd0.withYear( 2005 );
-		checkValue( kd1, 2005, 2, false, 1 );
+		assertEquals( kd1, KLunarDate.of( 2005, 2, false, 1 ) );
 
 		kd0 = KLunarDate.of( 2010, 12, false, 30 );
 		kd1 = kd0.withYear( 2009 );
-		checkValue( kd1, 2009, 12, false, 30 );
+		assertEquals( kd1, KLunarDate.of( 2009, 12, false, 30 ) );
 		kd1 = kd0.withYear( 2005 );
-		checkValue( kd1, 2005, 12, false, 29 );
-	}// TODO 안 되는 경우
+		assertEquals( kd1, KLunarDate.of( 2005, 12, false, 29 ) );
+
+		repeatShortly( this::testWithYear_1 );
+	}
+
+	private void testWithYear_1 () {
+		KLunarDate kd0 = null;
+		ValueRange r = null;
+		int i = -9999;
+		try{
+			kd0 = getRaondomKd().withMonthLeap( false );
+			r = kd0.range( ChronoField.YEAR );
+			int min = Math.toIntExact( r.getMinimum() );
+			int max = Math.toIntExact( r.getMaximum() );
+			for( i = min ; i < max ; i++ ){
+				KLunarDate kd1 = kd0.withYear( i );
+				assertEquals( kd1,
+				        KLunarDate.of(
+				                i,
+				                kd0.getMonth(),
+				                kd0.isLeapMonth(),
+				                kd1.isBigMonth() ? kd0.getDay() : Math.min( kd0.getDay(), KLunarDate.LIL_MONTH_SIZE ) ) );
+			}
+		}
+		catch( Throwable e ){
+			System.out.println( "=DOOM1=" );
+			System.out.println( kd0 );
+			System.out.println( r );
+			System.out.println( i );
+			throw e;
+		}
+	}
 
 	@Test
 	public void testWithMonth () {
+		printTitle( "with month" );
 		KLunarDate kd0, kd1;
 
 		kd0 = KLunarDate.of( 2004, 2, true, 11 );
 		for( int m = 1 ; m <= 12 ; m++ ){
 			if( m != 2 ){
 				kd1 = kd0.withMonth( m );
-				checkValue( kd1, 2004, m, false, 11 );
+				assertEquals( kd1, KLunarDate.of( 2004, m, false, 11 ) );
 			}
 			else{
 				kd1 = kd0.withMonth( m );
-				checkValue( kd1, 2004, m, true, 11 );
+				assertEquals( kd1, KLunarDate.of( 2004, m, true, 11 ) );
 			}
 		}
-	}// TODO 안 되는 경우
+
+		repeat( this::testWithMonth_1 );
+	}
+
+	private void testWithMonth_1 () {
+		KLunarDate kd0 = null;
+		ValueRange r = null;
+		int i = -9999;
+		try{
+			kd0 = getRaondomKd().withMonthLeap( false );
+			r = kd0.range( LunarMonthField.MONTH_N );
+			int min = Math.toIntExact( r.getMinimum() );
+			int max = Math.toIntExact( r.getMaximum() );
+			for( i = min ; i < max ; i++ ){
+				KLunarDate kd1 = kd0.withMonth( i );
+				assertEquals( kd1,
+				        KLunarDate.of(
+				                kd0.getYear(),
+				                i,
+				                kd0.isLeapMonth(),
+				                kd1.isBigMonth() ? kd0.getDay() : Math.min( kd0.getDay(), KLunarDate.LIL_MONTH_SIZE ) ) );
+			}
+		}
+		catch( OutOfRangeException e ){
+			throw new NoNeedToTest();
+		}
+		catch( Throwable e ){
+			System.out.println( "=DOOM2=" );
+			System.out.println( kd0 );
+			System.out.println( r );
+			System.out.println( i );
+			throw e;
+		}
+	}// TODO 윤달은
 
 	@Test
 	public void testWithDay () {
+		printTitle( "with day" );
 		KLunarDate kd0, kd1;
 
 		kd0 = KLunarDate.of( 2004, 12, false, 1 );
 		for( int d = 1 ; d <= 29 ; d++ ){
 			kd1 = kd0.withDay( d );
-			checkValue( kd1, 2004, 12, false, d );
+			assertEquals( kd1, KLunarDate.of( 2004, 12, false, d ) );
 		}
 		kd0 = KLunarDate.of( 2020, 12, false, 1 );
 		for( int d = 1 ; d <= 30 ; d++ ){
 			kd1 = kd0.withDay( d );
-			checkValue( kd1, 2020, 12, false, d );
+			assertEquals( kd1, KLunarDate.of( 2020, 12, false, d ) );
 		}
-	}// TODO 안 되는 경우
+
+		repeat( this::testWithDay_1 );
+	}
+
+	private void testWithDay_1 () {
+		KLunarDate kd0 = null;
+		ValueRange r = null;
+		int i = -9999;
+		try{
+			kd0 = getRaondomKd();
+			r = kd0.range( ChronoField.DAY_OF_MONTH );
+			int min = Math.toIntExact( r.getMinimum() );
+			int max = Math.toIntExact( r.getMaximum() );
+			for( i = min ; i < max ; i++ ){
+				assertEquals( kd0.withDay( i ),
+				        KLunarDate.of(
+				                kd0.getYear(),
+				                kd0.getMonth(),
+				                kd0.isLeapMonth(),
+				                i ) );
+			}
+		}
+		catch( OutOfRangeException e ){
+			throw new NoNeedToTest();
+		}
+		catch( Throwable e ){
+			System.out.println( "=DOOM3=" );
+			System.out.println( kd0 );
+			System.out.println( r );
+			System.out.println( i );
+			throw e;
+		}
+	}
+
+	// TODO OutOfRangeException
 
 	@Test
 	public void testWithSecha () {
+		printTitle( "with ganji year" );
 		KLunarDate kd;
 
-		// TODO 이거 걍 단순한
 		kd = KLunarDate.of( 2004, 12, false, 1 );
 		kd = kd.withSecha( Ganji.A11 );
 		assertEquals( Ganji.A11, kd.getSecha() );
@@ -73,6 +176,12 @@ public class KLunarDateTest_with extends KLunarDateTest
 		assertEquals( Ganji.A1, kd.getSecha() );
 		kd = kd.withSecha( Ganji.J12 );
 		assertEquals( Ganji.J12, kd.getSecha() );
+
+		repeat( this::testWithSecha_1 );
+	}
+
+	public void testWithSecha_1 () {
+
 	}
 
 	// TODO with ganji
