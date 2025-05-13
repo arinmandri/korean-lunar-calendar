@@ -103,4 +103,24 @@ public class KLunarDateTest_until extends KLunarDateTest
 			throw e;
 		}
 	}
+
+	@Test
+	public void testOfYearDay () {
+		printTitle( "until year of day" );
+
+		for( int y = YEAR_MIN ; y <= YEAR_MAX ; y++ ){
+			KLunarDate kd0 = KLunarDate.of( y, 1, 1 );
+			KLunarDate kd1 = KLunarDate.ofYearDay( y, 1 );
+			assertEquals( kd1, kd0 );
+
+			final int yearLength = kd0.lengthOfYear();
+
+			for( int yd = 2 ; yd <= yearLength ; yd++ ){
+				kd1 = KLunarDate.ofYearDay( y, yd );
+				int diff = Math.toIntExact( kd0.until( kd1, ChronoUnit.DAYS ) );
+				assertEquals( yd - 1, diff );
+			}
+		}
+		System.out.println( "GOOD" );
+	}
 }
