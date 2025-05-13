@@ -27,7 +27,15 @@ import java.util.List;
  */
 public final class KLunarChronology extends AbstractChronology implements java.io.Serializable
 {
+	private static final long serialVersionUID = 1L;
+
+	/**
+	 * 싱글턴은 아니다.
+	 * SPI를 쓰기 위해 public 생성자가 있다.
+	 * Chronology.of( "KoreanLunar" ); 할 때마다 자동으로 생성자가 호출된다.
+	 */
 	public static final KLunarChronology INSTANCE = new KLunarChronology();
+
 	/**
 	 * for Java SPI.
 	 * You do {@code Chronology.of("KoreanLunar")} instead.
