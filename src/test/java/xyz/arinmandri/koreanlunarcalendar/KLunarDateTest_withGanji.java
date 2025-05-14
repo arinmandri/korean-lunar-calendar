@@ -1,6 +1,7 @@
 package xyz.arinmandri.koreanlunarcalendar;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static xyz.arinmandri.koreanlunarcalendar.Ganji.CYCLE_SIZE;
 
@@ -234,5 +235,65 @@ public class KLunarDateTest_withGanji extends KLunarDateTest
 		return KLunarDate.ofEpochDay( getRandomInt( EPOCHDAY_MIN + CYCLE_SIZE, EPOCHDAY_MAX - CYCLE_SIZE ) );
 	}
 
-	// TODO 경계
+	public void letsSeeBoundary () {
+		KLunarDate kd;
+		kd = MIN;
+		System.out.println( kd.getSecha().ordinal() );// 7
+		System.out.println( kd.getWolgeon().ordinal() );// 26
+		System.out.println( kd.getIljin().ordinal() );// 25
+		kd = MAX;
+		System.out.println( kd.getSecha().ordinal() );// 6
+		System.out.println( kd.getWolgeon().ordinal() );// 25
+		System.out.println( kd.getIljin().ordinal() );// 2
+	}
+
+	@Test
+	public void testBoundary () {
+		printTitle( "with ganji boundary" );
+
+		MIN.withSecha( Ganji.values()[7] );
+		assertThrows( OutOfRangeException.class, ()-> {
+			MIN.withSecha( Ganji.values()[6] );
+		} );
+		assertThrows( OutOfRangeException.class, ()-> {
+			MIN.withSecha( Ganji.values()[0] );
+		} );
+		MAX.withSecha( Ganji.values()[6] );
+		assertThrows( OutOfRangeException.class, ()-> {
+			MAX.withSecha( Ganji.values()[7] );
+		} );
+		assertThrows( OutOfRangeException.class, ()-> {
+			MAX.withSecha( Ganji.values()[59] );
+		} );
+
+		MIN.withWolgeon( Ganji.values()[26] );
+		assertThrows( OutOfRangeException.class, ()-> {
+			MIN.withWolgeon( Ganji.values()[25] );
+		} );
+		assertThrows( OutOfRangeException.class, ()-> {
+			MIN.withWolgeon( Ganji.values()[0] );
+		} );
+		MAX.withWolgeon( Ganji.values()[25] );
+		assertThrows( OutOfRangeException.class, ()-> {
+			MAX.withWolgeon( Ganji.values()[26] );
+		} );
+		assertThrows( OutOfRangeException.class, ()-> {
+			MAX.withWolgeon( Ganji.values()[59] );
+		} );
+
+		MIN.withIljin( Ganji.values()[25] );
+		assertThrows( OutOfRangeException.class, ()-> {
+			MIN.withIljin( Ganji.values()[24] );
+		} );
+		assertThrows( OutOfRangeException.class, ()-> {
+			MIN.withIljin( Ganji.values()[0] );
+		} );
+		MAX.withIljin( Ganji.values()[2] );
+		assertThrows( OutOfRangeException.class, ()-> {
+			MAX.withIljin( Ganji.values()[3] );
+		} );
+		assertThrows( OutOfRangeException.class, ()-> {
+			MAX.withIljin( Ganji.values()[59] );
+		} );
+	}
 }
