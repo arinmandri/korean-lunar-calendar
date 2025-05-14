@@ -154,7 +154,33 @@ public final class KLunarChronology extends AbstractChronology implements java.i
 		return ( ( yd >>> 13 ) & 0xF ) != 0xF;
 	}
 
-    /**
+	/**
+	 * 특정 월에 윤달이 있는지 확인한다.
+	 * 유효한 년도 및 월 범위를 벗어난 경우에도 예외를 던지지 않으며 false를 반환한다.
+	 *
+	 * @param prolepticYear 기년(기원 기준 년도, 기원은 서력기원이다), 유효범위를 확인 안 함.
+	 * @param month         월
+	 * @return 윤달인 경우 true
+	 */
+	/* XXX
+	 * Chronology.isLeapYear 메서드에서는 year의 유효한 범위를 벗어나더라도 예외를 던지지 말라 적혀있다.
+	 * 그렇다면 isLeapMonth에서 유효한 월의 범위를 벗어나도 마찬가지로 예외를 던지지 말아야 하는가?
+	 * 1) 예외를 던지지 말아야 한다. isLeapYear에서 "must not"이라 적힌 이유가 뭔진 모르겠지만 아무튼 뭔가 이유가 있는 게 아닐까? 다른 어떤 곳에서 쓰일 때 문제가 된다든지.
+	 * 2) 예외를 던져야 한다. 현실적으로 지원하는 범위가 제한됐을 뿐, 개념적으로 년도는 무한대까지 존재할 수 있지만 그와 달리 월은 범위를 벗어난 월을 아예 정의할 수 없다.
+	 * 참고할 만한 것도 있는지 모르겠고 모르겠다. 일단은 예외를 안 던지고 false를 반환한다.
+	 * 챗지피티는 "윤년은 존재성보다 성질 질의이고, 윤달은 존재가 전제"라며 2를 주장한다.
+	 */
+	public boolean isLeapMonth ( long prolepticYear , int month ) {
+		if( prolepticYear < YEAR_MIN ) return false;
+		if( prolepticYear > YEAR_MAX ) return false;
+		int year = (int) prolepticYear;
+		int c0 = ( year - YEAR_MIN ) / CYCLE_SIZE;
+		int y0 = ( year - YEAR_MIN ) % CYCLE_SIZE;
+		int yd = ydss[c0][y0];
+		return ( ( yd >>> 13 ) & 0xF ) == month;
+	}
+
+	/**
 	 * 주어진 시대와 그 시대에서의 연도 값으로 기년을 계산해 내놓는다.
 	 * (그러나 이 역법은 년도는 서력의 것을 그대로 쓰고 서력기원후 외의 다른 시대를 지원하지 않는다.)
 	 * 
