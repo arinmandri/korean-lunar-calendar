@@ -48,7 +48,8 @@ public enum GanjiField implements TemporalField
 	}
 
 	/**
-	 * 이 필드가 날짜의 성분인지 확인한다.
+	 * 이 필드가 날짜의 성분인지 확인한다.<br>
+	 * Checks if this field represents a component of a date.
 	 */
 	@Override
 	public boolean isDateBased () {
@@ -56,7 +57,8 @@ public enum GanjiField implements TemporalField
 	}
 
 	/**
-	 * 이 필드가 시간의 성분인지 확인한다.
+	 * 이 필드가 시간의 성분인지 확인한다.<br>
+	 * Checks if this field represents a component of a time.
 	 */
 	@Override
 	public boolean isTimeBased () {
