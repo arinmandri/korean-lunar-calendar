@@ -9,7 +9,7 @@ import java.time.temporal.ValueRange;
 import org.junit.jupiter.api.Test;
 
 
-public class KLunarDateTest_with extends KLunarDateTest
+public class KLunarDateTest_withYMD extends KLunarDateTest
 {
 	@Test
 	public void testWithYear () {
@@ -210,28 +210,4 @@ public class KLunarDateTest_with extends KLunarDateTest
 			throw e;
 		}
 	}
-
-	@Test
-	public void testWithSecha () {
-		printTitle( "with ganji year" );
-		KLunarDate kd;
-
-		kd = KLunarDate.of( 2004, 12, false, 1 );
-		kd = kd.withSecha( Ganji.A11 );
-		assertEquals( Ganji.A11, kd.getSecha() );
-		kd = kd.withSecha( Ganji.G7 );
-		assertEquals( Ganji.G7, kd.getSecha() );
-		kd = kd.withSecha( Ganji.A1 );
-		assertEquals( Ganji.A1, kd.getSecha() );
-		kd = kd.withSecha( Ganji.J12 );
-		assertEquals( Ganji.J12, kd.getSecha() );
-
-		repeat( this::testWithSecha_1 );
-	}
-
-	public void testWithSecha_1 () {
-
-	}
-
-	// TODO with ganji
 }
