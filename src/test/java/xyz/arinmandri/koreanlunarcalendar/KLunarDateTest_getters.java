@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
 
-public class KLunarDateTest_getters extends KLunarDateTest
+public class KLunarDateTest_getters extends ATest
 {
 	@Test
 	public void test () {

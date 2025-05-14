@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import xyz.arinmandri.kasiapi.Item;
 
 
-public class KLunarDateTest_ganji extends KLunarDateTest
+public class KLunarDateTest_ganji extends ATest
 {
 	@Test
 	public void valueOfGanJi () {

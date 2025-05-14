@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
 
-public class KLunarPeriodTest extends KLunarDateTest
+public class KLunarPeriodTest extends ATest
 {
 	// addTo 테스트는 KLunarDate의 addTo 테스트에 포함. 여기서 따로 할 건 Period끼리 산수밖에 없는 거 같다. 근데 머 기능이나 구현이나 워낙 단순해서 할 건덕지가 있나 싶긴 한데.
 

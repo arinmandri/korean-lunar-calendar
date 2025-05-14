@@ -11,7 +11,7 @@ import java.time.temporal.UnsupportedTemporalTypeException;
 import org.junit.jupiter.api.Test;
 
 
-public class LunarMonthUnitTest extends KLunarDateTest
+public class LunarMonthUnitTest extends ATest
 {
 
 	@Test

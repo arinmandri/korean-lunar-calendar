@@ -15,7 +15,7 @@ import xyz.arinmandri.kasiapi.ApiService;
 import xyz.arinmandri.kasiapi.Item;
 
 
-public class KLunarDateTest
+public class ATest
 {
 	protected final int testSize      = 100_0000;
 	protected final int testCheckSize =  20_0000;

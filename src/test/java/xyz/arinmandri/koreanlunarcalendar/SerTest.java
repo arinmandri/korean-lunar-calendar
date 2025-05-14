@@ -12,7 +12,7 @@ import java.time.chrono.Chronology;
 import org.junit.jupiter.api.Test;
 
 
-public class SerTest extends KLunarDateTest
+public class SerTest extends ATest
 {
 
 	@Test

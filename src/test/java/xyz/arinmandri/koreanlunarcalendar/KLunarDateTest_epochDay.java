@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 
 
-public class KLunarDateTest_epochDay extends KLunarDateTest
+public class KLunarDateTest_epochDay extends ATest
 {
 
 	@Test

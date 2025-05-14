@@ -9,7 +9,7 @@ import java.time.temporal.ValueRange;
 import org.junit.jupiter.api.Test;
 
 
-public class KLunarDateTest_withYMD extends KLunarDateTest
+public class KLunarDateTest_withYMD extends ATest
 {
 	@Test
 	public void testWithYear () {

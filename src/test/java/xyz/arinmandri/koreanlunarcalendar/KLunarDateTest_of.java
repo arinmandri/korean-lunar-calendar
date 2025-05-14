@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import xyz.arinmandri.kasiapi.Item;
 
 
-public class KLunarDateTest_of extends KLunarDateTest
+public class KLunarDateTest_of extends ATest
 {
 
 	@Test

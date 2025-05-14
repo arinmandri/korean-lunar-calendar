@@ -8,7 +8,7 @@ import java.time.temporal.ChronoUnit;
 
 import org.junit.jupiter.api.Test;
 
-public class KLunarDateTest_until extends KLunarDateTest
+public class KLunarDateTest_until extends ATest
 {
 
 	@Test

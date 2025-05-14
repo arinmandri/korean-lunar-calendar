@@ -10,7 +10,7 @@ import xyz.arinmandri.kasiapi.Item;
 
 
 public class KLunarDateTest_from
-        extends KLunarDateTest
+        extends ATest
 {
 
 	@Test

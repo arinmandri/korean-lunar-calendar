@@ -5,7 +5,7 @@ import static xyz.arinmandri.koreanlunarcalendar.Ganji.CYCLE_SIZE;
 import org.junit.jupiter.api.Test;
 
 
-public class KLunarDate_print extends KLunarDateTest
+public class KLunarDate_print extends ATest
 {
 
 	@Test

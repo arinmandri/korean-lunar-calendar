@@ -9,7 +9,7 @@ import java.time.temporal.ValueRange;
 import org.junit.jupiter.api.Test;
 
 
-public class KLunarChronologyTest extends KLunarDateTest
+public class KLunarChronologyTest extends ATest
 {
 	@Test
 	public void chronologyOf () {

@@ -8,7 +8,7 @@ import static xyz.arinmandri.koreanlunarcalendar.Ganji.CYCLE_SIZE;
 import org.junit.jupiter.api.Test;
 
 
-public class KLunarDateTest_withGanji extends KLunarDateTest
+public class KLunarDateTest_withGanji extends ATest
 {
 	@Test
 	public void testWithSecha () {

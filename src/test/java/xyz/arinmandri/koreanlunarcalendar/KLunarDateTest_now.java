@@ -7,7 +7,7 @@ import java.time.ZonedDateTime;
 
 import org.junit.jupiter.api.Test;
 
-public class KLunarDateTest_now extends KLunarDateTest
+public class KLunarDateTest_now extends ATest
 {
 
 	@Test
