@@ -82,11 +82,10 @@ public class KLunarDateTest_with extends KLunarDateTest
 	}
 
 	private void testWithMonth_1 () {
-		KLunarDate kd0 = null;
+		final KLunarDate kd0 = getRaondomKd().withMonthLeap( false );
 		ValueRange r = null;
 		int i = -9999;
 		try{
-			kd0 = getRaondomKd().withMonthLeap( false );
 			r = kd0.range( LunarMonthField.MONTH_N );
 			int min = Math.toIntExact( r.getMinimum() );
 			int max = Math.toIntExact( r.getMaximum() );
@@ -99,9 +98,13 @@ public class KLunarDateTest_with extends KLunarDateTest
 				                kd0.isLeapMonth(),
 				                kd1.isBigMonth() ? kd0.getDay() : Math.min( kd0.getDay(), KLunarDate.LIL_MONTH_SIZE ) ) );
 			}
-		}
-		catch( OutOfRangeException e ){
-			throw new NoNeedToTest();
+
+			assertThrowsExactly( NonexistentDateException.class, ()-> {
+				kd0.withMonth( min - 1 );
+			} );
+			assertThrowsExactly( NonexistentDateException.class, ()-> {
+				kd0.withMonth( max + 1 );
+			} );
 		}
 		catch( Throwable e ){
 			System.out.println( "=DOOM2=" );
@@ -176,15 +179,14 @@ public class KLunarDateTest_with extends KLunarDateTest
 	}
 
 	private void testWithDay_1 () {
-		KLunarDate kd0 = null;
+		final KLunarDate kd0 = getRaondomKd();;
 		ValueRange r = null;
 		int i = -9999;
 		try{
-			kd0 = getRaondomKd();
 			r = kd0.range( ChronoField.DAY_OF_MONTH );
 			int min = Math.toIntExact( r.getMinimum() );
 			int max = Math.toIntExact( r.getMaximum() );
-			for( i = min ; i < max ; i++ ){
+			for( i = min ; i <= max ; i++ ){
 				assertEquals( kd0.withDay( i ),
 				        KLunarDate.of(
 				                kd0.getYear(),
@@ -192,9 +194,13 @@ public class KLunarDateTest_with extends KLunarDateTest
 				                kd0.isLeapMonth(),
 				                i ) );
 			}
-		}
-		catch( OutOfRangeException e ){
-			throw new NoNeedToTest();
+
+			assertThrowsExactly( NonexistentDateException.class, ()-> {
+				kd0.withDay( min - 1 );
+			} );
+			assertThrowsExactly( NonexistentDateException.class, ()-> {
+				kd0.withDay( max + 1 );
+			} );
 		}
 		catch( Throwable e ){
 			System.out.println( "=DOOM3=" );
@@ -204,8 +210,6 @@ public class KLunarDateTest_with extends KLunarDateTest
 			throw e;
 		}
 	}
-
-	// TODO OutOfRangeException
 
 	@Test
 	public void testWithSecha () {
