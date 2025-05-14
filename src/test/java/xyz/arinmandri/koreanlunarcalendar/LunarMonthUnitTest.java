@@ -1,6 +1,12 @@
 package xyz.arinmandri.koreanlunarcalendar;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.time.LocalDate;
+import java.time.chrono.JapaneseDate;
+import java.time.chrono.ThaiBuddhistDate;
+import java.time.temporal.UnsupportedTemporalTypeException;
 
 import org.junit.jupiter.api.Test;
 
@@ -109,5 +115,55 @@ public class LunarMonthUnitTest extends KLunarDateTest
 		}, "LunarMonthUnit.LMONTH_BUNDLES.addTo" );
 	}
 
-	// TODO 안 되는 경우
+	@Test
+	public void between_Unsupported () {
+		printTitle( "LunarMonthUnit.between - unsupported types" );
+		LocalDate ld = LocalDate.now();
+		JapaneseDate jd = JapaneseDate.now();
+		ThaiBuddhistDate td = ThaiBuddhistDate.now();
+		assertThrows( UnsupportedTemporalTypeException.class, ()-> {
+			long diff = LunarMonthUnit.LMONTH_BUNDLES.between( ld, ld );
+		} );
+		assertThrows( UnsupportedTemporalTypeException.class, ()-> {
+			long diff = LunarMonthUnit.LMONTH_BUNDLES.between( jd, jd );
+		} );
+		assertThrows( UnsupportedTemporalTypeException.class, ()-> {
+			long diff = LunarMonthUnit.LMONTH_BUNDLES.between( td, td );
+		} );
+		assertThrows( UnsupportedTemporalTypeException.class, ()-> {
+			long diff = LunarMonthUnit.LMONTHS.between( ld, ld );
+		} );
+		assertThrows( UnsupportedTemporalTypeException.class, ()-> {
+			long diff = LunarMonthUnit.LMONTHS.between( jd, jd );
+		} );
+		assertThrows( UnsupportedTemporalTypeException.class, ()-> {
+			long diff = LunarMonthUnit.LMONTHS.between( td, td );
+		} );
+	}
+
+	@Test
+	public void addTo_Unsupported () {
+		printTitle( "LunarMonthUnit.addTo - unsupported types" );
+		LocalDate ld = LocalDate.now();
+		JapaneseDate jd = JapaneseDate.now();
+		ThaiBuddhistDate td = ThaiBuddhistDate.now();
+		assertThrows( UnsupportedTemporalTypeException.class, ()-> {
+			LunarMonthUnit.LMONTH_BUNDLES.addTo( ld, 1 );
+		} );
+		assertThrows( UnsupportedTemporalTypeException.class, ()-> {
+			LunarMonthUnit.LMONTH_BUNDLES.addTo( jd, 1 );
+		} );
+		assertThrows( UnsupportedTemporalTypeException.class, ()-> {
+			LunarMonthUnit.LMONTH_BUNDLES.addTo( td, 1 );
+		} );
+		assertThrows( UnsupportedTemporalTypeException.class, ()-> {
+			LunarMonthUnit.LMONTHS.addTo( ld, 1 );
+		} );
+		assertThrows( UnsupportedTemporalTypeException.class, ()-> {
+			LunarMonthUnit.LMONTHS.addTo( jd, 1 );
+		} );
+		assertThrows( UnsupportedTemporalTypeException.class, ()-> {
+			LunarMonthUnit.LMONTHS.addTo( td, 1 );
+		} );
+	}
 }
