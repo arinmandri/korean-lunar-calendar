@@ -24,10 +24,12 @@ public enum LunarMonthUnit implements TemporalUnit
 	;
 
 	private final Duration duration;
+	private final double durationInDays;
 	private final boolean isDurationEstimated;
 
 	private LunarMonthUnit( Duration duration , boolean isDurationEstimated ) {
 		this.duration = duration;
+		this.durationInDays = ( (double) duration.getSeconds() ) / ( 24 * 60 * 60 );
 		this.isDurationEstimated = isDurationEstimated;
 	}
 
@@ -37,7 +39,7 @@ public enum LunarMonthUnit implements TemporalUnit
 	}
 
 	public double getDurationInDays () {
-		return ( (double) duration.getSeconds() ) / ( 24 * 60 * 60 );
+		return durationInDays;
 	}
 
 	@Override
