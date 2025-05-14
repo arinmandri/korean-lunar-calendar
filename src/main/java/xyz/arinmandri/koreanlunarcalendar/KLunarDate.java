@@ -10,7 +10,6 @@ import java.time.chrono.ChronoLocalDate;
 import java.time.chrono.Chronology;
 import java.time.chrono.Era;
 import java.time.chrono.IsoEra;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
@@ -382,11 +381,6 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	public LocalDate toLocalDate () {
 
 		return LocalDate.ofEpochDay( toEpochDay() );
-	}
-
-	@Override
-	public String format ( DateTimeFormatter formatter ) {
-		return null;// TODO 이걸 어케함???
 	}
 
 	public static KLunarDate parse ( CharSequence text ) {
