@@ -13,7 +13,6 @@ import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.time.DateTimeException;
 import java.time.chrono.AbstractChronology;
-import java.time.chrono.ChronoLocalDate;
 import java.time.chrono.Era;
 import java.time.chrono.IsoEra;
 import java.time.temporal.ChronoField;
@@ -90,7 +89,7 @@ public final class KLunarChronology extends AbstractChronology implements java.i
 	 * @throws DateTimeException 날짜 생성 불가시
 	 */
 	@Override
-	public ChronoLocalDate date ( int prolepticYear , int month , int day ) {
+	public KLunarDate date ( int prolepticYear , int month , int day ) {
 		return KLunarDate.of( prolepticYear, month, day );
 	}
 
@@ -103,7 +102,7 @@ public final class KLunarChronology extends AbstractChronology implements java.i
 	 * @throws DateTimeException 날짜 생성 불가시
 	 */
 	@Override
-	public ChronoLocalDate dateYearDay ( int prolepticYear , int dayOfYear ) {
+	public KLunarDate dateYearDay ( int prolepticYear , int dayOfYear ) {
 		return KLunarDate.ofYearDay( prolepticYear, dayOfYear );
 	}
 
@@ -115,7 +114,7 @@ public final class KLunarChronology extends AbstractChronology implements java.i
 	 * @throws DateTimeException 날짜 생성 불가시
 	 */
 	@Override
-	public ChronoLocalDate dateEpochDay ( long epochDay ) {
+	public KLunarDate dateEpochDay ( long epochDay ) {
 		return KLunarDate.ofEpochDay( epochDay );
 	}
 
@@ -131,7 +130,7 @@ public final class KLunarChronology extends AbstractChronology implements java.i
 	 * @see KLunarDate#from(TemporalAccessor)
 	 */
 	@Override
-	public ChronoLocalDate date ( TemporalAccessor temporal ) {
+	public KLunarDate date ( TemporalAccessor temporal ) {
 		return KLunarDate.from( temporal );
 	}
 
