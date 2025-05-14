@@ -18,7 +18,6 @@ import java.time.temporal.UnsupportedTemporalTypeException;
 import java.util.List;
 
 
-// TODO test
 /**
  * 한국음력에서 기간(시간량 혹은 시간간격)을 나타낸다.
  * <p>
@@ -117,7 +116,7 @@ public final class KLunarPeriod implements java.time.chrono.ChronoPeriod , java.
 	 * @throws ArithmeticException if numeric overflow occurs
 	 */
 	@Override
-	public ChronoPeriod plus ( TemporalAmount amountToAdd ) {
+	public KLunarPeriod plus ( TemporalAmount amountToAdd ) {
 		if( amountToAdd.getClass() != KLunarPeriod.class )
 		    throw new DateTimeException( "not same type" );
 
@@ -140,7 +139,7 @@ public final class KLunarPeriod implements java.time.chrono.ChronoPeriod , java.
 	 * @throws ArithmeticException if numeric overflow occurs
 	 */
 	@Override
-	public ChronoPeriod minus ( TemporalAmount amountToSubtract ) {
+	public KLunarPeriod minus ( TemporalAmount amountToSubtract ) {
 		if( amountToSubtract.getClass() != KLunarPeriod.class )
 		    throw new DateTimeException( "not same type" );
 
