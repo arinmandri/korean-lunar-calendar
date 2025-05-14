@@ -20,7 +20,13 @@ import java.util.List;
 
 // TODO test
 /**
- * 한국음력에서 시간량 혹은 시간간격
+ * 한국음력에서 기간(시간량 혹은 시간간격)을 나타낸다.
+ * <p>
+ * 해수, 달수, 일수, 윤달무시여부로 구성된다.
+ * 윤달무시여부가 false이면 윤달도 평달과 동등한 달로 취급한다.
+ * 윤달무시여부가 true이면 달을 셈할 때 윤달을 건너뛴다. 예를 들어 윤2월이 있어도 평2월에서 한 달을 더하면 평3월이 된다.
+ * <p>
+ * {@link KLunarDate#until(java.time.chrono.ChronoLocalDate)}의 결과값은 윤달무시여부 false이다.
  */
 public final class KLunarPeriod implements java.time.chrono.ChronoPeriod , java.io.Serializable
 {
@@ -181,6 +187,9 @@ public final class KLunarPeriod implements java.time.chrono.ChronoPeriod , java.
 
 	/**
 	 * 이 시간량을 다른 날짜/시간에 더한다.
+	 * <p>
+	 * {@code KLunarPeriod p = start.until( end );} 이렇게 구한 경우
+	 * {@code start.plus( p )}의 결과는 {@code end}와 같다.
 	 * 
 	 * @param temporal 이 시간량이 더해질 피연산자
 	 * @return 더한 결과
@@ -203,7 +212,7 @@ public final class KLunarPeriod implements java.time.chrono.ChronoPeriod , java.
 	/**
 	 * 이 시간량을 다른 날짜/시간에서 뺀다.
 	 * <p>
-	 * 윤달 때문에
+	 * 윤달, 대소월 일수 차이 때문에
 	 * {@code KLunarPeriod p = start.until( end );} 이렇게 구했어도
 	 * {@code end.minus( p )}는 {@code start}와 같지 않을 수도 있다.
 	 * 
