@@ -15,7 +15,7 @@ public enum LunarMonthField implements TemporalField
 	/**
 	 * 몇월달인가
 	 */
-	MONTH_N (LunarMonthUnit.LMONTH_BUNDLES, ChronoUnit.YEARS, ValueRange.of( 1, 12 )),
+	MONTH_N (LunarMonthUnit.LMONTH_BUNDLES, ChronoUnit.YEARS, ValueRange.of( 1, KLunarDate.NAMED_MONTHS_NUMBER_IN_1Y )),
 
 	/**
 	 * 윤달여부
@@ -81,7 +81,7 @@ public enum LunarMonthField implements TemporalField
 			KLunarDate kd = (KLunarDate) temporal;
 			switch( this ){
 			case MONTH_N:{
-				return ValueRange.of( 1, 12 );
+				return range;
 			}
 			case MONTH_LEAP:{
 				if( kd.isLeapMonth() )
