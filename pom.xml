@@ -8,6 +8,13 @@
     <name>korean-lunar-calendar</name>
     <url>https://github.com/arinmandri/korean-lunar-calendar</url>
 
+    <licenses>
+        <license>
+            <name>The MIT License</name>
+            <url>https://opensource.org/licenses/MIT</url>
+        </license>
+    </licenses>
+
     <properties>
         <maven.compiler.target>8</maven.compiler.target>
         <maven.compiler.source>8</maven.compiler.source>
