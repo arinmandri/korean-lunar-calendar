@@ -7,9 +7,11 @@ import java.lang.annotation.Target;
 import java.lang.reflect.Method;
 import java.time.LocalDate;
 import java.time.chrono.ChronoPeriod;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 
+import xyz.arinmandri.koreanlunarcalendar.KLDateFormatters;
 import xyz.arinmandri.koreanlunarcalendar.KLunarDate;
 
 
@@ -98,6 +100,67 @@ public class Readme
 
 	// #### 문자열과의 상호 변환
 
+	@Order( 2_03_01 )
+	public void 문자열과의상호변환_toStringParse () {
+		// 기본 출력: toString
+		KLunarDate kd = KLunarDate.of( 1950, 10, 13 );
+		String str = kd.toString();
+		System.out.println( str );
+		// KoreanLunar 1950-10-13
+
+		// parse를 toString의 역연산으로 쓸 수 있다.
+		KLunarDate kd1 = KLunarDate.parse( str );
+		System.out.println( kd1 );
+		// KoreanLunar 1950-10-13
+	}
+
+	@Order( 2_03_02 )
+	public void 문자열과의상호변환_format () {
+		// 특정 형식으로 출력
+		KLunarDate kd;
+		DateTimeFormatter f = KLDateFormatters.HUMAN_DATE;
+
+		kd = KLunarDate.of( 2004, 2, 8 );
+		System.out.println( kd.format( f ) );
+		// 2004년 2월 8일
+
+		kd = KLunarDate.of( 2004, 2, true, 8 );
+		System.out.println( kd.format( f ) );
+		// 2004년 윤2월 8일
+
+		f = KLDateFormatters.SLASHED_DATE;
+		kd = KLunarDate.of( 2004, 2, 8 );
+		System.out.println( kd.format( f ) );
+		// 2004/2/8
+
+		f = KLDateFormatters.SIX_DIGITS;
+		kd = KLunarDate.of( 2004, 2, 8 );
+		System.out.println( kd.format( f ) );
+		// 040208
+	}
+
+	@Order( 2_03_03 )
+	public void 문자열과의상호변환_formatParse () {
+		// 특정 형식의 문자열 해석
+		DateTimeFormatter f = KLDateFormatters.HUMAN_DATE;
+
+		String str1 = "2030년 1월 1일";
+		KLunarDate kd1 = f.parse( str1, KLunarDate::from );
+		System.out.println( kd1 );
+		// KoreanLunar 2030-01-01
+
+		String str2 = "2031년 윤3월 13일";
+		KLunarDate kd2 = f.parse( str2, KLunarDate::from );
+		System.out.println( kd2 );
+		// KoreanLunar 2031-03-43
+
+		f = KLDateFormatters.SIX_DIGITS;// 년도는 1951년에서 2050년까지인 것으로 해석된다.
+		String str3 = "980913";
+		KLunarDate kd3 = f.parse( str3, KLunarDate::from );
+		System.out.println( kd3 );
+		// KoreanLunar 1998-09-13
+	}
+
 	/// ### 간지(干支) 조회
 
 	@Order( 3_00_01 )
@@ -150,8 +213,8 @@ public class Readme
 		KLunarDate kd2 = KLunarDate.of( 2003, 2, 2 );
 
 		System.out.println( kd1.until( kd2, ChronoUnit.YEARS ) );// 두 날짜의 해 차이
-		System.out.println( kd1.until( kd2, ChronoUnit.MONTHS ) );// 두 날짜의 월 차이
-		System.out.println( kd1.until( kd2, ChronoUnit.DAYS ) );// 두 날짜의 일 차이
+		System.out.println( kd1.until( kd2, ChronoUnit.MONTHS ) );// 두 날짜의 달 차이
+		System.out.println( kd1.until( kd2, ChronoUnit.DAYS ) );// 두 날짜의 날 차이
 	}
 
 	@Order( 4_03_02 )

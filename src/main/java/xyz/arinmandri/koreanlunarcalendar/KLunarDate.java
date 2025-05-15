@@ -358,7 +358,7 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	//// ================================ 변환
 
 	/**
-	 * 다른(날짜/시각)값-->음력
+	 * 다른 날짜-->음력
 	 *
 	 * @param temporal TemporalAccessor
 	 * 
@@ -369,9 +369,45 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 	public static KLunarDate from ( final TemporalAccessor temporal ) {
 		Objects.requireNonNull( temporal, "temporal" );
 
-		long epochDay = temporal.getLong( ChronoField.EPOCH_DAY );
+		if( temporal.isSupported( ChronoField.EPOCH_DAY ) ){
+			long epochDay = temporal.getLong( ChronoField.EPOCH_DAY );
+			return ofEpochDay( epochDay );
+		}
+		if( temporal.isSupported( ChronoField.YEAR ) ){
+			int y = temporal.get( ChronoField.YEAR );
 
-		return ofEpochDay( epochDay );
+			int m;
+			if( temporal.isSupported( ChronoField.MONTH_OF_YEAR ) ){
+				m = temporal.get( ChronoField.MONTH_OF_YEAR );
+			}
+			else if( temporal.isSupported( LunarMonthField.MONTH_N ) ){
+				m = temporal.get( LunarMonthField.MONTH_N );
+			}
+			else
+			    throw new DateTimeException( "Cannot create KLunarDate from TemporalAccessor: insufficient fields" );
+
+			boolean l = false;
+			if( temporal.isSupported( LunarMonthField.MONTH_LEAP ) ){
+				l = temporal.get( LunarMonthField.MONTH_LEAP ) != 0;
+			}
+
+			int d;
+			if( temporal.isSupported( ChronoField.DAY_OF_MONTH ) ){
+				d = temporal.get( ChronoField.DAY_OF_MONTH );
+			}
+			else if( temporal.isSupported( LunarMonthField.DAY_IN_LMONTH_BUNDLE ) ){
+				d = temporal.get( LunarMonthField.DAY_IN_LMONTH_BUNDLE );
+				if( d > BIG_MONTH_SIZE ){
+					d -= BIG_MONTH_SIZE;
+					l = true;
+				}
+			}
+			else
+			    throw new DateTimeException( "Cannot create KLunarDate from TemporalAccessor: insufficient fields" );
+
+			return of( y, m, l, d );
+		}
+		throw new DateTimeException( "Cannot create KLunarDate from TemporalAccessor: insufficient fields" );
 	}
 
 	/**

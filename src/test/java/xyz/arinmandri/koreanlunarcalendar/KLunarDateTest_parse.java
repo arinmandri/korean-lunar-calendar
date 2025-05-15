@@ -38,8 +38,8 @@ public class KLunarDateTest_parse extends ATest
 	public void manually () {
 		printTitle( "parse some cases" );
 		KLunarDate kd1 = null;
-		String str = null;
 		try{
+			kd1 = KLunarDate.parse( "2000-02-01" );// LocalDate.parse에서는 이런 경우 에러이긴 한데 뭐 어떤가 싶긴 한데.
 			assertEquals( kd1, KLunarDate.of( 2000, 2, false, 1 ) );
 			kd1 = KLunarDate.parse( "2000-2-1" );// LocalDate.parse에서는 이런 경우 에러이긴 한데 뭐 어떤가 싶긴 한데.
 			assertEquals( kd1, KLunarDate.of( 2000, 2, false, 1 ) );
@@ -59,7 +59,6 @@ public class KLunarDateTest_parse extends ATest
 		}
 		catch( Throwable e ){
 			System.out.println( "DOOM: " + e.getMessage() );
-			System.out.println( str );
 			System.out.println( kd1 );
 			throw e;
 		}

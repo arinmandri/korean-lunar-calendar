@@ -1,7 +1,7 @@
 
 ## 소개
 
-Java 한국 음력. 아직 개발중.
+Java 한국 음력.
 
 음력 양력 변환, 날짜 계산, 간지 조회, 직렬화 등 가능.
 
@@ -23,7 +23,7 @@ Korean Lunar Calendar in Java
 
 무중치윤법
 
-- 24절기는 12절기와 12중기로 구성된다.(절기와 중기가 번갈아 나옴) ※24절기는 달과는 상관없이 완전히 태양주기만을 기준으로 한다.
+- 24절기는 12절기와 12중기로 구성된다.(절기와 중기가 번갈아 나옴) ※24절기는 달과는 상관없이 오롯이 태양주기만을 기준으로 한다.
 - 음력 월의 이름은(몇 월 숫자가 아니고 사실 이름이 있었음) 그 월에 포함된 중기의 이름에 따라 짓는다.
 - 중기와 중기 사이 간격은 한 달보다 조금 더 길어서 중기가 없는 달이 나타나기도 하는데 그 달은 그 전달의 윤달인 것으로 취급한다.
 - 약 19년에 7개 윤달이 들어간다.
@@ -115,7 +115,64 @@ System.out.println( epochDay );
 
 #### 문자열과의 상호 변환
 
-TODO 음력 표기에 표준도 딱히 없는 거 같고... 어쩔지 고민중.
+```java
+// 기본 출력: toString
+KLunarDate kd = KLunarDate.of( 1950, 10, 13 );
+String str = kd.toString();
+System.out.println( str );
+// KoreanLunar 1950-10-13
+
+// parse를 toString의 역연산으로 쓸 수 있다.
+KLunarDate kd1 = KLunarDate.parse( str );
+System.out.println( kd1 );
+// KoreanLunar 1950-10-13
+```
+
+```java
+// 특정 형식으로 출력
+KLunarDate kd;
+DateTimeFormatter f = KLDateFormatters.HUMAN_DATE;
+
+kd = KLunarDate.of( 2004, 2, 8 );
+System.out.println( kd.format( f ) );
+// 2004년 2월 8일
+
+kd = KLunarDate.of( 2004, 2, true, 8 );
+System.out.println( kd.format( f ) );
+// 2004년 윤2월 8일
+
+f = KLDateFormatters.SLASHED_DATE;
+kd = KLunarDate.of( 2004, 2, 8 );
+System.out.println( kd.format( f ) );
+// 2004/2/8
+
+f = KLDateFormatters.SIX_DIGITS;
+kd = KLunarDate.of( 2004, 2, 8 );
+System.out.println( kd.format( f ) );
+// 040208
+```
+
+```java
+// 특정 형식의 문자열 해석
+DateTimeFormatter f = KLDateFormatters.HUMAN_DATE;
+
+String str1 = "2030년 1월 1일";
+KLunarDate kd1 = f.parse( str1, KLunarDate::from );
+System.out.println( kd1 );
+// KoreanLunar 2030-01-01
+
+String str2 = "2031년 윤3월 13일";
+KLunarDate kd2 = f.parse( str2, KLunarDate::from );
+System.out.println( kd2 );
+// KoreanLunar 2031-03-43
+
+f = KLDateFormatters.SIX_DIGITS;// 년도는 1951년에서 2050년까지인 것으로 해석된다.
+String str3 = "980913";
+KLunarDate kd3 = f.parse( str3, KLunarDate::from );
+System.out.println( kd3 );
+// KoreanLunar 1998-09-13
+```
+
 
 
 ### 간지(干支) 조회
