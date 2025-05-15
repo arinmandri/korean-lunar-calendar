@@ -38,7 +38,7 @@ Korean Lunar Calendar in Java
 ## 쓰는 법
 
 ```java
-import xyz.arinmandri.koreanlunarcalendar.KLunarDate;
+import xyz.arinmandri.koreanlunarcalendar.*;
 ```
 
 ### 날짜 개체 생성
