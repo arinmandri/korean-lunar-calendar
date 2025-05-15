@@ -1,5 +1,8 @@
 package xyz.arinmandri.koreanlunarcalendar;
 
+import static xyz.arinmandri.koreanlunarcalendar.KLunarDate.BIG_MONTH_SIZE;
+import static xyz.arinmandri.koreanlunarcalendar.KLunarDate.LIL_MONTH_SIZE;
+
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAccessor;
@@ -20,6 +23,12 @@ public enum LunarMonthField implements TemporalField
 	 * 윤달여부
 	 */
 	MONTH_LEAP (LunarMonthUnit.LMONTHS, LunarMonthUnit.LMONTH_BUNDLES, ValueRange.of( 0, 1 )),
+
+	/**
+	 * 일 부분. 단; 윤달이면 +30.
+	 * 날짜를 문자열로 바꿀 때 yyyy-MM-dd로만 나타내면 윤달 정보를 나타낼 수 없어서... 여러 가지 고민해봤지만 내 생각에 이게 최선이다.
+	 */
+	DAY_IN_LMONTH_BUNDLE (ChronoUnit.DAYS, LunarMonthUnit.LMONTH_BUNDLES, ValueRange.of( 1, 60 )),
 	;
 
 	private final TemporalUnit baseUnit;
@@ -117,6 +126,18 @@ public enum LunarMonthField implements TemporalField
 				    return range;
 				return ValueRange.of( 0, 0 );
 			}
+			case DAY_IN_LMONTH_BUNDLE:
+				if( kd.isLeapMonth() )// 이번달이 윤달
+				    return ValueRange.of( 1, kd.isBigMonth()
+				            ? BIG_MONTH_SIZE + BIG_MONTH_SIZE
+				            : BIG_MONTH_SIZE + LIL_MONTH_SIZE );
+				if( kd.getLeapMonth() == kd.getMonth() )// 다음달이 윤달
+				    return ValueRange.of( 1, kd.nextMonth().isBigMonth()
+				            ? BIG_MONTH_SIZE + BIG_MONTH_SIZE
+				            : BIG_MONTH_SIZE + LIL_MONTH_SIZE );
+				return ValueRange.of( 1, kd.isBigMonth()// 윤달아님
+				        ? BIG_MONTH_SIZE
+				        : LIL_MONTH_SIZE );
 			}
 		}
 		throw new UnsupportedTemporalTypeException( "not supported temporal type" );
@@ -140,6 +161,8 @@ public enum LunarMonthField implements TemporalField
 				else
 				    return 0;
 			}
+			case DAY_IN_LMONTH_BUNDLE:
+				return kd.getDay() + ( kd.isLeapMonth() ? 30 : 0 );
 			}
 		}
 		throw new UnsupportedTemporalTypeException( "not supported temporal type" );
@@ -170,6 +193,13 @@ public enum LunarMonthField implements TemporalField
 				if( newValue == 1 )
 				    return (R) kd.withMonthLeap( true );
 				throw new NonexistentDateException( "only 0 or 1 is valid for this field" );
+			}
+			case DAY_IN_LMONTH_BUNDLE:{
+				if( newValue > Integer.MAX_VALUE || newValue < Integer.MIN_VALUE )
+				    throw new NonexistentDateException();
+				if( newValue > 30 )
+				    return (R) kd.withMonthLeap( true ).withDay( (int) newValue - 30 );
+				return (R) kd.withMonthLeap( false ).withDay( (int) newValue );
 			}
 			}
 		}
