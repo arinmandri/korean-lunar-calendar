@@ -31,9 +31,13 @@ Korean Lunar Calendar in Java
 - 법적으로는 천문법에 따라 우주항공청에서 월력요항(달력 제작의 기준이 되는 자료)를 발표한다.
 - 우주항공청의 산하기관인 한국천문연구원에서 음양력 정보를 [공공데이터](https://www.data.go.kr/data/15012679/openapi.do)로 제공한다.
 
+이 라이브러리도 물론 그 공공데이터를 바탕으로 만들어졌다.
+
 
 
 ## 라이브러리 가져오기
+
+Maven에서
 
 ```xml
 <repository>
@@ -73,7 +77,6 @@ kd = KLunarDate.ofYearDay( 2004, 30 );
 
 
 
-
 ### 다른 타입으로/에서 변환
 
 #### 양력과의 상호 변환
@@ -92,7 +95,7 @@ KoreanLunar 2000-12-07
 ```java
 // 음력에서 양력으로
 KLunarDate kd = KLunarDate.of( 2000, 12, 7 );
-LocalDate ld = kd.toLocalDate();
+LocalDate ld = LocalDate.from( kd );// ld = kd.toLocalDate(); 이렇게도 가능
 System.out.println( ld );
 ```
 
@@ -102,6 +105,8 @@ System.out.println( ld );
 
 
 #### epoch day와의 상호 변환
+
+※ epoch day: 1970년 1월 1일로부터의 경과 일수 (1970년 1월 1일은 0 epoch day)
 
 ```java
 // epoch day에서 음력으로
@@ -125,8 +130,6 @@ System.out.println( epochDay );
 11323
 ```
 
-※ epoch day: 1970년 1월 1일로부터의 경과 일수 (1970년 1월 1일은 0 epoch day)
-
 
 #### 문자열과의 상호 변환
 
@@ -142,6 +145,10 @@ KLunarDate kd1 = KLunarDate.parse( str );
 System.out.println( kd1 );
 // KoreanLunar 1950-10-13
 ```
+
+윤달인 경우 일 부분에 30이 더해진다. 예를 들어 2004년 윤2월 1일은 "2004-02-31"로 출력된다. 이상하다고 여겨질지 모르지만 이놈의 윤달 때문에 이 문자열 변환뿐 아니라 여러 군데에서 골치 많이 아팠다. 내 나름의 고심의 결과이다. 이렇게 하면 (ISO-8601의 형식들처럼) 날짜에 관계 없이 글자 수가 일정하며, 글자순 정렬 결과가 날짜순 정렬과 일치하게 되면서도; 그 문자열이 나타내는 날짜가 윤달인지 아닌지, 윤달의 며칠인지도 바로 알 수 있다.
+
+포매터를 직접 정의할 수도 있지만 미리정의된 포매터가 몇 가지 있다.(아래 예시에서 일부 사용) 그 중 일부는 `toString()`처럼 윤달의 일에 +30하고 어떤 것들은 "윤" 혹은 "L" 글자를 붙인다.
 
 ```java
 // 특정 형식으로 출력
@@ -260,14 +267,14 @@ kd = kd.plusNamedMonths( 4 );// 월 단위 덧셈 (윤달 무시)
 kd = kd.minusDays( 2 );// 일 단위 뺄셈
 ```
 
-#### 시간 간격
+#### 기간(시간 간격) 구하기
 
 ```java
 KLunarDate kd1 = KLunarDate.of( 2001, 7, 8 );
 KLunarDate kd2 = KLunarDate.of( 2003, 2, 2 );
 
 System.out.println( kd1.until( kd2, ChronoUnit.YEARS ) );// 두 날짜의 해 차이
-System.out.println( kd1.until( kd2, ChronoUnit.MONTHS ) );// 두 날짜의 월 차이
+System.out.println( kd1.until( kd2, ChronoUnit.MONTHS ) );// 두 날짜의 달 차이
 System.out.println( kd1.until( kd2, ChronoUnit.DAYS ) );// 두 날짜의 일 차이
 ```
 

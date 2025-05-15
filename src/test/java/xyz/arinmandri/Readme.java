@@ -77,7 +77,7 @@ public class Readme
 	public void 양력과의상호변환2 () {
 		// 음력에서 양력으로
 		KLunarDate kd = KLunarDate.of( 2000, 12, 7 );
-		LocalDate ld = kd.toLocalDate();
+		LocalDate ld = LocalDate.from( kd );// ld = kd.toLocalDate(); 이렇게도 가능
 		System.out.println( ld );
 	}
 
