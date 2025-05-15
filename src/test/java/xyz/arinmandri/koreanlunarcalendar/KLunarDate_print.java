@@ -2,13 +2,11 @@ package xyz.arinmandri.koreanlunarcalendar;
 
 import static xyz.arinmandri.koreanlunarcalendar.Ganji.CYCLE_SIZE;
 
-import org.junit.jupiter.api.Test;
-
 
 public class KLunarDate_print extends ATest
 {
 
-	@Test
+//	@org.junit.jupiter.api.Test
 	public void printLeapMonths () {
 		printTitle( "윤달 목록" );
 		for( int c = 0 ; c < ydss.length ; c++ ){
@@ -23,7 +21,7 @@ public class KLunarDate_print extends ATest
 		}
 	}
 
-	@Test
+//	@org.junit.jupiter.api.Test
 	public void printYearLengths () {
 		printTitle( "1년 길이" );
 
@@ -38,7 +36,7 @@ public class KLunarDate_print extends ATest
 		}
 	}
 
-	@Test
+//	@org.junit.jupiter.api.Test
 	public void printCycleLengths () {
 		printTitle( "1갑자 길이" );
 
