@@ -10,6 +10,7 @@ import java.time.chrono.ChronoLocalDate;
 import java.time.chrono.Chronology;
 import java.time.chrono.Era;
 import java.time.chrono.IsoEra;
+import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
@@ -383,8 +384,96 @@ public final class KLunarDate implements java.io.Serializable , ChronoLocalDate
 		return LocalDate.ofEpochDay( toEpochDay() );
 	}
 
-	public static KLunarDate parse ( CharSequence text ) {
-		return null;// TODO
+	/**
+	 * 텍스트를 날짜 개체로 변환한다.
+	 * 다음 두 가지 형식만 해석 가능하다.
+	 * <ol>
+	 * <li>y-M-d : 년월일 각각은 앞에 0이 몇 자리든 붙어도 상관없다. dd가 30이 넘으면 윤달인 것으로 해석한다.
+	 * <li>위의 y-M-d 앞에 "KoreanLunar "를 붙인 것. 이 경우는 {@link #toString()}의 역연산으로 쓸 수 있다.
+	 * </ol>
+	 * 
+	 * @param text 음력 날짜로 해석될 텍스트
+	 * @return 음력 날짜
+	 */
+	public static KLunarDate parse ( final CharSequence text ) {
+		if( text.length() == 0 )
+		    throw new DateTimeParseException( "no text to parse" , text , 0 );
+
+		String c = KLunarChronology.INSTANCE.toString();
+
+		if( text.charAt( 0 ) != c.charAt( 0 ) ){
+			return parseDatePart( text );
+		}
+
+		if( text.length() < c.length() )
+		    throw new DateTimeParseException( "not a valid format" , text , 0 );
+
+		CharSequence chronologyStr = text.subSequence( 0, c.length() );
+		if( chronologyStr.equals( c ) ){
+			if( text.charAt( c.length() ) == ' ' ){
+				CharSequence dateStr = text.subSequence( c.length() + 1, text.length() );
+				return parseDatePart( dateStr );
+			}
+		}
+		throw new DateTimeParseException( "not a valid format" , text , 0 );
+	}
+
+	private static KLunarDate parseDatePart ( CharSequence text ) {
+		int i = -1;
+		int state = 1;
+		/*
+		 * 1: 년
+		 * 2: 월
+		 * 3: 일
+		 */
+		String numStr = "";
+		Integer y = null, m = null, d = null;
+		while( ++i < text.length() ){
+			char c = text.charAt( i );
+			if( c >= '0' && c <= '9' ){
+				numStr += c;
+				continue;
+			}
+			if( c == '-' ){
+				switch( state ){
+				case 1:// 년도
+					try{
+						y = Integer.parseInt( numStr );
+					}
+					catch( Exception e ){
+						throw new DateTimeParseException( "invalid data for year" , text , i , e );
+					}
+					numStr = "";
+					state = 2;
+					continue;
+				case 2:// 월
+					try{
+						m = Integer.parseInt( numStr );
+					}
+					catch( Exception e ){
+						throw new DateTimeParseException( "invalid data for month" , text , i , e );
+					}
+					numStr = "";
+					state = 3;
+					continue;
+				case 3:// 일
+					if( numStr.equals( "" ) )
+					    throw new DateTimeParseException( "not a valid format" , text , i );
+					throw new DateTimeParseException( "there must be nothting after day" , text , i );
+				}
+			}
+			throw new DateTimeParseException( "unacceptable character at index " + i , text , i );
+		}
+		if( state == 3 ){
+			try{
+				d = Integer.parseInt( numStr );
+			}
+			catch( Exception e ){
+				throw new DateTimeParseException( "invalid data for day" , text , i , e );
+			}
+			return of( y, m, d > BIG_MONTH_SIZE, d > BIG_MONTH_SIZE ? d - BIG_MONTH_SIZE : d );
+		}
+		throw new DateTimeParseException( "not a valid format" , text , i );
 	}
 
 // import java.time.LocalTime;
