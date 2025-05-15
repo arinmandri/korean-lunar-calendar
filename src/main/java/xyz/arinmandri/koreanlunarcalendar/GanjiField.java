@@ -79,7 +79,7 @@ public enum GanjiField implements TemporalField
 
 		//// 그외: temporal이 알아서
 		try{
-			temporal.get( this );
+			temporal.getLong( this );
 			return true;
 		}
 		catch( UnsupportedTemporalTypeException ex ){
@@ -91,15 +91,10 @@ public enum GanjiField implements TemporalField
 	 * 이 날짜/시간에서 가질 수 있는 이 필드의 가능한 값의 범위.
 	 * 간지 값은 날짜/시간에 무관하게 일정히 1부터 60까지 가질 수 있다.
 	 * 즉 {@link #range()}와 같다.
-	 * 
-	 * @throws UnsupportedTemporalTypeException
 	 */
 	@Override
 	public ValueRange rangeRefinedBy ( TemporalAccessor temporal ) {
-		if( temporal instanceof KLunarDate ){
-			return ValueRange.of( 1, 60 );
-		}
-		throw new UnsupportedTemporalTypeException( "Unsupported field: " + this );
+		return ValueRange.of( 1, 60 );
 	}
 
 	/**

@@ -91,7 +91,7 @@ public enum LunarMonthField implements TemporalField
 
 		//// 그외: temporal이 알아서
 		try{
-			temporal.get( this );
+			temporal.getLong( this );
 			return true;
 		}
 		catch( UnsupportedTemporalTypeException ex ){
@@ -139,6 +139,9 @@ public enum LunarMonthField implements TemporalField
 				        ? BIG_MONTH_SIZE
 				        : LIL_MONTH_SIZE );
 			}
+		}
+		if( isSupportedBy( temporal ) ){
+			return range;
 		}
 		throw new UnsupportedTemporalTypeException( "not supported temporal type" );
 	}
