@@ -1,11 +1,9 @@
 
 ## 소개
 
-Java 한국 음력.
+Java 한국 음력. java.time API와 호환.(표준 인터페이스 구현)
 
 음력 양력 변환, 날짜 계산, 간지 조회, 직렬화 등 가능.
-
-java.time API와 호환.(표준 인터페이스 구현)
 
 Korean Lunar Calendar in Java
 
@@ -34,6 +32,23 @@ Korean Lunar Calendar in Java
 - 우주항공청의 산하기관인 한국천문연구원에서 음양력 정보를 [공공데이터](https://www.data.go.kr/data/15012679/openapi.do)로 제공한다.
 
 
+
+## 라이브러리 가져오기
+
+```xml
+<repository>
+  <id>github</id>
+  <url>https://maven.pkg.github.com/arinmandri/korean-lunar-calendar</url>
+</repository>
+```
+
+```xml
+<dependency>
+  <groupId>xyz.arinmandri</groupId>
+  <artifactId>korean-lunar-calendar</artifactId>
+  <version>1.0</version>
+</dependency>
+```
 
 ## 쓰는 법
 

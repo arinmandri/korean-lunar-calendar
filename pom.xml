@@ -4,7 +4,7 @@
     <groupId>xyz.arinmandri</groupId>
     <artifactId>korean-lunar-calendar</artifactId>
     <packaging>jar</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
     <name>korean-lunar-calendar</name>
     <url>https://github.com/arinmandri/korean-lunar-calendar</url>
 
@@ -58,5 +58,13 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub arinmandri Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/arinmandri/korean-lunar-calendar</url>
+        </repository>
+    </distributionManagement>
 
 </project>
